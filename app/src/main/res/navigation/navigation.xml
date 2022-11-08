@@ -18,5 +18,11 @@
         android:id="@+id/nextFragment"
         android:name="pl.sggw.sggwmeet.fragment.NextFragment"
         android:label="fragment_next"
-        tools:layout="@layout/fragment_next" />
+        tools:layout="@layout/fragment_next" >
+        <action
+            android:id="@+id/action_nextFragment_to_startFragment"
+            app:destination="@id/startFragment"
+            app:popUpTo="@id/startFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

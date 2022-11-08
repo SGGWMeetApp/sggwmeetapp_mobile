@@ -1,12 +1,14 @@
 package pl.sggw.sggwmeet.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.FragmentNextBinding
-
 
 class NextFragment: Fragment() {
     private lateinit var binding: FragmentNextBinding
@@ -15,7 +17,8 @@ class NextFragment: Fragment() {
         this.binding = FragmentNextBinding.inflate(inflater, container, false)
 
         this.binding.buttonBack.setOnClickListener {
-            this.requireActivity().onBackPressedDispatcher.onBackPressed()
+            Log.i("SGGWMA " + this::class.simpleName, "moving to StartFragment...")
+            this.findNavController().navigate(R.id.action_nextFragment_to_startFragment)
         }
 
         return this.binding.root
