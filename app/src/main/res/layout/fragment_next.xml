@@ -26,6 +26,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_top_top"
+            app:layout_constraintBottom_toTopOf="@id/guideline_top_middle"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2"/>
+
+        <TextView
+            android:id="@+id/label_injected"
+            android:layout_width="@dimen/fill"
+            android:layout_height="@dimen/fill"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline_top_middle"
             app:layout_constraintBottom_toTopOf="@id/guideline_top_bottom"/>
 
         <androidx.constraintlayout.widget.Guideline
@@ -33,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2"/>
+            app:layout_constraintGuide_percent="0.3"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_bottom_top"
