@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="toolbarButton">
+        <item name="android:textColor">?android:textColorPrimary</item>
+
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">#00000000</item>
+    </style>
+</resources>

@@ -3,4 +3,8 @@
     <dimen name="fill">0dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_large">24dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="fragment_horizontal_margin">16dp</dimen>
+    <dimen name="fragment_vertical_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>
