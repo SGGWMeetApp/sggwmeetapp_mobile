@@ -16,4 +16,8 @@
         android:id="@+id/menu_login"
         android:title="Login">
     </item>
+    <item
+        android:id="@+id/menu_register"
+        android:title="Rejestracja">
+    </item>
 </menu>

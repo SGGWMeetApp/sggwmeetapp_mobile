@@ -37,4 +37,10 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
     </fragment>
+    <fragment
+        android:id="@+id/registerFragmemt"
+        android:name="pl.sggw.sggwmeet.fragment.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" >
+    </fragment>
 </navigation>

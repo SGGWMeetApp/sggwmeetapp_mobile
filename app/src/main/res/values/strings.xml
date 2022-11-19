@@ -10,9 +10,8 @@
     <string name="fnext_button_back_text">BACK</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="prompt_password">Hasło</string>
+    <string name="action_sign_in_short">Zaloguj</string>
     <string name="welcome">"Welcome!"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
@@ -107,5 +106,15 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="zaloguj_się_do_serwisu">Zaloguj się do serwisu</string>
+    <!-- Rejestracja -->
+    <string name="zarejestruj_sie_w_serwisie">Zarejestruj się w serwisie</string>
+    <string name="prompt_passwordRepeat">Powtórz hasło</string>
+    <string name="prompt_firstName">Imię</string>
+    <string name="prompt_lastName">Nazwisko</string>
+    <string name="prompt_phone">Telefon</string>
+    <string name="prompt_description">Opis</string>
+    <string name="action_register">Zarejestruj</string>
+    <string name="password_limit">Hasło powinno zawierać 10 symboli</string>
+    <string name="reg_tos_text">Akceptuję <a href="https://google.com">warunki korzystania z serwisu</a></string>
 
 </resources>

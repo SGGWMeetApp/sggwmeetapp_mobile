@@ -42,6 +42,10 @@ class MainActivity : AppCompatActivity() {
                         navController.navigateUp()
                         navController.navigate(R.id.scrollingFragment)
                     }
+                    R.id.menu_register -> {
+                        navController.navigateUp()
+                        navController.navigate(R.id.registerFragmemt)
+                    }
                 }
                 true
             })
