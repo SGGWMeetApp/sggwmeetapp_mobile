@@ -12,12 +12,8 @@ import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.FragmentNextBinding
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class NextFragment: Fragment() {
     private lateinit var binding: FragmentNextBinding
-
-    @Inject
-    lateinit var injectedString : String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentNextBinding.inflate(inflater, container, false)
@@ -26,8 +22,6 @@ class NextFragment: Fragment() {
             Log.i("SGGWMA " + this::class.simpleName, "moving to StartFragment...")
             this.findNavController().navigate(R.id.action_nextFragment_to_startFragment)
         }
-
-        this.binding.labelInjected.text = injectedString
 
         return this.binding.root
     }

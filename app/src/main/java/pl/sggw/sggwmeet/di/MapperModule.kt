@@ -4,19 +4,16 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import pl.sggw.sggwmeet.util.ExecutionHelper
+import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object CoreModule {
+object MapperModule {
 
     @Singleton
     @Provides
-    fun provideTestString() : String {
-        if(ExecutionHelper.isRunningInMockMode()) {
-            return "I'm running on MOCK build!";
-        }
-        return "I'm running on PROD build!";
+    fun provideAuthorizationMapper() : AuthorizationMapper {
+        return AuthorizationMapper()
     }
 }

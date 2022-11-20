@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_startFragment_to_nextFragment"
             app:destination="@id/nextFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/nextFragment"
@@ -33,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="pl.sggw.sggwmeet.ui.login.LoginFragment"
+        android:name="pl.sggw.sggwmeet.fragment.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
     </fragment>
