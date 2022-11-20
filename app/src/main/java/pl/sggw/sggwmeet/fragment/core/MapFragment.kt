@@ -13,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
@@ -22,8 +23,10 @@ import pl.sggw.sggwmeet.databinding.FragmentLoginBinding
 import pl.sggw.sggwmeet.databinding.FragmentMapBinding
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MapFragment : Fragment(R.layout.fragment_map) {
@@ -32,10 +35,12 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         private const val DEFAULT_ZOOM = 15.0f
     }
 
+    private val placesViewModel by viewModels<PlacesViewModel>()
+    @Inject
+    lateinit var markerBitmapGenerator: MarkerBitmapGenerator
+
     lateinit var map : GoogleMap
     lateinit var binding : FragmentMapBinding
-
-    private val placesViewModel by viewModels<PlacesViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -106,7 +111,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             map.addMarker(
                 MarkerOptions()
                     .position(LatLng(marker.geolocation.latitude, marker.geolocation.longitude))
-                    .title(marker.name)
+                    .icon(BitmapDescriptorFactory.fromBitmap(markerBitmapGenerator.generatePlaceBitmap(marker)))
             )
         }
     }
