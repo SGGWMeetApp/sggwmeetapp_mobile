@@ -5,8 +5,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
+import pl.sggw.sggwmeet.model.connector.PlacesConnector
 import pl.sggw.sggwmeet.model.connector.mock.MockAuthorizationConnector
+import pl.sggw.sggwmeet.model.connector.mock.MockPlacesConnector
 import pl.sggw.sggwmeet.model.connector.rest.RestAuthorizationConnector
+import pl.sggw.sggwmeet.model.connector.rest.RestPlacesConnector
 import pl.sggw.sggwmeet.util.ExecutionHelper
 import javax.inject.Singleton
 
@@ -20,6 +23,15 @@ object ConnectorModule {
         return restConnectorOrMock(
             RestAuthorizationConnector(),
             MockAuthorizationConnector()
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun providePlacesConnector() : PlacesConnector {
+        return restConnectorOrMock(
+            RestPlacesConnector(),
+            MockPlacesConnector()
         )
     }
 

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragment.core.MapFragment"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/arrow_BT"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/asset_arrow_right"
+        android:scaleType="fitXY"
+        android:padding="5dp"
+        android:background="@drawable/bg_white_rounded"
+        android:elevation="10dp"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:visibility="invisible"/>
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/zoom_in_BT"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/asset_plus"
+        android:scaleType="fitXY"
+        android:padding="5dp"
+        android:background="@drawable/bg_white_rounded"
+        android:elevation="10dp"
+        android:layout_margin="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:visibility="invisible"/>
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/zoom_out_BT"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/asset_minus"
+        android:scaleType="fitXY"
+        android:padding="5dp"
+        android:background="@drawable/bg_white_rounded"
+        android:elevation="10dp"
+        android:layout_margin="10dp"
+        app:layout_constraintEnd_toStartOf="@id/zoom_in_BT"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:visibility="invisible"/>
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.core.MapFragment"
+        />
+
+    <ProgressBar
+        android:id="@+id/map_PB"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

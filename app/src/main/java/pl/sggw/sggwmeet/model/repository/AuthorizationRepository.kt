@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import pl.sggw.sggwmeet.domain.UserCredentials
 import pl.sggw.sggwmeet.domain.UserData
-import pl.sggw.sggwmeet.util.exception.ClientErrorCode
-import pl.sggw.sggwmeet.util.exception.ClientException
-import pl.sggw.sggwmeet.util.exception.TechnicalException
-import pl.sggw.sggwmeet.util.exception.ServerException
+import pl.sggw.sggwmeet.exception.ClientErrorCode
+import pl.sggw.sggwmeet.exception.ClientException
+import pl.sggw.sggwmeet.exception.TechnicalException
+import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
 import pl.sggw.sggwmeet.model.connector.dto.response.ErrorResponse

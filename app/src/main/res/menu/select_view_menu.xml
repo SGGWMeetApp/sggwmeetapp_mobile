@@ -5,10 +5,6 @@
         android:title="Start">
     </item>
     <item
-        android:id="@+id/menu_next"
-        android:title="Next">
-    </item>
-    <item
         android:id="@+id/menu_scrolling"
         android:title="Scrolling">
     </item>

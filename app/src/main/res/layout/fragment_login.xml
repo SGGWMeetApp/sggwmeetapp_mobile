@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:backgroundTint="#80000000"
     android:backgroundTintMode="src_over"
-    tools:context=".fragment.LoginFragment">
+    tools:context=".fragment.welcome.LoginFragment">
 
     <FrameLayout
         android:layout_width="match_parent"

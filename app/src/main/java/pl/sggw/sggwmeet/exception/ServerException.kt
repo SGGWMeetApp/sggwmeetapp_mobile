@@ -1,4 +1,4 @@
-package pl.sggw.sggwmeet.util.exception
+package pl.sggw.sggwmeet.exception
 
 class ServerException(
     val errorCode : String,

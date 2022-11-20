@@ -1,16 +1,15 @@
-package pl.sggw.sggwmeet
+package pl.sggw.sggwmeet.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.appcompat.widget.Toolbar
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.widget.PopupMenu
 import androidx.navigation.findNavController
+import pl.sggw.sggwmeet.R
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,10 +28,6 @@ class MainActivity : AppCompatActivity() {
                     R.id.menu_start -> {
                         navController.navigateUp()
                         navController.navigate(R.id.startFragment)
-                    }
-                    R.id.menu_next -> {
-                        navController.navigateUp()
-                        navController.navigate(R.id.nextFragment)
                     }
                     R.id.menu_login -> {
                         navController.navigateUp()

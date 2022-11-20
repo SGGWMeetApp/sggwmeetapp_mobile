@@ -1,29 +1,26 @@
-package pl.sggw.sggwmeet.fragment
+package pl.sggw.sggwmeet.fragment.welcome
 
 import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.FragmentLoginBinding
-import pl.sggw.sggwmeet.databinding.FragmentNextBinding
 import pl.sggw.sggwmeet.viewmodel.AuthorizationViewModel
 import pl.sggw.sggwmeet.domain.UserCredentials
 import pl.sggw.sggwmeet.domain.UserData
-import pl.sggw.sggwmeet.util.exception.ClientErrorCode
-import pl.sggw.sggwmeet.util.exception.ClientException
-import pl.sggw.sggwmeet.util.exception.ServerException
-import pl.sggw.sggwmeet.util.exception.TechnicalException
+import pl.sggw.sggwmeet.exception.ClientErrorCode
+import pl.sggw.sggwmeet.exception.ClientException
+import pl.sggw.sggwmeet.exception.ServerException
+import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.util.Resource
 
 @AndroidEntryPoint

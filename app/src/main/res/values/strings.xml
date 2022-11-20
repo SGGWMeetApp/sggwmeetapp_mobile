@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">SGGW Meet</string>
+    <string name="app_name_merged">SGGWMeetApp</string>
 
     <!-- FRAGMENT START -->
     <string name="fstart_label_greetings_text">Welcome, to the SGGW Meet App!</string>
     <string name="fstart_button_next_text">NEXT</string>
+    <string name="skip_login_button_text">SKIP LOGIN</string>
 
     <!-- FRAGMENT NEXT -->
     <string name="fnext_label_greetings_text">Hi, I\'m the NEXT fragment!</string>

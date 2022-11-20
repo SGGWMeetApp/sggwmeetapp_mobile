@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:backgroundTint="#80000000"
     android:backgroundTintMode="src_over"
-    tools:context=".fragment.RegisterFragment">
+    tools:context=".fragment.welcome.RegisterFragment">
 
     <FrameLayout
         android:layout_width="match_parent"

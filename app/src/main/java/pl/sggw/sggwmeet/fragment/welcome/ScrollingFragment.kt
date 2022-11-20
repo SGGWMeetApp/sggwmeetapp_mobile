@@ -1,4 +1,4 @@
-package pl.sggw.sggwmeet.fragment
+package pl.sggw.sggwmeet.fragment.welcome
 
 import android.os.Bundle
 import android.view.LayoutInflater

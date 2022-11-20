@@ -8,7 +8,7 @@
         android:id="@+id/layout_start"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="pl.sggw.sggwmeet.fragment.StartFragment">
+        tools:context="pl.sggw.sggwmeet.fragment.welcome.StartFragment">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_top_top"
@@ -40,10 +40,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.8"/>
+            app:layout_constraintGuide_percent="0.6"/>
 
         <Button
-            android:id="@+id/button_next"
+            android:id="@+id/login_BT"
             android:layout_width="@dimen/fill"
             android:layout_height="@dimen/fill"
             android:text="@string/fstart_button_next_text"
@@ -53,6 +53,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_bottom_top"
+            app:layout_constraintBottom_toTopOf="@id/skip_login_BT"/>
+
+        <Button
+            android:id="@+id/skip_login_BT"
+            android:layout_width="@dimen/fill"
+            android:layout_height="@dimen/fill"
+            android:text="@string/skip_login_button_text"
+            android:gravity="center"
+            android:layout_marginVertical="@dimen/margin_small"
+            android:layout_marginHorizontal="@dimen/margin_large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/login_BT"
             app:layout_constraintBottom_toTopOf="@id/guideline_bottom_bottom"/>
 
         <androidx.constraintlayout.widget.Guideline
