@@ -116,8 +116,13 @@
     <string name="prompt_phone">Telefon</string>
     <string name="prompt_description">Opis</string>
     <string name="action_register">Zarejestruj</string>
-    <string name="password_limit">Hasło powinno zawierać 10 symboli</string>
+    <string name="password_limit">Hasło powinno zawierać min. 8 symboli</string>
     <string name="reg_tos_text">Akceptuję <a href="https://google.com">warunki korzystania z serwisu</a></string>
+    <string name="password_repeat_fail">Źle powtórzone hasło</string>
+    <string name="registration_required_field">Pole wymagane</string>
+    <string name="optional_field">Pole opcjonalne</string>
+    <string name="reg_avatar_select">Wybierz zdjęcie profilowe</string>
+    <string name="reg_avatar_cancel">Anuluj wybór zdjęcia</string>
 
     <!-- Wspólne komunikaty -->
     <string name="technical_error_message">Technical error occurred!</string>

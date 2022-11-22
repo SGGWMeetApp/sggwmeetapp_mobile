@@ -58,12 +58,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         binding.passwordET.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                authorizationViewModel.login(
-                    UserCredentials(
-                        binding.emailET.text.toString(),
-                        binding.passwordET.text.toString()
-                    )
-                )
+                if (binding.loginBT.isEnabled) {
+                    loginUser()
+                }
             }
             false
         }
@@ -73,12 +70,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun setButtonListeners() {
 
         binding.loginBT.setOnClickListener {
-            authorizationViewModel.login(
-                UserCredentials(
-                    binding.emailET.text.toString(),
-                    binding.passwordET.text.toString()
-                )
-            )
+            loginUser()
         }
 
     }
@@ -118,10 +110,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun handleClientErrorCode(errorCode: ClientErrorCode) {
         when(errorCode) {
             ClientErrorCode.EMAIL_VALIDATION_ERROR -> {
-                binding.emailET.error = getString(R.string.invalid_email)
+                binding.emailTextInputLayout.error = getString(R.string.invalid_email)
             }
             ClientErrorCode.PASSWORD_VALIDATION_ERROR -> {
-                binding.passwordET.error = getString(R.string.invalid_password)
+                binding.passwordTextInputLayout.error = getString(R.string.invalid_password)
             }
         }
     }
@@ -131,7 +123,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun lockUI() {
-        binding.loadingPB.visibility = View.VISIBLE
+        binding.loadingFL.visibility = View.VISIBLE
         binding.loginBT.isEnabled = false
         binding.emailET.isEnabled = false
         binding.emailET.error = null
@@ -140,7 +132,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun unlockUI() {
-        binding.loadingPB.visibility = View.GONE
+        binding.loadingFL.visibility = View.GONE
         binding.loginBT.isEnabled = true
         binding.emailET.isEnabled = true
         binding.passwordET.isEnabled = true
@@ -161,10 +153,25 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     fun handleLoginButtonLocking() {
-        if(binding.passwordET.text.toString().isBlank() && binding.emailET.text.toString().isBlank()) {
+        if(binding.passwordET.text.toString().isBlank() || binding.emailET.text.toString().isBlank()) {
             binding.loginBT.isEnabled = false
             return
         }
         binding.loginBT.isEnabled = true
+    }
+
+    private fun resetErrors(){
+        binding.emailTextInputLayout.isErrorEnabled = false
+        binding.passwordTextInputLayout.isErrorEnabled = false
+    }
+
+    private fun loginUser(){
+        resetErrors()
+        authorizationViewModel.login(
+            UserCredentials(
+                binding.emailET.text.toString(),
+                binding.passwordET.text.toString()
+            )
+        )
     }
 }
