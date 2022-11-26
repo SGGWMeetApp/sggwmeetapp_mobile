@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/topSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/hidden_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent">
+
+            <com.mancj.materialsearchbar.MaterialSearchBar
+                android:id="@+id/searchBar"
+                style="@style/MaterialSearchBarLight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                app:mt_hint="@string/menu_search_text"
+                app:mt_maxSuggestionsCount="0"
+                app:mt_placeholder="@string/menu_search_text"
+                app:mt_placeholderColor="@color/primary_accent"
+                app:mt_speechMode="false" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="12dp"
+                android:background="#D9D9D9" />
+
+            <Button
+                android:id="@+id/menu_map_BT"
+                style="@style/welcome_sheet_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_map_BT"
+                app:icon="@drawable/asset_icon_map"
+                app:iconGravity="textEnd"
+                app:iconPadding="13dp"
+                app:iconSize="36dp"
+                app:iconTint="@color/primary_accent" />
+
+            <Button
+                android:id="@+id/menu_event_BT"
+                style="@style/welcome_sheet_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_event_BT"
+                app:icon="@drawable/asset_icon_event"
+                app:iconGravity="textEnd"
+                app:iconPadding="13dp"
+                app:iconSize="36dp"
+                app:iconTint="@color/primary_accent" />
+
+            <Button
+                android:id="@+id/menu_groups_BT"
+                style="@style/welcome_sheet_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_groups_BT"
+                android:textColor="@color/primary_accent"
+                app:icon="@drawable/asset_icon_group"
+                app:iconGravity="textEnd"
+                app:iconPadding="13dp"
+                app:iconSize="36dp"
+                app:iconTint="@color/primary_accent" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="12dp"
+                android:background="#D9D9D9" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="12dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginVertical="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center|center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/display_name_TV"
+                        style="@style/welcome_sheet_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Testowy Użytkownik" />
+
+                    <TextView
+                        android:id="@+id/display_email_TV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="email"
+                        android:linksClickable="false"
+                        android:text="testowy@email.com"
+                        android:textColor="#99000000"
+                        android:textColorLink="#99000000" />
+
+                </LinearLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginVertical="10dp"
+                    android:layout_weight="0"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="10dp"
+                    app:cardMaxElevation="10dp">
+
+                    <ImageView
+                        android:id="@+id/avatar_preview_IV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:adjustViewBounds="true"
+                        android:maxWidth="75dp"
+                        android:maxHeight="75dp"
+                        android:src="@drawable/avatar_1" />
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/menu_settings_BT"
+                    style="@style/sheet_buttons_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_settings_BT"
+                    app:icon="@drawable/asset_icon_settings"
+                    app:iconGravity="textStart"
+                    app:iconPadding="32dp"
+                    app:iconSize="20dp"
+                    app:iconTint="#8A000000" />
+
+                <Button
+                    android:id="@+id/menu_profile_BT"
+                    style="@style/sheet_buttons_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_profile_BT"
+                    app:icon="@drawable/asset_icon_profile"
+                    app:iconGravity="textStart"
+                    app:iconPadding="32dp"
+                    app:iconSize="20dp"
+                    app:iconTint="#8A000000" />
+
+                <Button
+                    android:id="@+id/menu_logout_BT"
+                    style="@style/sheet_buttons_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:letterSpacing="0.035"
+                    android:text="@string/menu_logout_BT"
+                    android:textAllCaps="true"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2.5dp"
+                android:background="#BCBCBC" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

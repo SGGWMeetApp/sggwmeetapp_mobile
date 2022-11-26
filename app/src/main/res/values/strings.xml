@@ -127,4 +127,20 @@
     <!-- Wspólne komunikaty -->
     <string name="technical_error_message">Technical error occurred!</string>
 
+    <!-- Menu -->
+    <string name="menu_start_BT">Start</string>
+    <string name="menu_login_BT">Logowanie</string>
+    <string name="menu_reg_BT">Rejestracja</string>
+    <string name="menu_map_BT">Mapa</string>
+    <string name="menu_event_BT">Wydarzenia</string>
+    <string name="menu_groups_BT">Grupy</string>
+    <string name="menu_search_text">Wyszukaj...</string>
+    <string name="menu_settings_BT">Ustawienia</string>
+    <string name="menu_profile_BT">Profil</string>
+    <string name="menu_logout_BT">Wyloguj się</string>
+
+    <!-- Edytuj użytkownika -->
+    <string name="edit_user">Edytuj dane użytkownika</string>
+    <string name="action_userEdit_accept">Potwierdź</string>
+    <string name="menu_edit_BT">Edytuj użytkownika</string>
 </resources>

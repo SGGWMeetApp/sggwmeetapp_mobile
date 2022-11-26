@@ -21,14 +21,16 @@
 
         <activity
             android:name=".activity.CoreActivity"
-            android:exported="false">
+            android:exported="false"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".activity.WelcomeActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

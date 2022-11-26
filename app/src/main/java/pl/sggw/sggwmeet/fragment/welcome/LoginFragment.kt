@@ -7,6 +7,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -25,7 +27,8 @@ import pl.sggw.sggwmeet.util.Resource
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
-
+    private lateinit var animationDim : Animation
+    private lateinit var animationLit : Animation
     private lateinit var binding : FragmentLoginBinding
     private val authorizationViewModel by viewModels<AuthorizationViewModel>()
 
@@ -40,6 +43,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         setButtonListeners()
         setEditTextListeners()
         setViewModelListener()
+        setAnimations()
     }
 
     private fun setEditTextListeners() {
@@ -123,19 +127,21 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun lockUI() {
-        binding.loadingFL.visibility = View.VISIBLE
+        binding.loadingPB.visibility = View.VISIBLE
         binding.loginBT.isEnabled = false
         binding.emailET.isEnabled = false
         binding.emailET.error = null
         binding.passwordET.isEnabled = false
         binding.passwordET.error = null
+        animationDimStart()
     }
 
     private fun unlockUI() {
-        binding.loadingFL.visibility = View.GONE
+        binding.loadingPB.visibility = View.GONE
         binding.loginBT.isEnabled = true
         binding.emailET.isEnabled = true
         binding.passwordET.isEnabled = true
+        animationLitStart()
     }
 
     private fun updateUiWithUser(userData: UserData) {
@@ -173,5 +179,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 binding.passwordET.text.toString()
             )
         )
+    }
+    private fun setAnimations(){
+        animationDim = AnimationUtils.loadAnimation(context,R.anim.background_dim_anim)
+        animationDim.fillAfter=true
+
+        animationLit = AnimationUtils.loadAnimation(context,R.anim.background_lit_anim)
+        animationLit.fillAfter=true
+    }
+    private fun animationDimStart(){
+        binding.loadingFL.startAnimation(animationDim)
+    }
+    private fun animationLitStart(){
+        binding.loadingFL.startAnimation(animationLit)
     }
 }
