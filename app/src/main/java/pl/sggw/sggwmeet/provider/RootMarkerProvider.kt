@@ -7,7 +7,7 @@ import pl.sggw.sggwmeet.domain.PlaceMarkerData
 class RootMarkerProvider {
 
     companion object {
-        private val ROOT_MARKER = PlaceMarkerData(
+        public val ROOT_MARKER = PlaceMarkerData(
             "",
             "SGGW",
             PlaceCategory.ROOT_LOCATION,

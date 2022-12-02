@@ -134,6 +134,7 @@
     <string name="menu_map_BT">Mapa</string>
     <string name="menu_event_BT">Wydarzenia</string>
     <string name="menu_groups_BT">Grupy</string>
+    <string name="menu_spots_BT">Miejsca</string>
     <string name="menu_search_text">Wyszukaj...</string>
     <string name="menu_settings_BT">Ustawienia</string>
     <string name="menu_profile_BT">Profil</string>
@@ -143,4 +144,11 @@
     <string name="edit_user">Edytuj dane użytkownika</string>
     <string name="action_userEdit_accept">Potwierdź</string>
     <string name="menu_edit_BT">Edytuj użytkownika</string>
+
+    <!-- Grupy -->
+    <string name="hello_groups_fragment">Hello groups fragment!</string>
+
+    <!-- Wydarzenia -->
+    <string name="hello_events_fragment">Hello events fragment!</string>
+
 </resources>

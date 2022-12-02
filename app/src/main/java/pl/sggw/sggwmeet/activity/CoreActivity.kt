@@ -9,6 +9,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.ActivityCoreBinding
@@ -58,6 +59,31 @@ class CoreActivity : AppCompatActivity() {
             topSheetTransition.duration=200
             closeTopSheet()
         }
+
+        binding.topSheetLayout.menuPlacesBT.setOnClickListener {
+            this.navigateToFragment(R.id.placesFragment)
+            this.topSheetTransition.duration = 100
+            this.closeTopSheet()
+        }
+
+        binding.topSheetLayout.menuMapBT.setOnClickListener {
+            this.navigateToFragment(R.id.mapFragment)
+            this.topSheetTransition.duration = 100
+            this.closeTopSheet()
+        }
+
+        binding.topSheetLayout.menuEventBT.setOnClickListener {
+            this.navigateToFragment(R.id.eventsFragment)
+            this.topSheetTransition.duration = 100
+            this.closeTopSheet()
+        }
+
+        binding.topSheetLayout.menuGroupsBT.setOnClickListener {
+            this.navigateToFragment(R.id.groupsFragment)
+            this.topSheetTransition.duration = 100
+            this.closeTopSheet()
+        }
+
         onBackPressedDispatcher.addCallback(this , object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.topSheetLayout.hiddenView.visibility == View.VISIBLE) {
@@ -81,5 +107,11 @@ class CoreActivity : AppCompatActivity() {
         binding.topSheetLayout.hiddenView.visibility=View.VISIBLE
         binding.topSheetHideHitbox.visibility=View.VISIBLE
         animationDimStart()
+    }
+
+    private fun navigateToFragment(fragmentId: Int){
+        val navController = findNavController(R.id.nav_host_fragment)
+        navController.navigateUp()
+        navController.navigate(fragmentId)
     }
 }

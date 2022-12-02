@@ -60,6 +60,13 @@
                 android:background="#D9D9D9" />
 
             <Button
+                android:id="@+id/menu_places_BT"
+                style="@style/welcome_sheet_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_spots_BT"/>
+
+            <Button
                 android:id="@+id/menu_map_BT"
                 style="@style/welcome_sheet_text"
                 android:layout_width="match_parent"
