@@ -90,6 +90,7 @@ class CoreActivity : AppCompatActivity() {
 
         binding.topSheetLayout.menuLogoutBT.setOnClickListener {
             Prefs.securely().write().content("password","")
+                .apply()
             startActivity(Intent(this, WelcomeActivity::class.java))
             this.finish()
         }
