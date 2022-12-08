@@ -5,15 +5,16 @@ import pl.sggw.sggwmeet.model.connector.dto.request.UserLoginRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserRegisterRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.UserLoginResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.UserRegisterResponse
+import retrofit2.Response
 
 class RestAuthorizationConnector : AuthorizationConnector {
 
-    override suspend fun login(loginRequest: UserLoginRequest): UserLoginResponse {
+    override suspend fun login(loginRequest: UserLoginRequest): Response<UserLoginResponse> {
         //TODO implement when backend is published
         throw NotImplementedError("Not yet implemented!")
     }
 
-    override suspend fun register(registerRequest: UserRegisterRequest): UserRegisterResponse {
+    override suspend fun register(registerRequest: UserRegisterRequest): Response<UserRegisterResponse> {
         //TODO implement when backend is published
         throw NotImplementedError("Not yet implemented!")
     }

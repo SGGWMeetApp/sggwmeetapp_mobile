@@ -16,7 +16,7 @@
     <string name="action_sign_in_short">Zaloguj</string>
     <string name="welcome">"Welcome!"</string>
     <string name="invalid_email">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_password">Password must be >=8 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
@@ -150,5 +150,6 @@
 
     <!-- Wydarzenia -->
     <string name="hello_events_fragment">Hello events fragment!</string>
+    <string name="prompt_phonePrefix">Prefiks</string>
 
 </resources>

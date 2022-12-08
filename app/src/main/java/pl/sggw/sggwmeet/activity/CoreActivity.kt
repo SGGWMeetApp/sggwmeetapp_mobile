@@ -1,5 +1,6 @@
 package pl.sggw.sggwmeet.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -11,8 +12,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.ActivityCoreBinding
+import pl.sggw.sggwmeet.util.RefreshUtil
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
 
 @AndroidEntryPoint
@@ -31,6 +34,7 @@ class CoreActivity : AppCompatActivity() {
             ResourcesCompat.getFont(this, R.font.robotoregular))
         setTopSheet()
         setAnimations()
+        refreshUserData()
     }
     private fun setAnimations(){
         animationDim = AnimationUtils.loadAnimation(this,R.anim.background_dim_anim)
@@ -84,6 +88,12 @@ class CoreActivity : AppCompatActivity() {
             this.closeTopSheet()
         }
 
+        binding.topSheetLayout.menuLogoutBT.setOnClickListener {
+            Prefs.securely().write().content("password","")
+            startActivity(Intent(this, WelcomeActivity::class.java))
+            this.finish()
+        }
+
         onBackPressedDispatcher.addCallback(this , object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.topSheetLayout.hiddenView.visibility == View.VISIBLE) {
@@ -113,5 +123,11 @@ class CoreActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         navController.navigateUp()
         navController.navigate(fragmentId)
+    }
+
+    fun refreshUserData(){
+        val userData=RefreshUtil.getCurrentUserData()
+        binding.topSheetLayout.displayNameTV.setText(userData.firstName+" "+userData.lastName)
+        binding.topSheetLayout.displayEmailTV.setText(Prefs.read().content("email","email@testowy.pl"))
     }
 }

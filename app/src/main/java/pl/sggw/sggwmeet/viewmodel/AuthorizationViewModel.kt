@@ -21,8 +21,8 @@ class AuthorizationViewModel @Inject constructor(
     val loginState: LiveData<Resource<UserData>>
         get() = _loginState
 
-    private val _registerState: MutableLiveData<Resource<Nothing>> = MutableLiveData()
-    val registerState: LiveData<Resource<Nothing>>
+    private val _registerState: MutableLiveData<Resource<UserData>> = MutableLiveData()
+    val registerState: LiveData<Resource<UserData>>
         get() = _registerState
 
     fun login(userCredentials: UserCredentials) {

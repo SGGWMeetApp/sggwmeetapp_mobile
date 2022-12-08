@@ -11,7 +11,7 @@ class AuthorizationMapper {
 
     fun map(userCredentials: UserCredentials) : UserLoginRequest {
         return UserLoginRequest(
-            userCredentials.email,
+            userCredentials.username,
             userCredentials.password
         )
     }
@@ -20,19 +20,21 @@ class AuthorizationMapper {
         return UserData(
             userLoginResponse.userData.firstName,
             userLoginResponse.userData.lastName,
-            null,
-            null,
+            userLoginResponse.userData.phoneNumberPrefix,
+            userLoginResponse.userData.phoneNumber,
+            userLoginResponse.userData.description,
             userLoginResponse.userData.avatarUrl
         )
     }
 
     fun map(userCredentials: UserCredentials, userData: UserData) : UserRegisterRequest {
         return UserRegisterRequest(
-            userCredentials.email,
+            userCredentials.username,
             userCredentials.password,
             UserRegisterRequestData(
                 userData.firstName,
                 userData.lastName,
+                userData.phoneNumberPrefix,
                 userData.phoneNumber,
                 userData.description
             )

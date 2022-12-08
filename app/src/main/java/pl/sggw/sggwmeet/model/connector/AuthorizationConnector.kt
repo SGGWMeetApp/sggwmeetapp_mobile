@@ -4,6 +4,9 @@ import pl.sggw.sggwmeet.model.connector.dto.request.UserLoginRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserRegisterRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.UserLoginResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.UserRegisterResponse
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 /**
  * REST connector for authorization
@@ -13,10 +16,12 @@ interface AuthorizationConnector {
     /**
      * Logins user in the backend application
      */
-    suspend fun login(loginRequest: UserLoginRequest) : UserLoginResponse
+    @POST("/api/login_check")
+    suspend fun login(@Body loginRequest: UserLoginRequest) : Response<UserLoginResponse>
 
     /**
      * Registers user in the backend application
      */
-    suspend fun register(registerRequest: UserRegisterRequest) : UserRegisterResponse
+    @POST("/register")
+    suspend fun register(@Body registerRequest: UserRegisterRequest) : Response<UserRegisterResponse>
 }

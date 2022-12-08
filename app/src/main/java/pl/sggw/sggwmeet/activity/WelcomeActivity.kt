@@ -1,5 +1,6 @@
 package pl.sggw.sggwmeet.activity
 
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -20,9 +21,12 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
     private val topSheetTransition = AutoTransition()
+    lateinit var sharedPreferences:SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = getSharedPreferences("Prefs", MODE_PRIVATE)
+
         this.binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)

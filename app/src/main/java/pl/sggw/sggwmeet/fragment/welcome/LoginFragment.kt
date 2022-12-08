@@ -1,5 +1,6 @@
 package pl.sggw.sggwmeet.fragment.welcome
 
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
@@ -13,8 +14,9 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-
+import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.activity.CoreActivity
 import pl.sggw.sggwmeet.databinding.FragmentLoginBinding
 import pl.sggw.sggwmeet.viewmodel.AuthorizationViewModel
 import pl.sggw.sggwmeet.domain.UserCredentials
@@ -44,6 +46,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         setEditTextListeners()
         setViewModelListener()
         setAnimations()
+        getSavedUserInfo()
     }
 
     private fun setEditTextListeners() {
@@ -89,6 +92,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 is Resource.Success -> {
                     unlockUI()
                     updateUiWithUser(resource.data!!)
+                    startActivity(Intent(context, CoreActivity::class.java))
+                    requireActivity().finish()
                 }
                 is Resource.Error -> {
                     unlockUI()
@@ -180,6 +185,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             )
         )
     }
+
     private fun setAnimations(){
         animationDim = AnimationUtils.loadAnimation(context,R.anim.background_dim_anim)
         animationDim.fillAfter=true
@@ -192,5 +198,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
     private fun animationLitStart(){
         binding.loadingFL.startAnimation(animationLit)
+    }
+    private fun getSavedUserInfo(){
+        binding.emailET.setText(Prefs.read().content("email",""))
+        binding.passwordET.setText(Prefs.securely().read().content("password",""))
+
     }
 }
