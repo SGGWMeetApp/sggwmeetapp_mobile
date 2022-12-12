@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import pl.sggw.sggwmeet.mapper.PlacesMapper
+import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
 import pl.sggw.sggwmeet.model.connector.PlacesConnector
 import pl.sggw.sggwmeet.model.repository.AuthorizationRepository
@@ -21,9 +22,10 @@ object RepositoryModule {
     @Provides
     fun provideAuthorizationRepository(
         authorizationConnector: AuthorizationConnector,
-        authorizationMapper: AuthorizationMapper
+        authorizationMapper: AuthorizationMapper,
+        userDataStore: UserDataStore
     ) : AuthorizationRepository {
-        return AuthorizationRepository(authorizationConnector, authorizationMapper)
+        return AuthorizationRepository(authorizationConnector, authorizationMapper, userDataStore)
     }
 
     @Singleton

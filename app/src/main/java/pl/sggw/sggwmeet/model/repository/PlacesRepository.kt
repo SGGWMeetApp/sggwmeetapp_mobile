@@ -26,9 +26,9 @@ class PlacesRepository(
     suspend fun getSimplePlaceListForMarkers(category: PlaceCategory?) : Flow<Resource<List<PlaceMarkerData>>> = flow {
         emit(Resource.Loading())
         try {
-            val response = connector.getPlaces(category)
-            interceptBackendErrors(response)
-            val result = mapper.mapToMarkers(response.places) as MutableList
+            val response = connector.getPlaces(category).body()
+//            interceptBackendErrors(response)
+            val result = mapper.mapToMarkers(response!!.places) as MutableList
             //add SGGW marker
             result.add(rootMarkerProvider.getRootMarker())
             Log.i(TAG, "Getting simple places list was successful, places : $response")

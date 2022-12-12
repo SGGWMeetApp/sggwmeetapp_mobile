@@ -46,7 +46,7 @@ class MarkerBitmapGenerator(
             PlaceCategory.BAR -> {
                 image.setImageResource(R.drawable.asset_marker_pub)
             }
-            PlaceCategory.OTHER -> {
+            else -> {
                 image.setImageResource(R.drawable.asset_marker_other)
             }
         }

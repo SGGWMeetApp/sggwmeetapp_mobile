@@ -1,5 +1,6 @@
 package pl.sggw.sggwmeet.mapper
 
+import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 
@@ -13,8 +14,15 @@ class PlacesMapper {
         return PlaceMarkerData(
             simplePlaceData.id,
             simplePlaceData.name,
-            simplePlaceData.locationCategoryCodes[0],
+            resolveCategoryCode(simplePlaceData.locationCategoryCodes),
             simplePlaceData.geolocation
         )
+    }
+
+    private fun resolveCategoryCode(categories : List<PlaceCategory>) : PlaceCategory {
+        if(categories.isEmpty()) {
+            return PlaceCategory.OTHER
+        }
+        return categories[0]
     }
 }
