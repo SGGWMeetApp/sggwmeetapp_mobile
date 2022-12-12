@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragment.core.MapFragment"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:animateLayoutChanges="true">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/arrow_BT"
@@ -69,6 +70,88 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/place_description_CV"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardElevation="25dp"
+        app:cardCornerRadius="5dp"
+        android:layout_margin="15dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/place_description_wrapper_CL"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/place_description_GL_first"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".33"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/place_description_GL_second"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".66"/>
+
+            <ImageView
+                android:id="@+id/place_description_IV"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/place_description_GL_first"
+                tools:src="@drawable/asset_small_logo_green"
+                app:layout_constraintWidth_percent=".3"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/place_description_name_TV"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                tools:text="Klub SGGW Lorem Ipsum"
+                android:fontFamily="@font/montserrat"
+                android:textFontWeight="900"
+                app:layout_constraintStart_toStartOf="@id/place_description_GL_first"
+                app:layout_constraintEnd_toEndOf="@id/place_description_GL_second"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/place_description_close_BT"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/asset_close"
+                android:layout_margin="3dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/place_description_view_BT"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:textSize="12sp"
+                android:text="@string/map_fragment_details_BT"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/place_description_close_BT"
+                app:layout_constraintStart_toStartOf="@id/place_description_GL_second"
+                app:layout_constraintWidth_max="100dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

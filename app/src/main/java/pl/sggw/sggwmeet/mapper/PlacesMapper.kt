@@ -11,12 +11,16 @@ class PlacesMapper {
     }
 
     private fun mapToMarker(simplePlaceData : SimplePlaceResponseData) : PlaceMarkerData {
-        return PlaceMarkerData(
+        val markerData =  PlaceMarkerData(
             simplePlaceData.id,
             simplePlaceData.name,
             resolveCategoryCode(simplePlaceData.locationCategoryCodes),
-            simplePlaceData.geolocation
+            simplePlaceData.geolocation,
+            simplePlaceData.photoPath
         )
+        simplePlaceData.reviewSummary.reviewsCount?.let { markerData.reviewsCount = it }
+        simplePlaceData.reviewSummary.positivePercent?.let { markerData.positiveReviewsPercent = it }
+        return markerData
     }
 
     private fun resolveCategoryCode(categories : List<PlaceCategory>) : PlaceCategory {

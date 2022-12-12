@@ -14,7 +14,8 @@ class RootMarkerProvider {
             Geolocation(
                 52.163692,
                 21.044748
-            )
+            ),
+            ""
         )
     }
 

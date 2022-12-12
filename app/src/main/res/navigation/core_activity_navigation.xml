@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_mapFragment_to_groupsFragment"
             app:destination="@id/groupsFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_placeDetailsFragment"
+            app:destination="@id/placeDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/placesFragment"
@@ -35,4 +38,9 @@
         android:name="pl.sggw.sggwmeet.fragment.core.GroupsFragment"
         android:label="fragment_groups"
         tools:layout="@layout/fragment_groups" />
+    <fragment
+        android:id="@+id/placeDetailsFragment"
+        android:name="pl.sggw.sggwmeet.fragment.core.PlaceDetailsFragment"
+        android:label="fragment_place_details"
+        tools:layout="@layout/fragment_place_details" />
 </navigation>

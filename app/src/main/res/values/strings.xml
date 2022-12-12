@@ -140,6 +140,10 @@
     <string name="menu_profile_BT">Profil</string>
     <string name="menu_logout_BT">Wyloguj się</string>
 
+    <!-- MapFragment -->
+    <string name="map_fragment_details_BT">Szczegóły</string>
+
+
     <!-- Edytuj użytkownika -->
     <string name="edit_user">Edytuj dane użytkownika</string>
     <string name="action_userEdit_accept">Potwierdź</string>
@@ -151,5 +155,7 @@
     <!-- Wydarzenia -->
     <string name="hello_events_fragment">Hello events fragment!</string>
     <string name="prompt_phonePrefix">Prefiks</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

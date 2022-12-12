@@ -3,6 +3,7 @@ package pl.sggw.sggwmeet.di
 import android.content.Context
 import android.location.LocationManager
 import com.google.gson.Gson
+import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,5 +48,13 @@ object UtilModule {
     @Provides
     fun provideUserDataStore(gson: Gson, authorizationConnector: AuthorizationConnector, mapper: AuthorizationMapper,): UserDataStore {
         return UserDataStore(gson, authorizationConnector, mapper)
+    }
+
+    @Singleton
+    @Provides
+    fun providePicasso() : Picasso {
+        val picasso = Picasso.get()
+        picasso.isLoggingEnabled = true
+        return picasso
     }
 }
