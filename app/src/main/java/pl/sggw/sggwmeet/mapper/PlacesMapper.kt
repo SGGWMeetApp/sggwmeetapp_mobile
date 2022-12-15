@@ -1,13 +1,49 @@
 package pl.sggw.sggwmeet.mapper
 
-import pl.sggw.sggwmeet.domain.PlaceCategory
-import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.domain.*
+import pl.sggw.sggwmeet.model.connector.dto.response.PlaceDetailsResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 
 class PlacesMapper {
 
     fun mapToMarkers(places : List<SimplePlaceResponseData>) : List<PlaceMarkerData> {
         return places.map { mapToMarker(it) }
+    }
+
+    fun mapToPlaceDetails(placeResponse: PlaceDetailsResponse, userEmail: String) : PlaceDetails {
+        return PlaceDetails(
+            placeResponse.name,
+            placeResponse.rating.positivePercent,
+            placeResponse.rating.reviews.size,
+            placeResponse.textLocation,
+            placeResponse.photoPath,
+            placeResponse.rating.reviews
+                .map { mapReview(it, userEmail) }
+                .sortedByDescending { it.isOwnedByUser }
+                .sortedByDescending { it.publicationDate }
+        )
+    }
+
+    private fun mapReview(responseReview: PlaceDetailsResponse.Rating.Review, userEmail: String) : Review {
+        return Review(
+            responseReview.id,
+            responseReview.comment,
+            mapReviewer(responseReview.author),
+            responseReview.isPositive,
+            responseReview.upvoteCount,
+            responseReview.downvoteCount,
+            responseReview.publicationDate,
+            responseReview.userVote,
+            responseReview.author.email == userEmail
+        )
+    }
+
+    private fun mapReviewer(responseReviewer: PlaceDetailsResponse.Rating.Review.Author) : Reviewer {
+        return Reviewer(
+            responseReviewer.firstName,
+            responseReviewer.lastName,
+            responseReviewer.avatarUrl
+        )
     }
 
     private fun mapToMarker(simplePlaceData : SimplePlaceResponseData) : PlaceMarkerData {

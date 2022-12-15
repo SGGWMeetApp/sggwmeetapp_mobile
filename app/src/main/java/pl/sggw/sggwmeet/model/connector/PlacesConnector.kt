@@ -1,9 +1,11 @@
 package pl.sggw.sggwmeet.model.connector
 
 import pl.sggw.sggwmeet.domain.PlaceCategory
+import pl.sggw.sggwmeet.model.connector.dto.response.PlaceDetailsResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.PlaceListResponse
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -16,4 +18,7 @@ interface PlacesConnector {
      */
     @GET("/api/places")
     suspend fun getPlaces(@Query("category") category : PlaceCategory?) : Response<PlaceListResponse>
+
+    @GET("/api/places/{id}")
+    suspend fun getPlaceDetails(@Path("id") id : String) : Response<PlaceDetailsResponse>
 }

@@ -104,6 +104,13 @@ class UserDataStore(
     }
 
     /**
+     * Returns currently authorized user email
+     */
+    fun getUserEmail() : String {
+        return Prefs.read().content(EMAIL_KEY,"")
+    }
+
+    /**
      * Gets token from the storage. If token is not valid anymore then login request will be sent with stored user data
      * to renew the token
      */

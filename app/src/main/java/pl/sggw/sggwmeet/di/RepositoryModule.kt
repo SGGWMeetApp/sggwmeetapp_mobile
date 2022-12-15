@@ -36,9 +36,10 @@ object RepositoryModule {
     fun providePlacesRepository(
         placesConnector: PlacesConnector,
         placesMapper: PlacesMapper,
-        rootMarkerProvider: RootMarkerProvider
+        rootMarkerProvider: RootMarkerProvider,
+        userDataStore: UserDataStore
     ) : PlacesRepository {
-        return PlacesRepository(placesConnector, placesMapper, rootMarkerProvider)
+        return PlacesRepository(placesConnector, placesMapper, rootMarkerProvider, userDataStore)
     }
 
     @Singleton

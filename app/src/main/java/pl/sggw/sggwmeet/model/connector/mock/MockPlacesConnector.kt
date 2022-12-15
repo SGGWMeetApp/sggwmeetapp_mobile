@@ -6,6 +6,7 @@ import pl.sggw.sggwmeet.domain.Geolocation
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.ReviewSummary
 import pl.sggw.sggwmeet.model.connector.PlacesConnector
+import pl.sggw.sggwmeet.model.connector.dto.response.PlaceDetailsResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.PlaceListResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import retrofit2.Response
@@ -107,5 +108,9 @@ class MockPlacesConnector : PlacesConnector {
                 )
             )
         )
+    }
+
+    override suspend fun getPlaceDetails(id: String): Response<PlaceDetailsResponse> {
+        throw NotImplementedError("Mock details are not implemented!")
     }
 }
