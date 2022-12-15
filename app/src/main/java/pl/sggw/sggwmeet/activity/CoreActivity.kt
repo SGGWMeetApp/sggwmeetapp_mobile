@@ -11,11 +11,15 @@ import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.findNavController
+import com.google.gson.Gson
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.ActivityCoreBinding
+import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CoreActivity : AppCompatActivity() {
@@ -23,6 +27,9 @@ class CoreActivity : AppCompatActivity() {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
     private val topSheetTransition = AutoTransition()
+    @Inject
+    lateinit var picasso: Picasso
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.binding = ActivityCoreBinding.inflate(layoutInflater)
@@ -33,7 +40,14 @@ class CoreActivity : AppCompatActivity() {
             ResourcesCompat.getFont(this, R.font.robotoregular))
         setTopSheet()
         setAnimations()
+        setUserData()
     }
+
+    override fun onResume() {
+        super.onResume()
+        setUserData()
+    }
+
     private fun setAnimations(){
         animationDim = AnimationUtils.loadAnimation(this,R.anim.background_dim_anim)
         animationDim.fillAfter=true
@@ -93,6 +107,12 @@ class CoreActivity : AppCompatActivity() {
             this.finish()
         }
 
+        binding.topSheetLayout.menuProfileBT.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+            this.topSheetTransition.duration = 100
+            this.closeTopSheet()
+        }
+
         onBackPressedDispatcher.addCallback(this , object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.topSheetLayout.hiddenView.visibility == View.VISIBLE) {
@@ -122,5 +142,29 @@ class CoreActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         navController.navigateUp()
         navController.navigate(fragmentId)
+    }
+
+    private fun setUserData(){
+        val gson = Gson()
+        val fetchedData = Prefs.read().content(
+            "userData",
+            "{\"id\":\"0\",\"firstName\":\"Imie\",\"lastName\":\"Nazwisko\",\"phoneNumberPrefix\":\"12\",\"phoneNumber\":\"123\",\"description\":\"\",\"avatarUrl\":null}"
+        )
+        val currentUser = gson.fromJson(fetchedData, UserData::class.java)
+
+        binding.topSheetLayout.displayNameTV.setText(currentUser.firstName+" "+currentUser.lastName)
+        binding.topSheetLayout.displayEmailTV.setText(Prefs.read().content("email","email@testowy.pl"))
+
+        val avatarUrl=Prefs.read().content("avatarUrl","")
+        if(avatarUrl!="") {
+            picasso
+                .load(avatarUrl)
+                .placeholder(R.drawable.asset_loading)
+                .into(binding.topSheetLayout.avatarPreviewIV)
+        }
+        else{
+            binding.topSheetLayout.avatarPreviewIV.setImageURI(null)
+            binding.topSheetLayout.avatarPreviewIV.setImageResource(R.drawable.avatar_1)
+        }
     }
 }

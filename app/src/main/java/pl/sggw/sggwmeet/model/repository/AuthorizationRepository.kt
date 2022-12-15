@@ -13,6 +13,7 @@ import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
+import pl.sggw.sggwmeet.model.connector.dto.request.UserRegisterRequestData
 import pl.sggw.sggwmeet.model.connector.dto.response.ErrorResponse
 import pl.sggw.sggwmeet.util.Resource
 
@@ -32,10 +33,17 @@ class AuthorizationRepository(
         try {
             validateUserCredentials(userCredentials)
             val connectorRequest = mapper.map(userCredentials)
-            val response = connector.login(connectorRequest).body()
-            userDataStore.store(response!!, userCredentials)
-            Log.i(TAG, "Login successful, response data : $response")
-            emit(Resource.Success(response.userData))
+            val response = connector.login(connectorRequest)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                userDataStore.store(responseBody!!, userCredentials)
+                Log.i(TAG, "Login successful, response data : $response")
+                emit(Resource.Success(responseBody.userData))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during user editing, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
         } catch (exception : ClientException) {
             Log.e(TAG, "Client exception occurred during logging user in, user email : ${userCredentials.username}", exception)
             emit(Resource.Error(exception))
@@ -48,16 +56,23 @@ class AuthorizationRepository(
         }
     }
 
-    suspend fun register(userCredentials: UserCredentials, userData: UserData) : Flow<Resource<UserData>> = flow {
+    suspend fun register(userCredentials: UserCredentials, userData: UserRegisterRequestData) : Flow<Resource<Nothing>> = flow {
         emit(Resource.Loading())
         try {
-            //validateUserCredentials(userCredentials)
+
             val connectorRequest = mapper.map(userCredentials, userData)
-            val response = connector.register(connectorRequest).body()
-            //interceptBackendErrors(response)
-            userDataStore.store(response!!, userCredentials, userData)
-            Log.i(TAG, "Registering for user ${userCredentials.username} was successful")
-            emit(Resource.Success(userData))
+            val response = connector.register(connectorRequest)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                userDataStore.store(responseBody!!, userCredentials)
+                Log.i(TAG, "Registering for user ${userCredentials.username} was successful")
+                emit(Resource.Success())
+            }
+            else{
+                Log.e(TAG, "An exception occurred during user editing, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+
         } catch (exception : ClientException) {
             Log.e(TAG, "Client exception occurred during registering user, user email : ${userCredentials.username}")
             emit(Resource.Error(exception))

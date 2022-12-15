@@ -6,11 +6,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import pl.sggw.sggwmeet.mapper.PlacesMapper
+import pl.sggw.sggwmeet.mapper.UserMapper
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
 import pl.sggw.sggwmeet.model.connector.PlacesConnector
+import pl.sggw.sggwmeet.model.connector.UserConnector
 import pl.sggw.sggwmeet.model.repository.AuthorizationRepository
 import pl.sggw.sggwmeet.model.repository.PlacesRepository
+import pl.sggw.sggwmeet.model.repository.UserRepository
 import pl.sggw.sggwmeet.provider.RootMarkerProvider
 import javax.inject.Singleton
 
@@ -36,5 +39,15 @@ object RepositoryModule {
         rootMarkerProvider: RootMarkerProvider
     ) : PlacesRepository {
         return PlacesRepository(placesConnector, placesMapper, rootMarkerProvider)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(
+        userConnector: UserConnector,
+        userMapper: UserMapper,
+        userDataStore: UserDataStore
+    ) : UserRepository {
+        return UserRepository(userConnector, userMapper, userDataStore)
     }
 }

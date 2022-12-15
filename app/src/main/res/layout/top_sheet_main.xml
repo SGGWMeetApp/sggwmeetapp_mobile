@@ -63,13 +63,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/menu_reg_BT" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/menu_edit_BT"
-                style="@style/welcome_sheet_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/menu_edit_BT" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2.5dp"

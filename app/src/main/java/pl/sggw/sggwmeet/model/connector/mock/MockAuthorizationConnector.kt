@@ -29,7 +29,8 @@ class MockAuthorizationConnector : AuthorizationConnector {
             "12",
             "4567",
             null,
-            "https://www.prospectmagazine.co.uk/content/uploads/2016/11/Pepedankmeems420blazeitohbabyatripledankaestheticafkeepit100.jpg"
+            "https://www.prospectmagazine.co.uk/content/uploads/2016/11/Pepedankmeems420blazeitohbabyatripledankaestheticafkeepit100.jpg",
+            1000
         )
 
         return Response.success(UserLoginResponse(

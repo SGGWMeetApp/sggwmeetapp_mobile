@@ -3,13 +3,12 @@ package pl.sggw.sggwmeet.model
 import android.util.Log
 import com.google.gson.Gson
 import io.easyprefs.Prefs
+import pl.sggw.sggwmeet.domain.UserChangePasswordData
 import pl.sggw.sggwmeet.domain.UserCredentials
-import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
-import pl.sggw.sggwmeet.model.connector.dto.response.UserLoginResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.UserRegisterResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.*
 
 class UserDataStore(
     private val gson: Gson,
@@ -23,6 +22,8 @@ class UserDataStore(
         private const val USER_DATA_KEY = "userData"
         private const val EMAIL_KEY = "email"
         private const val PASSWORD_KEY = "password"
+        private const val USER_ID_KEY = "userId"
+        private const val AVATAR_KEY = "avatarUrl"
 
         //How much time token is valid (in miliseconds), default : 9 mins
         private const val TOKEN_EXPIRATION_TIME = 540000L
@@ -36,11 +37,17 @@ class UserDataStore(
     fun store(response: UserLoginResponse, userCredentials: UserCredentials) {
         Log.d("token: ", response.token)
         Log.d("userData: ", response.toString())
+        var avatarUrl=""
+        if (response.userData.avatarUrl!=null){
+            avatarUrl=response.userData.avatarUrl.toString()
+        }
         Prefs.write()
             .content(TOKEN_KEY, response.token)
             .content(TOKEN_GENERATION_TIMESTAMP_KEY, System.currentTimeMillis())
             .content(EMAIL_KEY, userCredentials.username)
             .content(USER_DATA_KEY, gson.toJson(response.userData))
+            .content(USER_ID_KEY, response.userData.id)
+            .content(AVATAR_KEY, avatarUrl)
             .apply()
 
         Prefs.securely().write()
@@ -51,19 +58,49 @@ class UserDataStore(
     /**
      * Stores user data in 'SharedPreferences' storage
      */
-    fun store(response: UserRegisterResponse, userCredentials: UserCredentials, userData: UserData) {
+    fun store(response: UserRegisterResponse, userCredentials: UserCredentials) {
         Log.d("token: ", response.token)
         Log.d("userData: ", response.toString())
         Prefs.write()
             .content(TOKEN_KEY, response.token)
             .content(TOKEN_GENERATION_TIMESTAMP_KEY, System.currentTimeMillis())
             .content(EMAIL_KEY, userCredentials.username)
-            .content(USER_DATA_KEY, gson.toJson(userData))
             .apply()
 
         Prefs.securely().write()
             .content(PASSWORD_KEY, userCredentials.password)
             .apply()
+    }
+
+    /**
+     * Stores user data in 'SharedPreferences' storage on password change.
+     */
+    fun store(response: UserChangePasswordResponse, passwordData: UserChangePasswordData) {
+        Prefs.securely().write()
+            .content(PASSWORD_KEY, passwordData.newPassword)
+            .apply()
+    }
+
+    /**
+     * Stores user data in 'SharedPreferences' storage on user edit.
+     */
+    fun store(response: UserEditResponse) {
+        Log.d("userData: ", response.toString())
+        Prefs.write()
+            .content(USER_DATA_KEY, gson.toJson(response.userData))
+            .apply()
+
+    }
+
+    /**
+     * Stores avatar Uri in 'SharedPreferences' storage on avatar upload.
+     */
+    fun store(response: UploadAvatarResponse) {
+        Log.d("Upload Avatar Response: ", response.toString())
+        Prefs.write()
+            .content(AVATAR_KEY, response.avatarUrl)
+            .apply()
+
     }
 
     /**
@@ -97,4 +134,5 @@ class UserDataStore(
         }
         return System.currentTimeMillis() > tokenGenerationTime + TOKEN_EXPIRATION_TIME
     }
+
 }

@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import pl.sggw.sggwmeet.mapper.PlacesMapper
+import pl.sggw.sggwmeet.mapper.UserMapper
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -22,5 +23,11 @@ object MapperModule {
     @Provides
     fun providePlacesMapper() : PlacesMapper {
         return PlacesMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserMapper() : UserMapper {
+        return UserMapper()
     }
 }

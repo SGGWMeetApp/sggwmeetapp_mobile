@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:backgroundTint="#80000000"
     android:backgroundTintMode="src_over"
-    tools:context=".fragment.welcome.UserEditFragment">
+    tools:context=".fragment.profile.UserEditFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -60,6 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    app:expandedHintEnabled="false"
                     android:autofillHints="@string/prompt_firstName"
                     android:hint="@string/prompt_firstName">
 
@@ -78,6 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    app:expandedHintEnabled="false"
                     android:autofillHints="@string/prompt_lastName"
                     android:hint="@string/prompt_lastName">
 
@@ -91,11 +93,31 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/userEdit_phonePrefix_TextInputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:expandedHintEnabled="false"
+                    android:autofillHints="@string/prompt_phonePrefix"
+                    android:hint="@string/prompt_phonePrefix">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/userEdit_phonePrefix"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:selectAllOnFocus="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/userEdit_phone_TextInputLayout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    app:expandedHintEnabled="false"
                     android:autofillHints="@string/prompt_phone"
                     android:hint="@string/prompt_phone">
 
@@ -126,29 +148,6 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/userEdit_avatarAdd"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/reg_avatar_select" />
-
-                <Button
-                    android:id="@+id/userEdit_avatarCancel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/reg_avatar_cancel"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/userEdit_avatarPreview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:visibility="gone">
-
-                </ImageView>
-
 
                 <Button
                     android:id="@+id/userEditButton"
@@ -158,6 +157,14 @@
                     android:enabled="true"
                     android:text="@string/action_userEdit_accept" />
 
+                <Button
+                    android:id="@+id/cancel_BT"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:backgroundTint="#FF4444"
+                    android:text="@string/cancel"
+                    android:visibility="visible" />
+
 
 
 
@@ -165,24 +172,25 @@
         </androidx.core.widget.NestedScrollView>
 
         <FrameLayout
-            android:id="@+id/userEdit_loading_FL"
+            android:id="@+id/loading_FL"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#40000000"
-            android:visibility="gone">
+            android:visibility="invisible">
 
-            <ProgressBar
-                android:id="@+id/userEdit_loading_PB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.3" />
         </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/loading_PB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3" />
 
     </FrameLayout>
 

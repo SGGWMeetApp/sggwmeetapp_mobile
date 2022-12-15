@@ -12,6 +12,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
 import pl.sggw.sggwmeet.model.connector.PlacesConnector
+import pl.sggw.sggwmeet.model.connector.UserConnector
 import pl.sggw.sggwmeet.model.connector.mock.MockAuthorizationConnector
 import pl.sggw.sggwmeet.model.connector.mock.MockPlacesConnector
 import pl.sggw.sggwmeet.util.ExecutionHelper
@@ -46,6 +47,12 @@ object ConnectorModule {
         )
     }
 
+    @Singleton
+    @Provides
+    fun provideUserConnector(@AuthorizedRetrofitInstance retrofit : Retrofit) : UserConnector {
+        return retrofit.create(UserConnector::class.java)
+    }
+
     private fun <T, T1 : T, T2 : T> restConnectorOrMock(restConnector : T1, mockConnector : T2) : T {
         if(ExecutionHelper.isRunningInMockMode()) {
             return mockConnector
@@ -73,6 +80,13 @@ object ConnectorModule {
         }
         val httpClient = OkHttpClient.Builder()
             .addNetworkInterceptor(loggingInterceptor)
+            .addNetworkInterceptor { chain ->
+                val original = chain.request()
+                val simplified = original.newBuilder()
+                    .header("Content-Type", "application/json")
+                    .build()
+                chain.proceed(simplified)
+            }
             .build()
 
         return Retrofit.Builder()
@@ -95,6 +109,13 @@ object ConnectorModule {
         }
         val httpClient = OkHttpClient.Builder()
             .addNetworkInterceptor(loggingInterceptor)
+            .addNetworkInterceptor { chain ->
+                val original = chain.request()
+                val simplified = original.newBuilder()
+                    .header("Content-Type", "application/json")
+                    .build()
+                chain.proceed(simplified)
+            }
             .addInterceptor(userTokenInterceptor(userDataStore))
             .build()
 

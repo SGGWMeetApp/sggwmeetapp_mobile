@@ -15,9 +15,12 @@
     <string name="prompt_password">Hasło</string>
     <string name="action_sign_in_short">Zaloguj</string>
     <string name="welcome">"Welcome!"</string>
-    <string name="invalid_email">Not a valid username</string>
-    <string name="invalid_password">Password must be >=8 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="invalid_email">Niepoprawny email</string>
+    <string name="invalid_password">Hasło musi mieć >=8 znaków</string>
+    <string name="login_failed">"Logowanie nie powiodło się"</string>
+    <string name="login_register_info">Nie mam jeszcze konta</string>
+    <string name="login_register_link"><a href="">Zarejestruj</a></string>
+    <string name="login_wrong">Niepoprawne dane</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -115,6 +118,7 @@
     <string name="prompt_lastName">Nazwisko</string>
     <string name="prompt_phone">Telefon</string>
     <string name="prompt_description">Opis</string>
+    <string name="prompt_phonePrefix">Prefiks</string>
     <string name="action_register">Zarejestruj</string>
     <string name="password_limit">Hasło powinno zawierać min. 8 symboli</string>
     <string name="reg_tos_text">Akceptuję <a href="https://google.com">warunki korzystania z serwisu</a></string>
@@ -123,6 +127,13 @@
     <string name="optional_field">Pole opcjonalne</string>
     <string name="reg_avatar_select">Wybierz zdjęcie profilowe</string>
     <string name="reg_avatar_cancel">Anuluj wybór zdjęcia</string>
+    <string name="prefix_limit">Wymagane 4 lub mniej znaków</string>
+    <string name="phone_limit">Wymagane 15 lub mniej znaków</string>
+    <string name="register_login_info">Mam już konto</string>
+    <string name="register_login_link"><a href="">Zaloguj się</a></string>
+    <string name="email_taken">Wybrany email jest zajęty</string>
+    <string name="phone_taken">Już istnieje użytkownik o wybranym numerze</string>
+    <string name="user_exists">Użytkownik o tych danych już istnieje</string>
 
     <!-- Wspólne komunikaty -->
     <string name="technical_error_message">Technical error occurred!</string>
@@ -149,12 +160,26 @@
     <string name="action_userEdit_accept">Potwierdź</string>
     <string name="menu_edit_BT">Edytuj użytkownika</string>
 
+    <!-- Profile -->
+    <string name="profile">Profil użytkownika</string>
+    <string name="edit_profile">Edytuj profil</string>
+    <string name="change_password">Zmień hasło</string>
+    <string name="change_avatar">Zmień awatar</string>
+    <string name="cancel">Anuluj</string>
+
+    <!-- Zmiana hasła -->
+    <string name="password_current">Obecne hasło</string>
+    <string name="password_new">Nowe hasło</string>
+    <string name="password_new_repeat">Powtórz nowe hasło</string>
+    <string name="password_wrong">Złe hasło</string>
+    <string name="password_error_same_password">Nowe hasło nie może być takie jak poprzednie</string>
+
     <!-- Grupy -->
     <string name="hello_groups_fragment">Hello groups fragment!</string>
 
     <!-- Wydarzenia -->
     <string name="hello_events_fragment">Hello events fragment!</string>
-    <string name="prompt_phonePrefix">Prefiks</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

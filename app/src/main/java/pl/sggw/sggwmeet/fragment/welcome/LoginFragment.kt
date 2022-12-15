@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
@@ -28,7 +29,7 @@ import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.util.Resource
 
 @AndroidEntryPoint
-class LoginFragment : Fragment(R.layout.fragment_login) {
+class LoginFragment : Fragment() {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
     private lateinit var binding : FragmentLoginBinding
@@ -79,6 +80,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding.loginBT.setOnClickListener {
             loginUser()
         }
+        binding.registerLinkTV.setOnClickListener {
+            this.findNavController().navigate(R.id.registerFragment)
+        }
 
     }
 
@@ -122,13 +126,19 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 binding.emailTextInputLayout.error = getString(R.string.invalid_email)
             }
             ClientErrorCode.PASSWORD_VALIDATION_ERROR -> {
-                binding.passwordTextInputLayout.error = getString(R.string.invalid_password)
+                binding.passwordTextInputLayout.error = getString(R.string.password_limit)
             }
+            else -> {}
         }
     }
 
     private fun handleServerErrorCode(errorCode: String) {
-        //TODO Dodać obsługę jak dowiemy się czy backend zwraca jakieś kody błędu
+        when(errorCode){
+            "401" -> {
+                binding.emailTextInputLayout.error=getString(R.string.login_wrong)
+                binding.passwordTextInputLayout.error=getString(R.string.login_wrong)
+            }
+        }
     }
 
     private fun lockUI() {
@@ -138,6 +148,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding.emailET.error = null
         binding.passwordET.isEnabled = false
         binding.passwordET.error = null
+        binding.registerLinkTV.isEnabled = false
         animationDimStart()
     }
 
@@ -146,6 +157,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding.loginBT.isEnabled = true
         binding.emailET.isEnabled = true
         binding.passwordET.isEnabled = true
+        binding.registerLinkTV.isEnabled = true
         animationLitStart()
     }
 

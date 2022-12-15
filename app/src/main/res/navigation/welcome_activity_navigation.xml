@@ -89,10 +89,4 @@
             app:popUpTo="@id/scrollingFragment"
             app:popUpToSaveState="true"/>
     </fragment>
-    <fragment
-        android:id="@+id/userEditFragment"
-        android:name="pl.sggw.sggwmeet.fragment.welcome.UserEditFragment"
-        android:label="fragment_user_edit"
-        tools:layout="@layout/fragment_user_edit" >
-    </fragment>
 </navigation>

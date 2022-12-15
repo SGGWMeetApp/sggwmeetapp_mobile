@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:backgroundTint="#80000000"
     android:backgroundTintMode="src_over"
-    tools:context=".fragment.welcome.LoginFragment">
+    tools:context=".fragment.profile.UploadAvatarFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/background_IV"
+            android:id="@+id/uploadAvatar_BackgroundImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="false"
@@ -26,7 +26,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/map_v2"
             android:tintMode="src_over"
-            app:tint="#66FFFFFF"/>
+            app:tint="#66FFFFFF"></ImageView>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -45,79 +45,47 @@
 
 
                 <TextView
-                    android:id="@+id/login_TV"
+                    android:id="@+id/uploadAvatar_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto"
-                    android:text="@string/zaloguj_się_do_serwisu"
+                    android:text="@string/edit_user"
                     android:textColor="@color/blackAlpha"
                     android:textFontWeight="400"
                     android:textSize="24sp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/email_TextInputLayout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <Button
+                    android:id="@+id/uploadAvatar_selectAvatar_BT"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:autofillHints="@string/prompt_email"
-                    android:hint="@string/prompt_email">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/email_ET"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
-                        android:selectAllOnFocus="true" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/password_TextInputLayout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:layout_marginTop="16dp"
-                    android:autofillHints="@string/prompt_password"
-                    android:hint="@string/prompt_password"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionDone"
-                    app:endIconMode="password_toggle"
-                    app:errorIconDrawable="@null">
+                    android:text="@string/reg_avatar_select" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/password_ET"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:selectAllOnFocus="true" />
+                <ImageView
+                    android:id="@+id/uploadAvatar_avatarPreview_IV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:visibility="visible">
 
-                </com.google.android.material.textfield.TextInputLayout>
+                </ImageView>
+
 
                 <Button
-                    android:id="@+id/login_BT"
+                    android:id="@+id/uploadAvatar_confirm_BT"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
                     android:enabled="false"
-                    android:text="@string/action_sign_in_short" />
+                    android:text="@string/action_userEdit_accept" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/login_register_info"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/register_link_TV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:autoLink="all|web"
-                    android:text="@string/login_register_link"
-                    android:textColorLink="@color/black"
-                    android:textSize="18sp" />
+                <Button
+                    android:id="@+id/cancel_BT"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:backgroundTint="#FF4444"
+                    android:text="@string/cancel"
+                    android:visibility="visible" />
 
 
             </LinearLayout>

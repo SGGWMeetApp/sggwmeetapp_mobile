@@ -2,33 +2,38 @@ package pl.sggw.sggwmeet.fragment.welcome
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Message
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.activity.CoreActivity
 import pl.sggw.sggwmeet.databinding.FragmentRegisterBinding
 import pl.sggw.sggwmeet.domain.UserCredentials
-import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
+import pl.sggw.sggwmeet.model.connector.dto.request.UserRegisterRequestData
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.AuthorizationViewModel
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
-
+    private lateinit var animationDim : Animation
+    private lateinit var animationLit : Animation
     private lateinit var binding: FragmentRegisterBinding
     private val authorizationViewModel by viewModels<AuthorizationViewModel>()
 
@@ -44,6 +49,8 @@ class RegisterFragment : Fragment() {
         setFormListeners()
         setButtonListeners()
         setViewModelListener()
+        setViewModelLoginListener()
+        setAnimations()
     }
 
     /**
@@ -65,6 +72,12 @@ class RegisterFragment : Fragment() {
                 registerUser()
             }
         }
+
+        binding.loginLinkTV.setOnClickListener {
+            this.findNavController().navigateUp()
+            this.findNavController().navigateUp()
+            this.findNavController().navigate(R.id.loginFragment)
+        }
     }
 
     private fun verifyFormFields() : Boolean {
@@ -77,6 +90,16 @@ class RegisterFragment : Fragment() {
         trimTextInput(binding.regPhonePrefix)
         verified = checkPassword()
 
+        if(binding.regPhonePrefix.text!!.length>4){
+            binding.regPhonePrefixTextInputLayout.error = getString(R.string.prefix_limit)
+            verified = false
+        }
+
+        if(binding.regPhone.text!!.length>15){
+            binding.regPhoneTextInputLayout.error = getString(R.string.phone_limit)
+            verified = false
+        }
+
         val requiredInput = arrayOf(
             binding.regFirstName,
             binding.regLastName, binding.regPhone,
@@ -87,7 +110,7 @@ class RegisterFragment : Fragment() {
             binding.regLastNameTextInputLayout, binding.regPhoneTextInputLayout,
             binding.regPhonePrefixTextInputLayout
         )
-        for (i in 0..2) {
+        for (i in 0 until requiredInput.size) {
             if (requiredInput[i].text!!.isBlank()) {
                 requiredTextInputLayout[i].error = getString(R.string.registration_required_field)
                 verified = false
@@ -106,6 +129,41 @@ class RegisterFragment : Fragment() {
 
     private fun trimTextInput(textInput: TextInputEditText) {
         textInput.setText(textInput.text.toString().trim())
+    }
+
+    private fun lockUI() {
+        binding.loadingPB.visibility = View.VISIBLE
+        binding.registerButton.isEnabled = false
+        binding.loginLinkTV.isEnabled = false
+        binding.regEmail.isEnabled = false
+        binding.regPassword1.isEnabled = false
+        binding.regPassword2.isEnabled = false
+        binding.regFirstName.isEnabled = false
+        binding.regLastName.isEnabled = false
+        binding.regPhonePrefix.isEnabled = false
+        binding.regPhone.isEnabled = false
+        binding.regEmail.error = null
+        binding.regPassword1.error = null
+        binding.regPassword2.error = null
+        binding.regFirstName.error = null
+        binding.regLastName.error = null
+        binding.regPhonePrefix.error = null
+        binding.regPhone.error = null
+        animationDimStart()
+    }
+
+    private fun unlockUI() {
+        binding.loadingPB.visibility = View.GONE
+        binding.registerButton.isEnabled = true
+        binding.loginLinkTV.isEnabled = true
+        binding.regEmail.isEnabled = true
+        binding.regPassword1.isEnabled = true
+        binding.regPassword2.isEnabled = true
+        binding.regFirstName.isEnabled = true
+        binding.regLastName.isEnabled = true
+        binding.regPhonePrefix.isEnabled = true
+        binding.regPhone.isEnabled = true
+        animationLitStart()
     }
 
     private fun resetErrors() {
@@ -136,35 +194,28 @@ class RegisterFragment : Fragment() {
                 binding.regEmail.text.toString(),
                 binding.regPassword1.text.toString()
             ),
-            UserData(
+            UserRegisterRequestData(
                 firstName = binding.regFirstName.text.toString(),
                 lastName = binding.regLastName.text.toString(),
                 phoneNumberPrefix = binding.regPhonePrefix.text.toString(),
                 phoneNumber = binding.regPhone.text.toString(),
-                null,
                 null
             )
         )
     }
     private fun setViewModelListener() {
-
         authorizationViewModel.registerState.observe(viewLifecycleOwner) { resource ->
             when(resource) {
                 is Resource.Loading -> {
-                    //TODO
-                    //lockUI()
+                    lockUI()
                 }
                 is Resource.Success -> {
-                    updateUiWithUser(resource.data!!)
-                    startActivity(Intent(context, CoreActivity::class.java))
-                    requireActivity().finish()
-                    //TODO
+                    loginUser()
                     //unlockUI()
 
                 }
                 is Resource.Error -> {
-                    //TODO
-                    //unlockUI()
+                    unlockUI()
                     when(resource.exception) {
 
                         is TechnicalException -> {
@@ -183,10 +234,50 @@ class RegisterFragment : Fragment() {
             }
         }
     }
-    private fun updateUiWithUser(userData: UserData) {
-        val welcome = "${getString(R.string.welcome)} ${userData.firstName} ${userData.lastName}"
-        // TODO : initiate successful logged in experience
-        Toast.makeText(context, welcome, Toast.LENGTH_LONG).show()
+
+    /**
+     * Logowanie po rejestracji.
+     * Brzmi głupio, ale w taki sposób zwracane jest UserData z ID użytkownika.
+     */
+    private fun setViewModelLoginListener(){
+        authorizationViewModel.loginState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    unlockUI()
+                    startActivity(Intent(context, CoreActivity::class.java))
+                    requireActivity().finish()
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            showLoginFailedMessage()
+                            //handleServerErrorCode(resource.exception.errorCode, resource.exception.message)
+                        }
+                        is ClientException -> {
+                            showLoginFailedMessage()
+                            //handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun loginUser(){
+        resetErrors()
+        authorizationViewModel.login(
+            UserCredentials(
+                binding.regEmail.text.toString(),
+                binding.regPassword1.text.toString()
+            )
+        )
     }
     private fun showLoginFailedMessage() {
         Toast.makeText(context, getString(R.string.login_failed), Toast.LENGTH_LONG).show()
@@ -197,7 +288,27 @@ class RegisterFragment : Fragment() {
     }
 
     private fun handleServerErrorCode(errorCode: String) {
-        //TODO Dodać obsługę jak dowiemy się czy backend zwraca jakieś kody błędu
+        when(errorCode){
+            "409" -> {
+                        binding.regEmailTextInputLayout.error=getString(R.string.user_exists)
+                        binding.regPhoneTextInputLayout.error=getString(R.string.user_exists)
+                        binding.regPhonePrefixTextInputLayout.error=getString(R.string.user_exists)
+                }
+            }
+        }
+
+    private fun setAnimations(){
+        animationDim = AnimationUtils.loadAnimation(context,R.anim.background_dim_anim)
+        animationDim.fillAfter=true
+
+        animationLit = AnimationUtils.loadAnimation(context,R.anim.background_lit_anim)
+        animationLit.fillAfter=true
+    }
+    private fun animationDimStart(){
+        binding.loadingFL.startAnimation(animationDim)
+    }
+    private fun animationLitStart(){
+        binding.loadingFL.startAnimation(animationLit)
     }
 
 }
