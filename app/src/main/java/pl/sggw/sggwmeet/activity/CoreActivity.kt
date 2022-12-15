@@ -12,6 +12,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.findNavController
 import com.google.gson.Gson
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import io.easyprefs.Prefs
@@ -159,6 +161,8 @@ class CoreActivity : AppCompatActivity() {
         if(avatarUrl!="") {
             picasso
                 .load(avatarUrl)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
                 .placeholder(R.drawable.asset_loading)
                 .into(binding.topSheetLayout.avatarPreviewIV)
         }
