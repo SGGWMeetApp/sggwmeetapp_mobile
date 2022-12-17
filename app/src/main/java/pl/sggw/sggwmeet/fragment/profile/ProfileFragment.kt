@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import io.easyprefs.Prefs
@@ -72,6 +74,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         if(avatarUrl!="") {
             picasso
                 .load(avatarUrl)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
                 .placeholder(R.drawable.asset_loading)
                 .into(binding.avatarPreviewIV)
         }

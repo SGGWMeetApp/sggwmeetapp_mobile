@@ -1,0 +1,31 @@
+package pl.sggw.sggwmeet.model.connector
+
+import pl.sggw.sggwmeet.model.connector.dto.response.GetEventResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.PlaceListResponse
+import retrofit2.Response
+import retrofit2.http.*
+
+/**
+ * REST connector for user data
+ */
+interface EventConnector {
+
+    /**
+     * Gets all events
+     */
+    @GET("/api/events")
+    suspend fun getAllEvents() : Response<GetEventResponse>
+
+    /**
+     * Gets upcoming events
+     */
+    @GET("/api/events/upcoming")
+    suspend fun getUpcomingEvents() : Response<GetEventResponse>
+
+    /**
+     * Get all places
+     */
+    @GET("/api/places")
+    suspend fun getAllPlaces() : Response<PlaceListResponse>
+
+}

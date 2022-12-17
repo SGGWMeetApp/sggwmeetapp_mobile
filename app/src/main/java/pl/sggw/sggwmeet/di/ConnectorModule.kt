@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
+import pl.sggw.sggwmeet.model.connector.EventConnector
 import pl.sggw.sggwmeet.model.connector.PlacesConnector
 import pl.sggw.sggwmeet.model.connector.UserConnector
 import pl.sggw.sggwmeet.model.connector.mock.MockAuthorizationConnector
@@ -18,6 +19,7 @@ import pl.sggw.sggwmeet.model.connector.mock.MockPlacesConnector
 import pl.sggw.sggwmeet.util.ExecutionHelper
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -51,6 +53,12 @@ object ConnectorModule {
     @Provides
     fun provideUserConnector(@AuthorizedRetrofitInstance retrofit : Retrofit) : UserConnector {
         return retrofit.create(UserConnector::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideEventConnector(@AuthorizedRetrofitInstance retrofit : Retrofit) : EventConnector {
+        return retrofit.create(EventConnector::class.java)
     }
 
     private fun <T, T1 : T, T2 : T> restConnectorOrMock(restConnector : T1, mockConnector : T2) : T {
@@ -87,6 +95,8 @@ object ConnectorModule {
                     .build()
                 chain.proceed(simplified)
             }
+            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
@@ -117,6 +127,8 @@ object ConnectorModule {
                 chain.proceed(simplified)
             }
             .addInterceptor(userTokenInterceptor(userDataStore))
+            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()

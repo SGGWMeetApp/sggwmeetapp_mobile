@@ -182,6 +182,19 @@
 
     <!-- Wydarzenia -->
     <string name="hello_events_fragment">Hello events fragment!</string>
+    <string name="event_title">Wydarzenie</string>
+    <string name="event_name">Nazwa wydarzenia</string>
+    <string name="event_description">Opis</string>
+    <string name="event_location">Miejsce</string>
+    <string name="event_startDate">Data</string>
+    <string name="event_author">Autor</string>
+    <string name="event_email">Email</string>
+    <string name="event_edit">Edytuj</string>
+    <string name="exit">Wyjdź</string>
+    <string name="event_edit_title">Edytuj wydarzenie</string>
+    <string name="date_select">Wybierz datę</string>
+    <string name="location_select_list">Wybierz miejsce</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

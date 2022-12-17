@@ -5,13 +5,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
+import pl.sggw.sggwmeet.mapper.EventMapper
 import pl.sggw.sggwmeet.mapper.PlacesMapper
 import pl.sggw.sggwmeet.mapper.UserMapper
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
+import pl.sggw.sggwmeet.model.connector.EventConnector
 import pl.sggw.sggwmeet.model.connector.PlacesConnector
 import pl.sggw.sggwmeet.model.connector.UserConnector
 import pl.sggw.sggwmeet.model.repository.AuthorizationRepository
+import pl.sggw.sggwmeet.model.repository.EventRepository
 import pl.sggw.sggwmeet.model.repository.PlacesRepository
 import pl.sggw.sggwmeet.model.repository.UserRepository
 import pl.sggw.sggwmeet.provider.RootMarkerProvider
@@ -50,5 +53,15 @@ object RepositoryModule {
         userDataStore: UserDataStore
     ) : UserRepository {
         return UserRepository(userConnector, userMapper, userDataStore)
+    }
+
+    @Singleton
+    @Provides
+    fun provideEventRepository(
+        eventConnector: EventConnector,
+        eventMapper: EventMapper,
+        userDataStore: UserDataStore
+    ) : EventRepository {
+        return EventRepository(eventConnector, eventMapper, userDataStore)
     }
 }
