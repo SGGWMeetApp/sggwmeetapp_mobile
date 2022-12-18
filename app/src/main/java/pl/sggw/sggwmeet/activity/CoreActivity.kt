@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
-import pl.sggw.sggwmeet.activity.group.EventListActivity
+import pl.sggw.sggwmeet.activity.event.EventListActivity
 import pl.sggw.sggwmeet.databinding.ActivityCoreBinding
 import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil

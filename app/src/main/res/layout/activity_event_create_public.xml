@@ -50,11 +50,10 @@
 
 
                     <TextView
-                        android:id="@+id/fragment_userEdit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto"
-                        android:text="@string/event_edit_title"
+                        android:text="@string/event_create_public_title"
                         android:textColor="@color/blackAlpha"
                         android:textFontWeight="400"
                         android:textSize="24sp" />
@@ -136,6 +135,14 @@
                         style="@style/profile_main_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/event_create_location_warning"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/event_create_location_warning"
+                        android:textColor="#FF4444"
+                        android:visibility="gone" />
 
                     <Button
                         android:id="@+id/select_location_BT"

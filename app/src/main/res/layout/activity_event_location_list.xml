@@ -27,12 +27,6 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <Spinner
-                    android:id="@+id/spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp" />
-
                 <com.mancj.materialsearchbar.MaterialSearchBar
                     android:id="@+id/searchBar"
                     style="@style/MaterialSearchBarLight"
@@ -63,16 +57,6 @@
                 </FrameLayout>
             </LinearLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/floating_BT"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-
-                android:layout_margin="20dp"
-                android:clickable="true"
-                app:srcCompat="@drawable/asset_plus" />
-
             <FrameLayout
                 android:id="@+id/loading_FL"
                 android:layout_width="match_parent"
@@ -93,7 +77,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.3" />
-
 
         </FrameLayout>
 

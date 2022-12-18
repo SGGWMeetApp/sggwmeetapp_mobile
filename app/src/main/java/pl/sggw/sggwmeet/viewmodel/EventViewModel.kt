@@ -5,10 +5,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import pl.sggw.sggwmeet.model.connector.dto.request.EventCreatePublicRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.EventEditRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.model.repository.EventRepository
 import pl.sggw.sggwmeet.util.Resource
+import java.io.InputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,6 +54,32 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             eventRepository.getAllPlaces().onEach {
                 _getAllPlacesState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _editEventState: MutableLiveData<Resource<EventResponse>> = MutableLiveData()
+    val editEventState: LiveData<Resource<EventResponse>>
+        get() = _editEventState
+
+    fun editEvent(eventEditRequest: EventEditRequest, eventId: Int) {
+        viewModelScope.launch {
+            eventRepository.editEvent(eventEditRequest, eventId).onEach {
+                _editEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _createPublicEventState: MutableLiveData<Resource<EventResponse>> = MutableLiveData()
+    val createPublicEventState: LiveData<Resource<EventResponse>>
+        get() = _createPublicEventState
+
+    fun createPublicEvent(eventCreateRequest: EventCreatePublicRequest) {
+        viewModelScope.launch {
+            eventRepository.createPublicEvent(eventCreateRequest).onEach {
+                _createPublicEventState.value = it
             }
                 .launchIn(viewModelScope)
         }

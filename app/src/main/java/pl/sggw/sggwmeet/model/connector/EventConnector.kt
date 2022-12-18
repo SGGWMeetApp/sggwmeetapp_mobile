@@ -1,5 +1,8 @@
 package pl.sggw.sggwmeet.model.connector
 
+import pl.sggw.sggwmeet.model.connector.dto.request.EventCreatePublicRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.EventEditRequest
+import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.GetEventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.PlaceListResponse
 import retrofit2.Response
@@ -27,5 +30,17 @@ interface EventConnector {
      */
     @GET("/api/places")
     suspend fun getAllPlaces() : Response<PlaceListResponse>
+
+    /**
+     * Edit event
+     */
+    @PUT("/api/events/{id}")
+    suspend fun editEvent(@Body eventEditRequest: EventEditRequest, @Path("id") eventId: Int) : Response<EventResponse>
+
+    /**
+     * Creates event
+     */
+    @POST("/api/events")
+    suspend fun createPublicEvent(@Body eventCreatePublicRequest: EventCreatePublicRequest) : Response<EventResponse>
 
 }

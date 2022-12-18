@@ -1,4 +1,4 @@
-package pl.sggw.sggwmeet.activity.group
+package pl.sggw.sggwmeet.activity.event
 
 import android.os.Bundle
 import android.text.Editable
@@ -7,8 +7,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,33 +15,33 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mancj.materialsearchbar.MaterialSearchBar
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
-import pl.sggw.sggwmeet.adapter.EventListAdapter
-import pl.sggw.sggwmeet.databinding.ActivityEventListBinding
+import pl.sggw.sggwmeet.adapter.EventLocationListAdapter
+import pl.sggw.sggwmeet.databinding.ActivityEventLocationListBinding
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
-import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
-import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class EventLocationListActivity : AppCompatActivity() {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
-    private lateinit var binding : ActivityEventListBinding
+    private lateinit var binding : ActivityEventLocationListBinding
 
-    private lateinit var adapter: EventListAdapter
-    private lateinit var eventList: ArrayList<EventResponse>
+    private lateinit var adapter: EventLocationListAdapter
+    private var locationList = ArrayList<SimplePlaceResponseData>()
 
     private val eventViewModel by viewModels<EventViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.binding = ActivityEventListBinding.inflate(layoutInflater)
+        this.binding = ActivityEventLocationListBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
         setUpButton()
@@ -53,33 +51,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         SearchBarSetupUtil.setFontFamily(binding.searchBar,
             ResourcesCompat.getFont(this, R.font.robotoregular))
 
-        getUpcomingEvents()
-        setUpSpinner()
-    }
-    private val items = arrayOf<String>("Nadchodzące wydarzenia", "Wszystkie wydarzenia")
-    override fun onItemSelected(parent: AdapterView<*>?,
-                                view: View, position: Int,
-                                id: Long) {
-        when(position){
-            0 -> getUpcomingEvents()
-            1 -> getAllEvents()
-        }
-
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-    private fun setUpSpinner(){
-        val spinner = binding.spinner
-        spinner.onItemSelectedListener = this
-        val adapter: ArrayAdapter<*> = ArrayAdapter<Any?>(
-            this,
-            R.layout.spinner_textview,
-            items)
-
-        adapter.setDropDownViewResource(
-            android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
+        getAllPlaces()
     }
 
     private fun setUpButton(){
@@ -117,14 +89,14 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     private fun setViewModelListener() {
 
-        eventViewModel.getAllEventsState.observe(this) { resource ->
+        eventViewModel.getAllPlacesState.observe(this) { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     lockUI()
                 }
                 is Resource.Success -> {
                     unlockUI()
-                    eventList= resource.data!!
+                    resource.data!!.toCollection(locationList)
                     buildRecyclerView()
                     setUpSearch()
                     filter(binding.searchBar.text)
@@ -143,35 +115,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
                             handleClientErrorCode(resource.exception.errorCode)
                         }
                     }
-                }
-            }
-        }
-        eventViewModel.getUpcomingEventsState.observe(this) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    lockUI()
-                }
-                is Resource.Success -> {
-                    unlockUI()
-                    eventList= resource.data!!
-                    buildRecyclerView()
-                    setUpSearch()
-                    filter(binding.searchBar.text)
-                }
-                is Resource.Error -> {
-                    unlockUI()
-                    when(resource.exception) {
-
-                        is TechnicalException -> {
-                            showTechnicalErrorMessage()
-                        }
-                        is ServerException -> {
-                            handleServerErrorCode(resource.exception.errorCode)
-                        }
-                        is ClientException -> {
-                            handleClientErrorCode(resource.exception.errorCode)
-                        }
-                    }
+                    this.finish()
                 }
             }
         }
@@ -193,15 +137,12 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         Toast.makeText(this, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
     }
 
-    private fun getAllEvents(){
-        eventViewModel.getAllEvents()
-    }
-    private fun getUpcomingEvents(){
-        eventViewModel.getUpcomingEvents()
+    private fun getAllPlaces(){
+        eventViewModel.getAllPlaces()
     }
 
     private fun buildRecyclerView(){
-        adapter= EventListAdapter(eventList)
+        adapter= EventLocationListAdapter(locationList,this)
         val manager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager=manager
         binding.recyclerView.adapter=adapter
@@ -240,19 +181,13 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
 
     private fun filter(text: String) {
-        val filteredlist = ArrayList<EventResponse>()
+        val filteredlist = ArrayList<SimplePlaceResponseData>()
 
-        for (item in eventList) {
+        for (item in locationList) {
             if (item.name.lowercase().contains(text.lowercase())) {
                 filteredlist.add(item)
             }
-            else if(item.locationData.name.lowercase().contains(text.lowercase())){
-                filteredlist.add(item)
-            }
-            else if("${item.author.firstName} ${item.author.lastName}".lowercase().contains(text.lowercase())){
-                filteredlist.add(item)
-            }
-            else if(!item.description.isNullOrBlank()&&item.description.lowercase().contains(text.lowercase())){
+            else if(item.textLocation.lowercase().contains(text.lowercase())){
                 filteredlist.add(item)
             }
         }

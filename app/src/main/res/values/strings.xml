@@ -192,8 +192,11 @@
     <string name="event_edit">Edytuj</string>
     <string name="exit">Wyjdź</string>
     <string name="event_edit_title">Edytuj wydarzenie</string>
-    <string name="date_select">Wybierz datę</string>
+    <string name="date_select">Data</string>
+    <string name="time_select">Godzina</string>
     <string name="location_select_list">Wybierz miejsce</string>
+    <string name="event_create_public_title">Utwórz publiczne wydarzenie</string>
+    <string name="event_create_location_warning">Niewybrano miejsca</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

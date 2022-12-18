@@ -1,6 +1,6 @@
 package pl.sggw.sggwmeet.adapter
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -9,14 +9,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import pl.sggw.sggwmeet.R
-import pl.sggw.sggwmeet.activity.group.EventShowActivity
+import pl.sggw.sggwmeet.activity.event.EventShowActivity
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import java.text.SimpleDateFormat
 
-class EventListAdapter(eventList: ArrayList<EventResponse>): RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
+class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity): RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
     private var eventList: ArrayList<EventResponse>
     private val gson = Gson()
-    private val timeFormat = SimpleDateFormat("dd.MM.yyyy' 'HH:MM")
+    private val timeFormat = SimpleDateFormat("dd.MM.yyyy' 'HH:mm")
+    private lateinit var activity: Activity
 
     fun filterList(filterList: ArrayList<EventResponse>) {
         eventList = filterList
@@ -39,7 +40,7 @@ class EventListAdapter(eventList: ArrayList<EventResponse>): RecyclerView.Adapte
         holder.itemView.setOnClickListener{
             val newActivity = Intent(holder.itemView.context, EventShowActivity::class.java)
                 .putExtra("eventData",gson.toJson(model))
-            holder.itemView.context.startActivity(newActivity)
+            activity.startActivityForResult(newActivity, 104)
         }
     }
 
@@ -55,7 +56,6 @@ class EventListAdapter(eventList: ArrayList<EventResponse>): RecyclerView.Adapte
         lateinit var eventLocation: TextView
         lateinit var eventAuthor: TextView
         lateinit var eventDescription: TextView
-        lateinit var contextView: Context
 
 
         init {
@@ -70,5 +70,6 @@ class EventListAdapter(eventList: ArrayList<EventResponse>): RecyclerView.Adapte
 
     init {
         this.eventList = eventList
+        this.activity = activity
     }
 }

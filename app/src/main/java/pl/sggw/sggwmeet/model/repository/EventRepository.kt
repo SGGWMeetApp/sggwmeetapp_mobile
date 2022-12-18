@@ -9,6 +9,8 @@ import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.mapper.EventMapper
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.EventConnector
+import pl.sggw.sggwmeet.model.connector.dto.request.EventCreatePublicRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.EventEditRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.util.Resource
@@ -85,6 +87,58 @@ class EventRepository(
                 val responseBody = response.body()
                 Log.i(TAG, "Received places")
                 emit(Resource.Success(responseBody!!.places))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun editEvent(eventEditRequest: EventEditRequest, eventId: Int) : Flow<Resource<EventResponse>> = flow {
+        val functionTAG = "editEvent"
+        emit(Resource.Loading())
+        try {
+            val response = connector.editEvent(eventEditRequest, eventId)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Edited event")
+                emit(Resource.Success(responseBody))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun createPublicEvent(eventCreatePublicRequest: EventCreatePublicRequest) : Flow<Resource<EventResponse>> = flow {
+        val functionTAG = "createPublicEvent"
+        emit(Resource.Loading())
+        try {
+            val response = connector.createPublicEvent(eventCreatePublicRequest)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Created event")
+                emit(Resource.Success(responseBody))
             }
             else{
                 Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())

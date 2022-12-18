@@ -10,5 +10,7 @@ data class SimplePlaceResponseData(
     var geolocation : Geolocation,
     var locationCategoryCodes: List<PlaceCategory>,
     var photoPath: String,
-    var reviewSummary: ReviewSummary
+    var reviewSummary: ReviewSummary,
+    var description: String="",
+    var textLocation: String=""
 )
