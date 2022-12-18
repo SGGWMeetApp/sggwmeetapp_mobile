@@ -22,6 +22,8 @@ import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>, activity: Activity): RecyclerView.Adapter<EventLocationListAdapter.ViewHolder>() {
     private var locationList: ArrayList<SimplePlaceResponseData>
     private lateinit var activity: Activity
+    private lateinit var picasso: Picasso
+    private var visibilityState: ArrayList<Int> = ArrayList<Int>()
 
     fun filterList(filterList: ArrayList<SimplePlaceResponseData>) {
         locationList = filterList
@@ -33,6 +35,8 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model: SimplePlaceResponseData = locationList[position]
+        holder.locationHiddenView.visibility=visibilityState[position]
+
         holder.locationName.setText(model.name)
         holder.locationAddress.setText(model.textLocation)
         if(model.reviewSummary.reviewsCount!! > 0){
@@ -45,26 +49,28 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
                 "Brak ocen"
             )
         }
+        holder.locationDescription.setText(model.description)
+        if(model.photoPath.isNullOrBlank()){
+            holder.locationImage.visibility=View.GONE
+        }
+        else{
+            holder.locationImage.visibility=View.VISIBLE
+            picasso
+                .load(model.photoPath)
+                .placeholder(R.drawable.asset_loading)
+                .into(holder.locationImage)
+        }
+
         holder.locationItemArea.setOnClickListener{
             if(holder.locationHiddenView.isGone){
-                holder.locationDescription.setText(model.description)
-                if(model.photoPath.isNullOrBlank()){
-                    holder.locationImage.visibility=View.GONE
-                }
-                else{
-                    val picasso = Picasso.get()
-                    picasso.isLoggingEnabled = true
-                    picasso
-                        .load(model.photoPath)
-                        .placeholder(R.drawable.asset_loading)
-                        .into(holder.locationImage)
-                }
                 TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
                 holder.locationHiddenView.visibility=View.VISIBLE
+                visibilityState[position]=View.VISIBLE
             }
             else{
                 TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
                 holder.locationHiddenView.visibility=View.GONE
+                visibilityState[position]=View.GONE
             }
         }
         holder.locationSelectBT.setOnClickListener {
@@ -110,7 +116,12 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
     }
 
     init {
+        picasso = Picasso.get()
+        picasso.isLoggingEnabled = true
         this.locationList = locationList
         this.activity = activity
+        for(item in locationList){
+            visibilityState.add(View.GONE)
+        }
     }
 }
