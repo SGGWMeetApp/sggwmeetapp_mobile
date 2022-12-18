@@ -82,7 +82,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        app:expandedHintEnabled="false"
                         android:autofillHints="@string/event_description"
                         android:hint="@string/event_description">
 
