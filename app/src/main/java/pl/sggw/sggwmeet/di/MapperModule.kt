@@ -4,10 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import pl.sggw.sggwmeet.mapper.AuthorizationMapper
-import pl.sggw.sggwmeet.mapper.EventMapper
-import pl.sggw.sggwmeet.mapper.PlacesMapper
-import pl.sggw.sggwmeet.mapper.UserMapper
+import pl.sggw.sggwmeet.mapper.*
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -36,5 +33,11 @@ object MapperModule {
     @Provides
     fun provideEventMapper() : EventMapper {
         return EventMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideGroupMapper() : GroupMapper {
+        return GroupMapper()
     }
 }

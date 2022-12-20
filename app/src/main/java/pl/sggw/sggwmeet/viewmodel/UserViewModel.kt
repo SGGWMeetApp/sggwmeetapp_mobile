@@ -8,7 +8,9 @@ import kotlinx.coroutines.launch
 import pl.sggw.sggwmeet.domain.UserChangePasswordData
 import pl.sggw.sggwmeet.model.connector.dto.request.UserEditUserDataRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserNotificationSettingsRequest
+import pl.sggw.sggwmeet.model.connector.dto.response.UserEditResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.UserNotificationSettingsResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.UsersToGroupResponse
 import pl.sggw.sggwmeet.model.repository.UserRepository
 import pl.sggw.sggwmeet.util.Resource
 import java.io.InputStream
@@ -80,6 +82,32 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.setNotificationSettings(userSettings, userId).onEach {
                 _setUserNotificationGetState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _getUserDataGetState: MutableLiveData<Resource<UserEditResponse>> = MutableLiveData()
+    val getUserDataGetState: LiveData<Resource<UserEditResponse>>
+        get() = _getUserDataGetState
+
+    fun getUserData(userId: Int) {
+        viewModelScope.launch {
+            userRepository.getUserData(userId).onEach {
+                _getUserDataGetState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _getUsersEligibleToGroupGetState: MutableLiveData<Resource<UsersToGroupResponse>> = MutableLiveData()
+    val getUsersEligibleToGroupGetState: LiveData<Resource<UsersToGroupResponse>>
+        get() = _getUsersEligibleToGroupGetState
+
+    fun getUsersEligibleToGroup(groupId: Int) {
+        viewModelScope.launch {
+            userRepository.getUsersEligibleToGroup(groupId).onEach {
+                _getUsersEligibleToGroupGetState.value = it
             }
                 .launchIn(viewModelScope)
         }

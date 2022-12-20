@@ -1,6 +1,5 @@
-package pl.sggw.sggwmeet.activity.event
+package pl.sggw.sggwmeet.activity.group
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -18,39 +17,40 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mancj.materialsearchbar.MaterialSearchBar
 import dagger.hilt.android.AndroidEntryPoint
+import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
-import pl.sggw.sggwmeet.adapter.EventListAdapter
-import pl.sggw.sggwmeet.databinding.ActivityEventListBinding
+import pl.sggw.sggwmeet.adapter.GroupListAdapter
+import pl.sggw.sggwmeet.databinding.ActivityGroupListBinding
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
-import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.GroupResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
-import pl.sggw.sggwmeet.viewmodel.EventViewModel
-import java.util.*
+import pl.sggw.sggwmeet.viewmodel.GroupViewModel
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class GroupListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
-    private lateinit var binding : ActivityEventListBinding
+    private lateinit var binding : ActivityGroupListBinding
 
-    private lateinit var adapter: EventListAdapter
-    private lateinit var eventList: ArrayList<EventResponse>
+    private lateinit var adapter: GroupListAdapter
+    private lateinit var groupList: ArrayList<GroupResponse>
 
-    private val eventViewModel by viewModels<EventViewModel>()
+    private val groupViewModel by viewModels<GroupViewModel>()
 
     companion object {
-        const val EVENT_EDITED = 104
-        const val EVENT_ADDED = 105
+        const val GROUP_EDITED = 201
+        const val GROUP_ADDED = 202
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.binding = ActivityEventListBinding.inflate(layoutInflater)
+        this.binding = ActivityGroupListBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
         setUpButton()
@@ -64,7 +64,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         setUpFloatingButton()
         refreshList(binding.spinner.selectedItemPosition)
     }
-    private val items = arrayOf<String>("Wszystkie wydarzenia", "Nadchodzące wydarzenia")
+    private val items = arrayOf<String>("Twoje grupy", "Wszystkie grupy")
     override fun onItemSelected(parent: AdapterView<*>?,
                                 view: View, position: Int,
                                 id: Long) {
@@ -122,14 +122,14 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     private fun setViewModelListener() {
 
-        eventViewModel.getAllEventsState.observe(this) { resource ->
+        groupViewModel.getAllGroupsState.observe(this) { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     lockUI()
                 }
                 is Resource.Success -> {
                     unlockUI()
-                    eventList= resource.data!!
+                    sortList(resource.data!!.groups)
                     buildRecyclerView()
                     setUpSearch()
                     filter(binding.searchBar.text)
@@ -151,14 +151,14 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
                 }
             }
         }
-        eventViewModel.getUpcomingEventsState.observe(this) { resource ->
+        groupViewModel.getUserGroupsState.observe(this) { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     lockUI()
                 }
                 is Resource.Success -> {
                     unlockUI()
-                    eventList= resource.data!!
+                    sortList(resource.data!!.groups)
                     buildRecyclerView()
                     setUpSearch()
                     filter(binding.searchBar.text)
@@ -198,15 +198,18 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         Toast.makeText(this, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
     }
 
-    private fun getAllEvents(){
-        eventViewModel.getAllEvents()
+    private fun getAllGroups(){
+        groupViewModel.getAllGroups()
     }
-    private fun getUpcomingEvents(){
-        eventViewModel.getUpcomingEvents()
+
+    private fun getUserGroups(){
+        groupViewModel.getUserGroups(
+            Prefs.read().content("userId",0)
+        )
     }
 
     private fun buildRecyclerView(){
-        adapter= EventListAdapter(eventList, this)
+        adapter= GroupListAdapter(groupList, this)
         val manager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager=manager
         binding.recyclerView.adapter=adapter
@@ -245,19 +248,13 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
 
     private fun filter(text: String) {
-        val filteredlist = ArrayList<EventResponse>()
+        val filteredlist = ArrayList<GroupResponse>()
 
-        for (item in eventList) {
+        for (item in groupList) {
             if (item.name.lowercase().contains(text.lowercase())) {
                 filteredlist.add(item)
             }
-            else if(item.locationData.name.lowercase().contains(text.lowercase())){
-                filteredlist.add(item)
-            }
-            else if("${item.author.firstName} ${item.author.lastName}".lowercase().contains(text.lowercase())){
-                filteredlist.add(item)
-            }
-            else if(!item.description.isNullOrBlank()&&item.description.lowercase().contains(text.lowercase())){
+            else if("${item.adminData.firstName} ${item.adminData.lastName}".lowercase().contains(text.lowercase())){
                 filteredlist.add(item)
             }
         }
@@ -266,25 +263,39 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         }
         adapter.filterList(filteredlist)
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == EVENT_EDITED && resultCode == Activity.RESULT_OK) {
-            refreshList(binding.spinner.selectedItemPosition)
+
+    private fun sortList(responseList: ArrayList<GroupResponse>){
+        groupList = ArrayList<GroupResponse>()
+        val bufferList = ArrayList<GroupResponse>()
+        for (item in responseList){
+            if(item.adminData.isUserAdmin){
+                groupList.add(item)
+            }
+            else{
+                bufferList.add(item)
+            }
         }
-        else if (requestCode == EVENT_ADDED && resultCode == Activity.RESULT_OK) {
-            refreshList(binding.spinner.selectedItemPosition)
-        }
+        groupList.addAll(bufferList)
     }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == EVENT_EDITED && resultCode == Activity.RESULT_OK) {
+//            refreshList(binding.spinner.selectedItemPosition)
+//        }
+//        else if (requestCode == EVENT_ADDED && resultCode == Activity.RESULT_OK) {
+//            refreshList(binding.spinner.selectedItemPosition)
+//        }
+//    }
     fun refreshList(position: Int){
         when(position){
-            0 -> getAllEvents()
-            1 -> getUpcomingEvents()
+            0 -> getUserGroups()
+            1 -> getAllGroups()
         }
     }
     fun setUpFloatingButton(){
         binding.floatingBT.setOnClickListener{
-            intent=Intent(this,EventCreatePublicActivity::class.java)
-            startActivityForResult(intent, EVENT_ADDED)
+            intent= Intent(this,GroupCreateActivity::class.java)
+            startActivityForResult(intent, GROUP_ADDED)
         }
     }
 }

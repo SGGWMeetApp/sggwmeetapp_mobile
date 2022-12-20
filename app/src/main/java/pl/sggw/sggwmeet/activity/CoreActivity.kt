@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.activity.event.EventListActivity
+import pl.sggw.sggwmeet.activity.group.GroupListActivity
 import pl.sggw.sggwmeet.databinding.ActivityCoreBinding
 import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
@@ -99,7 +100,7 @@ class CoreActivity : AppCompatActivity() {
         }
 
         binding.topSheetLayout.menuGroupsBT.setOnClickListener {
-            this.navigateToFragment(R.id.groupsFragment)
+            this.startActivity(Intent(this, GroupListActivity::class.java))
             this.topSheetTransition.duration = 100
             this.closeTopSheet()
         }

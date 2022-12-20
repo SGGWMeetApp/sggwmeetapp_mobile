@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.activity.event.EventListActivity
 import pl.sggw.sggwmeet.activity.event.EventShowActivity
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import java.text.SimpleDateFormat
@@ -40,7 +41,7 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
         holder.itemView.setOnClickListener{
             val newActivity = Intent(holder.itemView.context, EventShowActivity::class.java)
                 .putExtra("eventData",gson.toJson(model))
-            activity.startActivityForResult(newActivity, 104)
+            activity.startActivityForResult(newActivity, EventListActivity.EVENT_EDITED)
         }
     }
 

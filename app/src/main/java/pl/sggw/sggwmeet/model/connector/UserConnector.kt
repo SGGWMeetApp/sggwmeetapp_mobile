@@ -4,10 +4,7 @@ import pl.sggw.sggwmeet.model.connector.dto.request.UploadImageRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserEditRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserChangePasswordRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserNotificationSettingsRequest
-import pl.sggw.sggwmeet.model.connector.dto.response.UploadAvatarResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.UserChangePasswordResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.UserEditResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.UserNotificationSettingsResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.*
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -45,4 +42,17 @@ interface UserConnector {
      */
     @PATCH("/api/users/{id}/notification_settings")
     suspend fun setNotificationSettings(@Body userNotificationSettingsRequest: UserNotificationSettingsRequest, @Path("id") id: Int) : Response<UserNotificationSettingsResponse>
+
+    /**
+     * Gets user data
+     */
+    @GET("/api/users/{id}")
+    suspend fun getUserData(@Path("id") id: Int) : Response<UserEditResponse>
+
+    /**
+     * Gets user eligible to add to group.
+     */
+    @GET("/api/groups/{id}/users/eligible")
+    suspend fun getUsersEligibleToGroup(@Path("id") group_Id: Int) : Response<UsersToGroupResponse>
+
 }

@@ -17,9 +17,7 @@ import pl.sggw.sggwmeet.model.connector.dto.request.UploadImageRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserEditRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserEditUserDataRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserNotificationSettingsRequest
-import pl.sggw.sggwmeet.model.connector.dto.response.ErrorResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
-import pl.sggw.sggwmeet.model.connector.dto.response.UserNotificationSettingsResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.*
 import pl.sggw.sggwmeet.util.Resource
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -183,6 +181,58 @@ class UserRepository(
                 val responseBody = response.body()
                 Log.i(TAG, "Set notification settings")
                 userDataStore.store(responseBody!!)
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun getUserData(id: Int) : Flow<Resource<UserEditResponse>> = flow {
+        val functionTAG = "getUserData"
+        emit(Resource.Loading())
+        try {
+            val response = connector.getUserData(id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Received user data")
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun getUsersEligibleToGroup(group_Id: Int) : Flow<Resource<UsersToGroupResponse>> = flow {
+        val functionTAG = "getUsersEligibleToGroup"
+        emit(Resource.Loading())
+        try {
+            val response = connector.getUsersEligibleToGroup(group_Id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Received eligible users")
                 emit(Resource.Success(responseBody!!))
             }
             else{
