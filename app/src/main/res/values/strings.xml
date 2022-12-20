@@ -198,6 +198,14 @@
     <string name="event_create_public_title">Utwórz publiczne wydarzenie</string>
     <string name="event_create_location_warning">Niewybrano miejsca</string>
 
+    <!-- Settings -->
+    <string name="user_settings">Opcje użytkownika</string>
+    <string name="notifications">Powiadomienia</string>
+    <string name="setting_1">Nowe wydarzenie</string>
+    <string name="setting_2">Dodanie do grupy</string>
+    <string name="setting_3">Wyrzucenie z grupy</string>
+    <string name="settings_updated">Zaktualizowano ustawienia</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

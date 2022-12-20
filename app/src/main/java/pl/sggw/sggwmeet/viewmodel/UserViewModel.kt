@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import pl.sggw.sggwmeet.domain.UserChangePasswordData
 import pl.sggw.sggwmeet.model.connector.dto.request.UserEditUserDataRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.UserNotificationSettingsRequest
+import pl.sggw.sggwmeet.model.connector.dto.response.UserNotificationSettingsResponse
 import pl.sggw.sggwmeet.model.repository.UserRepository
 import pl.sggw.sggwmeet.util.Resource
 import java.io.InputStream
@@ -52,6 +54,32 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.uploadAvatar(inputStream, userId).onEach {
                 _uploadAvatarState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _getUserNotificationGetState: MutableLiveData<Resource<UserNotificationSettingsResponse>> = MutableLiveData()
+    val getUserNotificationGetState: LiveData<Resource<UserNotificationSettingsResponse>>
+        get() = _getUserNotificationGetState
+
+    fun getNotificationSettings(userId: Int) {
+        viewModelScope.launch {
+            userRepository.getNotificationSettings(userId).onEach {
+                _getUserNotificationGetState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _setUserNotificationGetState: MutableLiveData<Resource<UserNotificationSettingsResponse>> = MutableLiveData()
+    val setUserNotificationGetState: LiveData<Resource<UserNotificationSettingsResponse>>
+        get() = _setUserNotificationGetState
+
+    fun setNotificationSettings(userSettings: UserNotificationSettingsRequest, userId: Int) {
+        viewModelScope.launch {
+            userRepository.setNotificationSettings(userSettings, userId).onEach {
+                _setUserNotificationGetState.value = it
             }
                 .launchIn(viewModelScope)
         }

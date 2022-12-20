@@ -2,6 +2,7 @@ package pl.sggw.sggwmeet.model.repository
 
 import android.util.Base64
 import android.util.Log
+import io.easyprefs.Prefs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import pl.sggw.sggwmeet.domain.UserChangePasswordData
@@ -15,7 +16,10 @@ import pl.sggw.sggwmeet.model.connector.UserConnector
 import pl.sggw.sggwmeet.model.connector.dto.request.UploadImageRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserEditRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserEditUserDataRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.UserNotificationSettingsRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.ErrorResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
+import pl.sggw.sggwmeet.model.connector.dto.response.UserNotificationSettingsResponse
 import pl.sggw.sggwmeet.util.Resource
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -143,4 +147,57 @@ class UserRepository(
         }
     }
 
+    suspend fun getNotificationSettings(id: Int) : Flow<Resource<UserNotificationSettingsResponse>> = flow {
+        val functionTAG = "getNotificationSettings"
+        emit(Resource.Loading())
+        try {
+            val response = connector.getNotificationSettings(id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Received notification settings")
+                userDataStore.store(responseBody!!)
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun setNotificationSettings(userNotificationSettingsRequest: UserNotificationSettingsRequest, id: Int) : Flow<Resource<UserNotificationSettingsResponse>> = flow {
+        val functionTAG = "setNotificationSettings"
+        emit(Resource.Loading())
+        try {
+            val response = connector.setNotificationSettings(userNotificationSettingsRequest, id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Set notification settings")
+                userDataStore.store(responseBody!!)
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
 }

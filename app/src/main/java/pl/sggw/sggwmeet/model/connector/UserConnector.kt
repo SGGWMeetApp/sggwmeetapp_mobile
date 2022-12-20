@@ -3,9 +3,11 @@ package pl.sggw.sggwmeet.model.connector
 import pl.sggw.sggwmeet.model.connector.dto.request.UploadImageRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserEditRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserChangePasswordRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.UserNotificationSettingsRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.UploadAvatarResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.UserChangePasswordResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.UserEditResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.UserNotificationSettingsResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -31,4 +33,16 @@ interface UserConnector {
      */
     @POST("/api/user/{id}/avatar")
     suspend fun uploadAvatar(@Body uploadImageRequest: UploadImageRequest, @Path("id") id: Int) : Response<UploadAvatarResponse>
+
+    /**
+     * Gets user notification settings
+     */
+    @GET("/api/users/{id}/notification_settings")
+    suspend fun getNotificationSettings(@Path("id") id: Int) : Response<UserNotificationSettingsResponse>
+
+    /**
+     * Updates user notification settings
+     */
+    @PATCH("/api/users/{id}/notification_settings")
+    suspend fun setNotificationSettings(@Body userNotificationSettingsRequest: UserNotificationSettingsRequest, @Path("id") id: Int) : Response<UserNotificationSettingsResponse>
 }

@@ -117,6 +117,12 @@ class CoreActivity : AppCompatActivity() {
             this.closeTopSheet()
         }
 
+        binding.topSheetLayout.menuSettingsBT.setOnClickListener {
+            startActivity(Intent(this, UserSettingsActivity::class.java))
+            this.topSheetTransition.duration = 100
+            this.closeTopSheet()
+        }
+
         onBackPressedDispatcher.addCallback(this , object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.topSheetLayout.hiddenView.visibility == View.VISIBLE) {

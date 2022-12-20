@@ -24,6 +24,9 @@ class UserDataStore(
         private const val PASSWORD_KEY = "password"
         private const val USER_ID_KEY = "userId"
         private const val AVATAR_KEY = "avatarUrl"
+        private const val NOTIFICATION_NEW_EVENT_KEY = "event_notification"
+        private const val NOTIFICATION_ADD_TO_GROUP_KEY = "group_add_notification"
+        private const val NOTIFICATION_KICKED_FROM_GROUP_KEY = "group_remove_notification"
 
         //How much time token is valid (in miliseconds), default : 9 mins
         private const val TOKEN_EXPIRATION_TIME = 540000L
@@ -99,6 +102,19 @@ class UserDataStore(
         Log.d("Upload Avatar Response: ", response.toString())
         Prefs.write()
             .content(AVATAR_KEY, response.avatarUrl)
+            .apply()
+
+    }
+
+    /**
+     * Stores notification settings 'SharedPreferences'.
+     */
+    fun store(response: UserNotificationSettingsResponse) {
+        Log.d("Notification Settings: ", response.toString())
+        Prefs.write()
+            .content(NOTIFICATION_NEW_EVENT_KEY, response.event_notification)
+            .content(NOTIFICATION_ADD_TO_GROUP_KEY, response.group_add_notification)
+            .content(NOTIFICATION_KICKED_FROM_GROUP_KEY, response.event_notification)
             .apply()
 
     }
