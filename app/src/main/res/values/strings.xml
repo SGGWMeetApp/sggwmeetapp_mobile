@@ -212,6 +212,7 @@
     <string name="admin">Administrator</string>
     <string name="group_name">Nazwa grupy</string>
     <string name="group_create_title">Utwórz grupę</string>
+    <string name="add_user">Dodaj użytkownika</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

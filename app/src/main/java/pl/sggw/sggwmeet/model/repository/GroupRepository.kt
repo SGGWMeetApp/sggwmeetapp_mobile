@@ -10,10 +10,9 @@ import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.mapper.GroupMapper
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.GroupConnector
+import pl.sggw.sggwmeet.model.connector.dto.request.GroupAddUserRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupCreateRequest
-import pl.sggw.sggwmeet.model.connector.dto.response.GetGroupsResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.GroupCreateResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.GroupResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.*
 import pl.sggw.sggwmeet.util.Resource
 import java.util.*
 import kotlin.Comparator
@@ -96,6 +95,85 @@ class GroupRepository(
             if(response.isSuccessful) {
                 val responseBody = response.body()
                 Log.i(TAG, "Created new group")
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun addUserToGroup(addUserRequest: GroupAddUserRequest, group_id: Int) : Flow<Resource<GroupAddUserResponse>> = flow {
+        val functionTAG = "addUserToGroup"
+        emit(Resource.Loading())
+        try {
+            val response = connector.addUserToGroup(addUserRequest, group_id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                responseBody!!.position=addUserRequest.position
+                Log.i(TAG, "Added user to group")
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun getGroupMembers(group_id: Int) : Flow<Resource<GroupGetMembersResponse>> = flow {
+        val functionTAG = "getGroupMembers"
+        emit(Resource.Loading())
+        try {
+            val response = connector.getGroupMembers(group_id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Received group members")
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun getGroupEvents(group_id: Int) : Flow<Resource<GetEventResponse>> = flow {
+        val functionTAG = "getGroupEvents"
+        emit(Resource.Loading())
+        try {
+            val response = connector.getGroupEvents(group_id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Received group events")
                 emit(Resource.Success(responseBody!!))
             }
             else{

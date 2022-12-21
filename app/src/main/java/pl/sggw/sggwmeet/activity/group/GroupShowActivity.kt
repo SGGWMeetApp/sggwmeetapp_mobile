@@ -3,19 +3,49 @@ package pl.sggw.sggwmeet.activity.group
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isGone
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.adapter.GroupEventListAdapter
+import pl.sggw.sggwmeet.adapter.GroupShowUsersAdapter
 import pl.sggw.sggwmeet.databinding.ActivityGroupShowBinding
+import pl.sggw.sggwmeet.exception.ClientErrorCode
+import pl.sggw.sggwmeet.exception.ClientException
+import pl.sggw.sggwmeet.exception.ServerException
+import pl.sggw.sggwmeet.exception.TechnicalException
+import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.GroupMemberResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.GroupResponse
-import java.text.SimpleDateFormat
+import pl.sggw.sggwmeet.util.Resource
+import pl.sggw.sggwmeet.viewmodel.GroupViewModel
 
 @AndroidEntryPoint
 class GroupShowActivity: AppCompatActivity() {
+    private lateinit var animationDim : Animation
+    private lateinit var animationLit : Animation
     private lateinit var binding : ActivityGroupShowBinding
     private lateinit var groupData : GroupResponse
+    private lateinit var memberResponse: ArrayList<GroupMemberResponse>
+    private lateinit var eventResponse: ArrayList<EventResponse>
+    private var areEventsInit = false
     private val gson = Gson()
+
+    private lateinit var adapter: GroupShowUsersAdapter
+    private lateinit var adapterEvent: GroupEventListAdapter
+    private val groupViewModel by viewModels<GroupViewModel>()
+
+    companion object {
+        const val ADD_USER = 301
+        const val ADD_EVENT = 302
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -23,11 +53,14 @@ class GroupShowActivity: AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         setUpButtons()
+        setAnimations()
+        setViewModelListener()
 
         val retrievedData: String? = intent.getStringExtra("groupData")
-        setUpEvent(retrievedData)
+        setUpGroup(retrievedData)
+        getMembers()
     }
-    private fun setUpEvent(data:String?){
+    private fun setUpGroup(data:String?){
         if(data.isNullOrBlank()){
             this.finish()
         }
@@ -35,9 +68,6 @@ class GroupShowActivity: AppCompatActivity() {
             groupData=gson.fromJson(data,GroupResponse::class.java)
             binding.groupInfoNameTV.setText(groupData.name)
             binding.groupInfoAdminTV.setText("${groupData.adminData.firstName} ${groupData.adminData.lastName}")
-            val adminCheck=groupData.adminData.isUserAdmin
-            binding.editEventBT.isEnabled=adminCheck
-            binding.editEventBT.isGone=adminCheck.not()
         }
         catch (e:Exception){
             this.finish()
@@ -50,20 +80,201 @@ class GroupShowActivity: AppCompatActivity() {
         binding.exitBT.setOnClickListener{
             this.finish()
         }
+        binding.groupAddUserBT.setOnClickListener {
+            addUser()
+        }
+        binding.groupUserSectionBT.setOnClickListener{
+            membersClick()
+        }
+        binding.groupEventSectionBT.setOnClickListener {
+            eventsClick()
+        }
 //        binding.editEventBT.setOnClickListener{
 //            val newActivity = Intent(this, EventEditActivity::class.java)
 //                .putExtra("groupData",gson.toJson(groupData))
 //            startActivityForResult(newActivity,103)
 //        }
     }
+    private fun addUser(){
+        val newActivity = Intent(this, GroupAddUserListActivity::class.java)
+            .putExtra("groupId",groupData.id)
+        startActivityForResult(newActivity, ADD_USER)
+    }
+
+    private fun setAnimations(){
+        animationDim = AnimationUtils.loadAnimation(this, R.anim.background_dim_anim)
+        animationDim.fillAfter=true
+
+        animationLit = AnimationUtils.loadAnimation(this, R.anim.background_lit_anim)
+        animationLit.fillAfter=true
+    }
+
+    private fun animationDimStart(){
+        binding.loadingFL.startAnimation(animationDim)
+    }
+
+    private fun animationLitStart(){
+        binding.loadingFL.startAnimation(animationLit)
+    }
+
+    private fun lockUI() {
+        binding.loadingPB.visibility = View.VISIBLE
+        binding.loadingFL.isClickable=true
+        animationDimStart()
+    }
+
+    private fun unlockUI() {
+        binding.loadingPB.visibility = View.GONE
+        binding.loadingFL.isClickable=false
+        animationLitStart()
+    }
+
+    private fun setViewModelListener() {
+
+        groupViewModel.getGroupMembersGetState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    unlockUI()
+                    if(resource.data!!.isUserAdmin){
+                        setAdminPermission()
+                    }
+                    else{
+                        setGroupMemberPermission()
+                    }
+                    if(areEventsInit){
+                        unlockUI()
+                    }
+                    else {
+                        getEvents()
+                    }
+                    memberResponse=resource.data.users
+                    buildRecyclerView()
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
+
+        groupViewModel.getGroupEventsGetState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    areEventsInit=true
+                    unlockUI()
+                    eventResponse= resource.data!!.events
+                    buildEventRecyclerView()
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun handleClientErrorCode(errorCode: ClientErrorCode) {
+        when(errorCode) {
+            else -> {}
+        }
+    }
+
+    private fun handleServerErrorCode(errorCode: String) {
+        when(errorCode){
+            "401" -> {
+
+            }
+        }
+    }
+
+    private fun showTechnicalErrorMessage() {
+        Toast.makeText(this, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
+    }
+
+    private fun setAdminPermission(){
+        binding.editGroupBT.visibility=View.VISIBLE
+        binding.groupAddUserBT.visibility=View.VISIBLE
+        binding.groupAddEventBT.visibility=View.VISIBLE
+        setGroupMemberPermission()
+    }
+
+    private fun setGroupMemberPermission(){
+        binding.groupShowUserView.visibility=View.VISIBLE
+        binding.groupShowSelection.visibility=View.VISIBLE
+        binding.groupShowEventView.visibility=View.GONE
+    }
+
+    private fun buildRecyclerView(){
+        adapter= GroupShowUsersAdapter(memberResponse, this)
+        val manager = LinearLayoutManager(this)
+        binding.groupShowUserList.layoutManager=manager
+        binding.groupShowUserList.adapter=adapter
+    }
+
+    private fun buildEventRecyclerView(){
+        adapterEvent= GroupEventListAdapter(eventResponse, this)
+        val managerEvent = LinearLayoutManager(this)
+        binding.groupShowEventList.layoutManager=managerEvent
+        binding.groupShowEventList.adapter=adapterEvent
+    }
+
+    private fun getMembers(){
+        groupViewModel.getGroupMembers(groupData.id)
+    }
+
+    private fun getEvents(){
+        groupViewModel.getGroupEvents(groupData.id)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode==103 && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                setUpEvent(data.getStringExtra("newEventData"))
-                this.setResult(Activity.RESULT_OK)
-            }
-
+        if (requestCode == ADD_USER && resultCode == Activity.RESULT_OK) {
+            getMembers()
         }
+        else if (requestCode == ADD_EVENT && resultCode == Activity.RESULT_OK) {
+            //TODO
+        }
+    }
+
+    private fun membersClick(){
+        binding.groupUserSectionBAR.visibility=View.VISIBLE
+        binding.groupEventSectionBAR.visibility=View.INVISIBLE
+        binding.groupShowUserView.visibility=View.VISIBLE
+        binding.groupShowEventView.visibility=View.GONE
+    }
+
+    private fun eventsClick(){
+        binding.groupEventSectionBAR.visibility=View.VISIBLE
+        binding.groupUserSectionBAR.visibility=View.INVISIBLE
+        binding.groupShowEventView.visibility=View.VISIBLE
+        binding.groupShowUserView.visibility=View.GONE
     }
 }
