@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -12,16 +14,23 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.mancj.materialsearchbar.MaterialSearchBar
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.activity.ProfileActivity
+import pl.sggw.sggwmeet.activity.UserSettingsActivity
+import pl.sggw.sggwmeet.activity.event.EventListActivity
 import pl.sggw.sggwmeet.adapter.GroupListAdapter
 import pl.sggw.sggwmeet.databinding.ActivityGroupListBinding
+import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
@@ -30,12 +39,17 @@ import pl.sggw.sggwmeet.model.connector.dto.response.GroupResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
 import pl.sggw.sggwmeet.viewmodel.GroupViewModel
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class GroupListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
+    private val topSheetTransition = AutoTransition()
+    @Inject
+    lateinit var picasso: Picasso
+
     private lateinit var binding : ActivityGroupListBinding
 
     private lateinit var adapter: GroupListAdapter
@@ -54,9 +68,12 @@ class GroupListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         this.binding = ActivityGroupListBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        setUpButton()
+
         setAnimations()
         setViewModelListener()
+
+        setTopSheet()
+        setUserData()
 
         SearchBarSetupUtil.setFontFamily(binding.searchBar,
             ResourcesCompat.getFont(this, R.font.robotoregular))
@@ -88,11 +105,6 @@ class GroupListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         spinner.adapter = adapter
     }
 
-    private fun setUpButton(){
-        binding.navbarActivity.closeBT.setOnClickListener {
-            this.finish()
-        }
-    }
     private fun setAnimations(){
         animationDim = AnimationUtils.loadAnimation(this,R.anim.background_dim_anim)
         animationDim.fillAfter=true
@@ -297,6 +309,103 @@ class GroupListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         binding.floatingBT.setOnClickListener{
             intent= Intent(this,GroupCreateActivity::class.java)
             startActivityForResult(intent, GROUP_ADDED)
+        }
+    }
+    private fun animationDimStartNavbar(){
+        binding.backgroundDimmer.startAnimation(animationDim)
+    }
+    private fun animationLitStartNavbar(){
+        binding.backgroundDimmer.startAnimation(animationLit)
+    }
+    private fun setTopSheet(){
+        binding.topSheetLayout.searchBar.visibility=View.GONE
+        binding.topSheetLayout.menuPlacesBT.visibility=View.GONE
+        binding.topSheetLayout.menuGroupsBT.isEnabled=false
+        binding.navbarActivity.popupButton.setOnClickListener{
+            topSheetTransition.duration=200
+            if(binding.topSheetLayout.hiddenView.visibility==View.VISIBLE){
+                closeTopSheet()
+            }
+            else{
+                openTopSheet()
+            }
+        }
+        binding.topSheetHideHitbox.setOnClickListener{
+            topSheetTransition.duration=200
+            closeTopSheet()
+        }
+
+        binding.topSheetLayout.menuMapBT.setOnClickListener {
+            this.finish()
+        }
+
+        binding.topSheetLayout.menuEventBT.setOnClickListener {
+            this.startActivity(Intent(this, EventListActivity::class.java))
+            this.finish()
+        }
+
+        binding.topSheetLayout.menuLogoutBT.setOnClickListener {
+            this.setResult(Activity.RESULT_OK)
+            this.finish()
+        }
+
+        binding.topSheetLayout.menuProfileBT.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+            this.topSheetTransition.duration = 100
+            this.closeTopSheet()
+        }
+
+        binding.topSheetLayout.menuSettingsBT.setOnClickListener {
+            startActivity(Intent(this, UserSettingsActivity::class.java))
+            this.topSheetTransition.duration = 100
+            this.closeTopSheet()
+        }
+
+        onBackPressedDispatcher.addCallback(this , object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.topSheetLayout.hiddenView.visibility == View.VISIBLE) {
+                    closeTopSheet()
+                }
+                else{
+                    isEnabled=false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+    }
+    private fun closeTopSheet(){
+        TransitionManager.beginDelayedTransition(binding.topSheetBase, topSheetTransition)
+        binding.topSheetLayout.hiddenView.visibility=View.GONE
+        binding.topSheetHideHitbox.visibility=View.GONE
+        animationLitStartNavbar()
+    }
+    private fun openTopSheet(){
+        TransitionManager.beginDelayedTransition(binding.topSheetBase, topSheetTransition)
+        binding.topSheetLayout.hiddenView.visibility=View.VISIBLE
+        binding.topSheetHideHitbox.visibility=View.VISIBLE
+        animationDimStartNavbar()
+    }
+    private fun setUserData(){
+        val gson = Gson()
+        val fetchedData = Prefs.read().content(
+            "userData",
+            "{\"id\":\"0\",\"firstName\":\"Imie\",\"lastName\":\"Nazwisko\",\"phoneNumberPrefix\":\"12\",\"phoneNumber\":\"123\",\"description\":\"\",\"avatarUrl\":null}"
+        )
+        val currentUser = gson.fromJson(fetchedData, UserData::class.java)
+
+        binding.topSheetLayout.displayNameTV.setText(currentUser.firstName+" "+currentUser.lastName)
+        binding.topSheetLayout.displayEmailTV.setText(Prefs.read().content("email","email@testowy.pl"))
+
+        val avatarUrl=Prefs.read().content("avatarUrl","")
+        if(avatarUrl!="") {
+            picasso
+                .load(avatarUrl)
+                .placeholder(R.drawable.asset_loading)
+                .into(binding.topSheetLayout.avatarPreviewIV)
+        }
+        else{
+            binding.topSheetLayout.avatarPreviewIV.setImageURI(null)
+            binding.topSheetLayout.avatarPreviewIV.setImageResource(R.drawable.avatar_1)
         }
     }
 }

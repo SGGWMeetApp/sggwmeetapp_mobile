@@ -1,5 +1,6 @@
 package pl.sggw.sggwmeet.activity
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -34,6 +35,11 @@ class CoreActivity : AppCompatActivity() {
     @Inject
     lateinit var picasso: Picasso
 
+    companion object {
+        //To check if user clicked logout on other activities
+        const val LOGOUT = 400
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.binding = ActivityCoreBinding.inflate(layoutInflater)
@@ -66,6 +72,7 @@ class CoreActivity : AppCompatActivity() {
         binding.backgroundDimmer.startAnimation(animationLit)
     }
     private fun setTopSheet(){
+        binding.topSheetLayout.menuMapBT.isEnabled=false
         binding.popupButton.setOnClickListener{
             topSheetTransition.duration=200
             if(binding.topSheetLayout.hiddenView.visibility==View.VISIBLE){
@@ -87,29 +94,26 @@ class CoreActivity : AppCompatActivity() {
         }
 
         binding.topSheetLayout.menuMapBT.setOnClickListener {
-            this.navigateToFragment(R.id.mapFragment)
-            this.topSheetTransition.duration = 100
-            this.closeTopSheet()
+//            this.navigateToFragment(R.id.mapFragment)
+//            this.topSheetTransition.duration = 100
+//            this.closeTopSheet()
         }
 
         binding.topSheetLayout.menuEventBT.setOnClickListener {
             //this.navigateToFragment(R.id.eventsFragment)
-            this.startActivity(Intent(this, EventListActivity::class.java))
+            this.startActivityForResult(Intent(this, EventListActivity::class.java), LOGOUT)
             this.topSheetTransition.duration = 100
             this.closeTopSheet()
         }
 
         binding.topSheetLayout.menuGroupsBT.setOnClickListener {
-            this.startActivity(Intent(this, GroupListActivity::class.java))
+            this.startActivityForResult(Intent(this, GroupListActivity::class.java), LOGOUT)
             this.topSheetTransition.duration = 100
             this.closeTopSheet()
         }
 
         binding.topSheetLayout.menuLogoutBT.setOnClickListener {
-            Prefs.securely().write().content("password","")
-                .apply()
-            startActivity(Intent(this, WelcomeActivity::class.java))
-            this.finish()
+            logoutUser()
         }
 
         binding.topSheetLayout.menuProfileBT.setOnClickListener {
@@ -179,5 +183,17 @@ class CoreActivity : AppCompatActivity() {
             binding.topSheetLayout.avatarPreviewIV.setImageURI(null)
             binding.topSheetLayout.avatarPreviewIV.setImageResource(R.drawable.avatar_1)
         }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == LOGOUT && resultCode == Activity.RESULT_OK) {
+            logoutUser()
+        }
+    }
+    private fun logoutUser(){
+        Prefs.securely().write().content("password","")
+            .apply()
+        startActivity(Intent(this, WelcomeActivity::class.java))
+        this.finish()
     }
 }
