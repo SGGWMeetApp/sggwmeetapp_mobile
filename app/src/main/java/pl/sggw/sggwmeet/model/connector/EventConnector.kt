@@ -43,4 +43,10 @@ interface EventConnector {
     @POST("/api/events")
     suspend fun createPublicEvent(@Body eventCreatePublicRequest: EventCreatePublicRequest) : Response<EventResponse>
 
+    /**
+     * Creates private event
+     */
+    @POST("/api/groups/{id}/events")
+    suspend fun createGroupEvent(@Body eventCreatePublicRequest: EventCreatePublicRequest, @Path("id") groupId: Int) : Response<EventResponse>
+
 }

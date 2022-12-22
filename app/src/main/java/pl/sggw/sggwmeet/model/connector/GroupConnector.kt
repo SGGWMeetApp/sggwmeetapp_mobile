@@ -2,6 +2,7 @@ package pl.sggw.sggwmeet.model.connector
 
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupAddUserRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupCreateRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.GroupEventNotificationRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -46,4 +47,23 @@ interface GroupConnector {
      */
     @GET("/api/groups/{group_id}/events")
     suspend fun getGroupEvents(@Path("group_id") group_id: Int) : Response<GetEventResponse>
+
+    /**
+     * Leaves or deletes group
+     */
+    @DELETE("/api/groups/{group_id}/users")
+    suspend fun leaveGroup(@Path("group_id") group_id: Int) : Response<GetGroupsResponse>
+
+    /**
+     * Changes notification settings for group for the event
+     */
+    @POST("/api/groups/{group_id}/events/{event_id}/notifications")
+    suspend fun switchGroupEventNotification(@Body groupNotificationRequest:GroupEventNotificationRequest, @Path("group_id") group_id: Int, @Path("event_id") event_id: Int) : Response<EventResponse>
+
+    /**
+     * Deletes group event
+     */
+    @DELETE("/api/groups/{group_id}/events/{event_id}")
+    suspend fun deleteGroupEvent(@Path("group_id") group_id: Int, @Path("event_id") event_id: Int) : Response<String>
+
 }

@@ -15,19 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mancj.materialsearchbar.MaterialSearchBar
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
-import pl.sggw.sggwmeet.adapter.EventLocationListAdapter
 import pl.sggw.sggwmeet.adapter.GroupUserAddAdapter
-import pl.sggw.sggwmeet.databinding.ActivityEventLocationListBinding
 import pl.sggw.sggwmeet.databinding.ActivityGroupAddUserListBinding
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
-import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.model.connector.dto.response.UserToGroupResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
-import pl.sggw.sggwmeet.viewmodel.EventViewModel
 import pl.sggw.sggwmeet.viewmodel.GroupViewModel
 import pl.sggw.sggwmeet.viewmodel.UserViewModel
 import kotlin.collections.ArrayList
@@ -195,6 +191,9 @@ class GroupAddUserListActivity : AppCompatActivity() {
 
         for (item in userList) {
             if ("${item.firstName} ${item.lastName}".lowercase().contains(text.lowercase())) {
+                filteredlist.add(item)
+            }
+            else if(item.email.lowercase().contains(text.lowercase())){
                 filteredlist.add(item)
             }
         }

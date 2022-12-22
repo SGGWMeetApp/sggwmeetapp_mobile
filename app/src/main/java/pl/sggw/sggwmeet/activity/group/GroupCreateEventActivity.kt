@@ -1,4 +1,4 @@
-package pl.sggw.sggwmeet.activity.event
+package pl.sggw.sggwmeet.activity.group
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -12,17 +12,15 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
-import pl.sggw.sggwmeet.databinding.ActivityEventEditBinding
+import pl.sggw.sggwmeet.activity.event.EventLocationListActivity
+import pl.sggw.sggwmeet.databinding.ActivityGroupEventCreateBinding
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
-import pl.sggw.sggwmeet.model.connector.dto.request.EventEditRequest
-import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
+import pl.sggw.sggwmeet.model.connector.dto.request.EventCreatePublicRequest
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
 import java.text.SimpleDateFormat
@@ -30,51 +28,33 @@ import java.util.Calendar
 
 
 @AndroidEntryPoint
-class EventEditActivity: AppCompatActivity() {
+class GroupCreateEventActivity: AppCompatActivity() {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
-    private lateinit var binding : ActivityEventEditBinding
-    private lateinit var eventData : EventResponse
+    private lateinit var binding : ActivityGroupEventCreateBinding
     private val timeFormat = SimpleDateFormat("dd.MM.yyyy' 'HH:mm")
-    private val gson = Gson()
+    private val dateToIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
     private var selectedCalendar=Calendar.getInstance()
     private var selectedLocationID=0
+    private var groupId=-1
 
     private val eventViewModel by viewModels<EventViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.binding = ActivityEventEditBinding.inflate(layoutInflater)
+        this.binding = ActivityGroupEventCreateBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
         setUpButtons()
         setAnimations()
         setViewModelListener()
-
-        val retrievedData: String? = intent.getStringExtra("eventData")
-        setUpEvent(retrievedData)
-    }
-
-    private fun setUpEvent(data:String?){
-        if(data.isNullOrBlank()){
-            this.finish()
-        }
-        try {
-            eventData=gson.fromJson(data, EventResponse::class.java)
-            binding.eventNameTF.setText(eventData.name)
-            selectedCalendar.time=eventData.startDate
-            binding.eventStartDateTV.setText(timeFormat.format(selectedCalendar.time))
-            binding.eventDescriptionTF.setText(eventData.description)
-            binding.eventLocationTV.setText(eventData.locationData.name)
-            eventViewModel.getAllPlaces()
-        }
-        catch (e:Exception){
+        binding.eventStartDateTV.setText(timeFormat.format(selectedCalendar.time))
+        groupId = intent.getIntExtra("groupId",groupId)
+        if(groupId==-1){
             this.finish()
         }
     }
-
-
 
     private fun setUpButtons() {
         binding.cancelBT.setOnClickListener {
@@ -95,7 +75,7 @@ class EventEditActivity: AppCompatActivity() {
             startActivityForResult(newActivity,101)
         }
         binding.confirmButton.setOnClickListener {
-            editEvent()
+            createEvent()
         }
     }
     private fun selectDate(){
@@ -145,47 +125,14 @@ class EventEditActivity: AppCompatActivity() {
     }
 
     private fun setViewModelListener() {
-
-        eventViewModel.getAllPlacesState.observe(this) { resource ->
+        eventViewModel.createGroupEventState.observe(this) { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     lockUI()
                 }
                 is Resource.Success -> {
-                    selectedLocationID=findLocation(resource.data!!)
-                    if(selectedLocationID == -1){
-                        this.finish()
-                    }
-                    unlockUI()
-                }
-                is Resource.Error -> {
-                    unlockUI()
-                    when(resource.exception) {
-
-                        is TechnicalException -> {
-                            showTechnicalErrorMessage()
-                        }
-                        is ServerException -> {
-                            handleServerErrorCode(resource.exception.errorCode)
-                        }
-                        is ClientException -> {
-                            handleClientErrorCode(resource.exception.errorCode)
-                        }
-                    }
-                }
-            }
-        }
-        eventViewModel.editEventState.observe(this) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    lockUI()
-                }
-                is Resource.Success -> {
-                    //resource.data!!
-                    Toast.makeText(this, "Zedytowano wydarzenie", Toast.LENGTH_SHORT).show()
-                    intent = Intent()
-                        .putExtra("newEventData",gson.toJson(resource.data))
-                    this.setResult(Activity.RESULT_OK,intent)
+                    Toast.makeText(this, "Utworzono wydarzenie", Toast.LENGTH_SHORT).show()
+                    this.setResult(Activity.RESULT_OK)
                     this.finish()
                     unlockUI()
                 }
@@ -216,6 +163,13 @@ class EventEditActivity: AppCompatActivity() {
 
     private fun handleServerErrorCode(errorCode: String) {
         when(errorCode){
+            "400" -> {
+                binding.eventCreateDateWarning.visibility=View.VISIBLE
+            }
+            "401" -> {
+                Toast.makeText(this, "Nie masz uprawnień", Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
         }
     }
 
@@ -223,20 +177,6 @@ class EventEditActivity: AppCompatActivity() {
         Toast.makeText(this, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
     }
 
-    //Zwraca id lokacji na podstawie nazwy, bo backend nie zwraca id lokacji w odpowiedzi
-    private fun findLocation(places:List<SimplePlaceResponseData>):Int{
-        val searchTarget = eventData.locationData.name
-        for (item in places){
-            if(item.name == searchTarget){
-                return try {
-                    item.id.toInt()
-                } catch (e:Exception){
-                    -1
-                }
-            }
-        }
-        return -1
-    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode==101 && resultCode == Activity.RESULT_OK) {
@@ -245,30 +185,44 @@ class EventEditActivity: AppCompatActivity() {
                 binding.eventLocationTV.setText(
                     data.getStringExtra("returnedLocationName")
                 )
+                binding.eventCreateLocationWarning.visibility=View.GONE
             }
 
         }
     }
-    private fun editEvent(){
+
+    private fun checkForm():Boolean{
+        var check = true
         binding.eventNameTextInputLayout.isErrorEnabled=false
+        binding.eventCreateLocationWarning.visibility=View.GONE
+        binding.eventCreateDateWarning.visibility=View.GONE
         trimTextInput(binding.eventNameTF)
         trimTextInput(binding.eventDescriptionTF)
-        if(!binding.eventNameTF.text.isNullOrBlank()){
-            val dateToIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-            eventViewModel.editEvent(
-                EventEditRequest(
+        if(binding.eventNameTF.text.isNullOrBlank()){
+            binding.eventNameTextInputLayout.error=getString(R.string.registration_required_field)
+            check = false
+        }
+        if(selectedLocationID==0){
+            binding.eventCreateLocationWarning.visibility=View.VISIBLE
+            check = false
+        }
+        return check
+    }
+
+    private fun createEvent(){
+        if(checkForm()){
+            eventViewModel.createGroupEvent(
+                EventCreatePublicRequest(
                     binding.eventNameTF.text.toString(),
                     selectedLocationID,
                     binding.eventDescriptionTF.text.toString(),
                     dateToIso.format(selectedCalendar.time)
                 ),
-                eventData.id
+                groupId
                 )
         }
-        else{
-            binding.eventNameTextInputLayout.error=getString(R.string.registration_required_field)
-        }
     }
+
     private fun trimTextInput(textInput: TextInputEditText) {
         textInput.setText(textInput.text.toString().trim())
     }

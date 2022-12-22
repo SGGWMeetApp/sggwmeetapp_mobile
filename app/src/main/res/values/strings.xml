@@ -195,8 +195,14 @@
     <string name="date_select">Data</string>
     <string name="time_select">Godzina</string>
     <string name="location_select_list">Wybierz miejsce</string>
-    <string name="event_create_public_title">Utwórz publiczne wydarzenie</string>
-    <string name="event_create_location_warning">Niewybrano miejsca</string>
+    <string name="event_create_public_title">Utwórz wydarzenie</string>
+    <string name="event_create_location_warning">Nie wybrano miejsca</string>
+    <string name="event_create_group_warning">Nie wybrano grupy</string>
+    <string name="event_delete">Usuń</string>
+    <string name="event_type">Rodzaj wydarzenia</string>
+    <string name="event_type_public">Publiczne</string>
+    <string name="event_type_group">Grupowe</string>
+    <string name="group_select_list">Wybierz grupę</string>
 
     <!-- Settings -->
     <string name="user_settings">Opcje użytkownika</string>
@@ -213,6 +219,10 @@
     <string name="group_name">Nazwa grupy</string>
     <string name="group_create_title">Utwórz grupę</string>
     <string name="add_user">Dodaj użytkownika</string>
+    <string name="group_create_event_title">Utwórz wydarzenie prywatne</string>
+    <string name="group_delete">Usuń grupę</string>
+    <string name="group_leave">Opuść grupę</string>
+    <string name="group">Grupa</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

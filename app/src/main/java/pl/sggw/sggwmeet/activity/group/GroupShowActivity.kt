@@ -1,6 +1,8 @@
 package pl.sggw.sggwmeet.activity.group
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -31,11 +33,13 @@ class GroupShowActivity: AppCompatActivity() {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
     private lateinit var binding : ActivityGroupShowBinding
-    private lateinit var groupData : GroupResponse
+    internal lateinit var groupData : GroupResponse
     private lateinit var memberResponse: ArrayList<GroupMemberResponse>
     private lateinit var eventResponse: ArrayList<EventResponse>
     private var areEventsInit = false
     private val gson = Gson()
+    private var userIsAdmin=false
+    private lateinit var leaveAlertDialog: AlertDialog
 
     private lateinit var adapter: GroupShowUsersAdapter
     private lateinit var adapterEvent: GroupEventListAdapter
@@ -44,6 +48,7 @@ class GroupShowActivity: AppCompatActivity() {
     companion object {
         const val ADD_USER = 301
         const val ADD_EVENT = 302
+        const val EDIT_EVENT = 303
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +88,9 @@ class GroupShowActivity: AppCompatActivity() {
         binding.groupAddUserBT.setOnClickListener {
             addUser()
         }
+        binding.groupAddEventBT.setOnClickListener {
+            addEvent()
+        }
         binding.groupUserSectionBT.setOnClickListener{
             membersClick()
         }
@@ -99,6 +107,12 @@ class GroupShowActivity: AppCompatActivity() {
         val newActivity = Intent(this, GroupAddUserListActivity::class.java)
             .putExtra("groupId",groupData.id)
         startActivityForResult(newActivity, ADD_USER)
+    }
+
+    private fun addEvent(){
+        val newActivity = Intent(this, GroupCreateEventActivity::class.java)
+            .putExtra("groupId",groupData.id)
+        startActivityForResult(newActivity, ADD_EVENT)
     }
 
     private fun setAnimations(){
@@ -199,6 +213,38 @@ class GroupShowActivity: AppCompatActivity() {
                 }
             }
         }
+
+        groupViewModel.leaveGroupGetState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    if(userIsAdmin){
+                        Toast.makeText(this, "Usunięto grupę", Toast.LENGTH_SHORT).show()
+                    }
+                    else Toast.makeText(this, "Opuszczono grupę", Toast.LENGTH_SHORT).show()
+                    unlockUI()
+                    this.setResult(Activity.RESULT_OK)
+                    this.finish()
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun handleClientErrorCode(errorCode: ClientErrorCode) {
@@ -220,16 +266,26 @@ class GroupShowActivity: AppCompatActivity() {
     }
 
     private fun setAdminPermission(){
-        binding.editGroupBT.visibility=View.VISIBLE
-        binding.groupAddUserBT.visibility=View.VISIBLE
+        //binding.editGroupBT.visibility=View.VISIBLE
+        //binding.groupAddUserBT.visibility=View.VISIBLE
         binding.groupAddEventBT.visibility=View.VISIBLE
+        binding.leaveGroupBT.visibility=View.VISIBLE
+        setUpRemoveAlertDialog()
+        userIsAdmin=true
         setGroupMemberPermission()
     }
 
     private fun setGroupMemberPermission(){
         binding.groupShowUserView.visibility=View.VISIBLE
         binding.groupShowSelection.visibility=View.VISIBLE
+        binding.groupAddUserBT.visibility=View.VISIBLE
+        //binding.groupAddEventBT.visibility=View.VISIBLE
         binding.groupShowEventView.visibility=View.GONE
+        if(!userIsAdmin){
+            binding.leaveGroupBT.setText(R.string.group_leave)
+            binding.leaveGroupBT.visibility=View.VISIBLE
+            setUpLeaveAlertDialog()
+        }
     }
 
     private fun buildRecyclerView(){
@@ -258,9 +314,15 @@ class GroupShowActivity: AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_USER && resultCode == Activity.RESULT_OK) {
             getMembers()
+            this.setResult(Activity.RESULT_OK)
         }
         else if (requestCode == ADD_EVENT && resultCode == Activity.RESULT_OK) {
-            //TODO
+            getEvents()
+            this.setResult(Activity.RESULT_OK)
+        }
+        else if (requestCode == EDIT_EVENT && resultCode == Activity.RESULT_OK) {
+            getEvents()
+            this.setResult(Activity.RESULT_OK)
         }
     }
 
@@ -276,5 +338,52 @@ class GroupShowActivity: AppCompatActivity() {
         binding.groupUserSectionBAR.visibility=View.INVISIBLE
         binding.groupShowEventView.visibility=View.VISIBLE
         binding.groupShowUserView.visibility=View.GONE
+    }
+
+    private fun setUpLeaveAlertDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder
+            .setCancelable(true)
+            .setMessage("Czy opuścić grupę?")
+            .setNegativeButton("Nie",
+                DialogInterface.OnClickListener { dialog, which ->
+                    dialog.cancel()
+                }
+            )
+            .setPositiveButton("Tak",
+                DialogInterface.OnClickListener { dialog, which ->
+                    leaveGroup()
+                    dialog.dismiss()
+                }
+            )
+        leaveAlertDialog=builder.create()
+        setUpLeaveButton()
+    }
+    private fun setUpRemoveAlertDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder
+            .setCancelable(true)
+            .setMessage("Czy usunąć grupę?")
+            .setNegativeButton("Nie",
+                DialogInterface.OnClickListener { dialog, which ->
+                    dialog.cancel()
+                }
+            )
+            .setPositiveButton("Tak",
+                DialogInterface.OnClickListener { dialog, which ->
+                    leaveGroup()
+                    dialog.dismiss()
+                }
+            )
+        leaveAlertDialog=builder.create()
+        setUpLeaveButton()
+    }
+    private fun setUpLeaveButton(){
+        binding.leaveGroupBT.setOnClickListener {
+            leaveAlertDialog.show()
+        }
+    }
+    private fun leaveGroup(){
+        groupViewModel.leaveGroup(groupData.id)
     }
 }

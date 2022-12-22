@@ -1,6 +1,5 @@
 package pl.sggw.sggwmeet.adapter
 
-import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -9,14 +8,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.activity.event.EventShowActivity
+import pl.sggw.sggwmeet.activity.group.GroupShowActivity
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import java.text.SimpleDateFormat
 
-class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity): RecyclerView.Adapter<GroupEventListAdapter.ViewHolder>() {
+class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: GroupShowActivity): RecyclerView.Adapter<GroupEventListAdapter.ViewHolder>() {
     private var eventList: ArrayList<EventResponse>
     private val gson = Gson()
     private val timeFormat = SimpleDateFormat("dd.MM.yyyy' 'HH:mm")
-    private lateinit var activity: Activity
+    private lateinit var activity: GroupShowActivity
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.event_item, parent, false)
@@ -32,11 +33,13 @@ class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: Activ
         if(model.description.isNullOrBlank()){
             holder.eventDescription.visibility=View.GONE
         }
-//        holder.itemView.setOnClickListener{
-//            val newActivity = Intent(holder.itemView.context, EventShowActivity::class.java)
-//                .putExtra("eventData",gson.toJson(model))
-//            activity.startActivityForResult(newActivity, EventListActivity.EVENT_EDITED)
-//        }
+        holder.itemView.setOnClickListener{
+            val newActivity = Intent(holder.itemView.context, EventShowActivity::class.java)
+                .putExtra("eventData",gson.toJson(model))
+                .putExtra("groupId",activity.groupData.id)
+                .putExtra("groupName",activity.groupData.name)
+            activity.startActivityForResult(newActivity, GroupShowActivity.EDIT_EVENT)
+        }
     }
 
     override fun getItemCount(): Int {

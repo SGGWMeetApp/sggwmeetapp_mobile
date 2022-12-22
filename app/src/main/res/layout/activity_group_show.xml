@@ -57,11 +57,21 @@
 
                     <Button
                         android:id="@+id/editGroup_BT"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|right"
                         android:layout_marginTop="8dp"
                         android:text="@string/event_edit"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <Button
+                        android:id="@+id/leave_group_BT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:backgroundTint="#FF4444"
+                        android:text="@string/group_delete"
                         android:visibility="gone"
                         tools:visibility="visible" />
 
@@ -133,9 +143,9 @@
 
                         <Button
                             android:id="@+id/group_add_user_BT"
-                            android:layout_width="match_parent"
-                            android:layout_height="60dp"
-                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|right"
                             android:text="@string/add_user"
                             android:visibility="gone"
                             tools:visibility="visible" />
@@ -156,9 +166,9 @@
 
                         <Button
                             android:id="@+id/group_add_event_BT"
-                            android:layout_width="match_parent"
-                            android:layout_height="60dp"
-                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|right"
                             android:text="Dodaj wydarzenie"
                             android:visibility="gone"
                             tools:visibility="visible" />

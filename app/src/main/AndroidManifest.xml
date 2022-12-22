@@ -21,6 +21,33 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.event.EventSelectGroupActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".activity.group.GroupEventEditActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".activity.group.GroupCreateEventActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
             android:name=".activity.group.GroupAddUserListActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false">

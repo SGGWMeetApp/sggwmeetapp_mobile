@@ -1,22 +1,11 @@
 package pl.sggw.sggwmeet.adapter
 
 import android.app.Activity
-import android.content.Intent
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.activity.viewModels
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isGone
-import androidx.core.view.isInvisible
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.activity.group.GroupAddUserListActivity
@@ -24,8 +13,6 @@ import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupAddUserRequest
-import pl.sggw.sggwmeet.model.connector.dto.response.GroupAddUserResponse
-import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.model.connector.dto.response.UserToGroupResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.GroupViewModel
@@ -49,6 +36,7 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
         val model: UserToGroupResponse = userList[position]
         holder.sendButton.visibility=visibilityState[position]
         holder.userName.setText("${model.firstName} ${model.lastName}")
+        holder.email.setText(model.email)
         if(model.avatarUrl.isNullOrBlank()){
             holder.profilePicture.setImageResource(R.drawable.avatar_1)
         }
@@ -60,7 +48,7 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
         }
 
         holder.sendButton.setOnClickListener{
-            setViewModelListener(holder)
+            setViewModelListener(holder, model)
             groupViewModel.addUserToGroup(GroupAddUserRequest(
                 model.id,
                 position
@@ -75,12 +63,14 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         lateinit var userName: TextView
+        lateinit var email: TextView
         lateinit var sendButton: ImageButton
         lateinit var profilePicture: ImageView
 
         init {
             // initializing our views with their ids.
             userName = itemView.findViewById(R.id.group_user_add_name)
+            email = itemView.findViewById(R.id.group_user_add_email)
             sendButton = itemView.findViewById(R.id.group_user_add_BT)
             profilePicture = itemView.findViewById(R.id.group_add_user_avatar_IV)
         }
@@ -97,7 +87,7 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
         }
     }
 
-    private fun setViewModelListener(holder:ViewHolder) {
+    private fun setViewModelListener(holder:ViewHolder, model: UserToGroupResponse) {
 
         groupViewModel.addUserToGroupGetState.observe(activity) { resource ->
             when(resource) {
@@ -105,12 +95,14 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
                     activity.lockUI()
                 }
                 is Resource.Success -> {
+                    Toast.makeText(activity, "Dodano ${model.firstName} ${model.lastName} do grupy", Toast.LENGTH_SHORT).show()
                     holder.sendButton.visibility=View.INVISIBLE
                     visibilityState[resource.data!!.position]=View.INVISIBLE
                     activity.setResult(Activity.RESULT_OK,activity.intent)
                     activity.unlockUI()
                 }
                 is Resource.Error -> {
+                    Toast.makeText(activity, "Nie dodano ${model.firstName} ${model.lastName} do grupy", Toast.LENGTH_SHORT).show()
                     activity.unlockUI()
                     when(resource.exception) {
 

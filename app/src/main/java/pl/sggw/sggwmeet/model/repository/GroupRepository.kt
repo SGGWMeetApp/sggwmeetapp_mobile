@@ -12,6 +12,7 @@ import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.GroupConnector
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupAddUserRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupCreateRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.GroupEventNotificationRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.*
 import pl.sggw.sggwmeet.util.Resource
 import java.util.*
@@ -175,6 +176,83 @@ class GroupRepository(
                 val responseBody = response.body()
                 Log.i(TAG, "Received group events")
                 emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun leaveGroup(group_id: Int) : Flow<Resource<GetGroupsResponse>> = flow {
+        val functionTAG = "leaveGroup"
+        emit(Resource.Loading())
+        try {
+            val response = connector.leaveGroup(group_id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Left group")
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun switchGroupNotification(notificationRequest: GroupEventNotificationRequest, group_id: Int, event_id: Int) : Flow<Resource<EventResponse>> = flow {
+        val functionTAG = "switchGroupNotification"
+        emit(Resource.Loading())
+        try {
+            val response = connector.switchGroupEventNotification(notificationRequest, group_id, event_id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Switched group event notification settings")
+                emit(Resource.Success(responseBody!!))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun deleteGroupEvent(group_id: Int, event_id: Int) : Flow<Resource<String>> = flow {
+        val functionTAG = "deleteGroupEvent"
+        emit(Resource.Loading())
+        try {
+            val response = connector.deleteGroupEvent(group_id, event_id)
+            if(response.isSuccessful) {
+                Log.i(TAG, "Deleted event")
+                emit(Resource.Success())
             }
             else{
                 Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())

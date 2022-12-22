@@ -53,64 +53,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto"
-                        android:text="@string/event_create_public_title"
+                        android:text="@string/group_create_event_title"
                         android:textColor="@color/blackAlpha"
                         android:textFontWeight="400"
                         android:textSize="24sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/event_type" />
-
-                    <Spinner
-                        android:id="@+id/spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <LinearLayout
-                        android:id="@+id/event_create_group_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/group" />
-
-                        <TextView
-                            android:id="@+id/event_create_group_name_TV"
-                            style="@style/profile_main_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Nie wybrano" />
-
-                        <TextView
-                            android:id="@+id/event_create_group_warning"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/event_create_group_warning"
-                            android:textColor="#FF4444"
-                            android:visibility="gone" />
-
-                        <Button
-                            android:id="@+id/select_group_BT"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="left"
-                            android:text="@string/group_select_list" />
-                    </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/event_name_TextInputLayout"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="16dp"
                         android:autofillHints="@string/event_name"
                         android:hint="@string/event_name">
 

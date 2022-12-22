@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupAddUserRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupCreateRequest
+import pl.sggw.sggwmeet.model.connector.dto.request.GroupEventNotificationRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.*
 import pl.sggw.sggwmeet.model.repository.GroupRepository
 import pl.sggw.sggwmeet.util.Resource
@@ -96,4 +97,42 @@ class GroupViewModel @Inject constructor(
         }
     }
 
+    private val _leaveGroupGetState: MutableLiveData<Resource<GetGroupsResponse>> = MutableLiveData()
+    val leaveGroupGetState: LiveData<Resource<GetGroupsResponse>>
+        get() = _leaveGroupGetState
+
+    fun leaveGroup(group_id:Int) {
+        viewModelScope.launch {
+            groupRepository.leaveGroup(group_id).onEach {
+                _leaveGroupGetState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _switchGroupNotificationGetState: MutableLiveData<Resource<EventResponse>> = MutableLiveData()
+    val switchGroupNotificationGetState: LiveData<Resource<EventResponse>>
+        get() = _switchGroupNotificationGetState
+
+    fun switchGroupNotification(notificationRequest: GroupEventNotificationRequest, group_id:Int, event_id:Int) {
+        viewModelScope.launch {
+            groupRepository.switchGroupNotification(notificationRequest, group_id, event_id).onEach {
+                _switchGroupNotificationGetState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _deleteGroupEventGetState: MutableLiveData<Resource<String>> = MutableLiveData()
+    val deleteGroupEventGetState: LiveData<Resource<String>>
+        get() = _deleteGroupEventGetState
+
+    fun deleteGroupEvent(group_id:Int, event_id:Int) {
+        viewModelScope.launch {
+            groupRepository.deleteGroupEvent(group_id, event_id).onEach {
+                _deleteGroupEventGetState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
 }

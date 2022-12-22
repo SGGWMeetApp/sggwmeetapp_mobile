@@ -84,4 +84,17 @@ class EventViewModel @Inject constructor(
                 .launchIn(viewModelScope)
         }
     }
+
+    private val _createGroupEventState: MutableLiveData<Resource<EventResponse>> = MutableLiveData()
+    val createGroupEventState: LiveData<Resource<EventResponse>>
+        get() = _createGroupEventState
+
+    fun createGroupEvent(eventCreateRequest: EventCreatePublicRequest, group_id: Int) {
+        viewModelScope.launch {
+            eventRepository.createGroupEvent(eventCreateRequest, group_id).onEach {
+                _createGroupEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
 }

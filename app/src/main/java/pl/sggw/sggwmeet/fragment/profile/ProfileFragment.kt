@@ -51,6 +51,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         binding.changePasswordBT.setOnClickListener {
             this.findNavController().navigate(R.id.action_profileFragment_to_changePasswordFragment)
         }
+        binding.quitBT.setOnClickListener {
+            requireActivity().finish()
+        }
 
     }
 
@@ -66,8 +69,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         )
         binding.firstNameTV.setText(currentUser.firstName)
         binding.lastNameTV.setText(currentUser.lastName)
-        binding.phonePrefixTV.setText(currentUser.phoneNumberPrefix)
-        binding.phoneTV.setText(currentUser.phoneNumber)
+        binding.phoneTV.setText("(${currentUser.phoneNumberPrefix}) ${currentUser.phoneNumber}")
         binding.descriptionTV.setText(currentUser.description)
 
         val avatarUrl=Prefs.read().content("avatarUrl","")

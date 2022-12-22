@@ -113,17 +113,6 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/prompt_phonePrefix" />
-
-                <TextView
-                    android:id="@+id/phonePrefix_TV"
-                    style="@style/profile_main_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:text="@string/prompt_phone" />
 
                 <TextView
@@ -164,6 +153,14 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center"
                     android:text="@string/change_password" />
+
+                <Button
+                    android:id="@+id/quit_BT"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:backgroundTint="#FF4444"
+                    android:text="@string/exit"
+                    android:visibility="visible" />
 
 
 

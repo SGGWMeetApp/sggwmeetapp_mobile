@@ -1,10 +1,11 @@
-package pl.sggw.sggwmeet.activity.event
+package pl.sggw.sggwmeet.activity.group
 
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -15,6 +16,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.activity.event.EventLocationListActivity
 import pl.sggw.sggwmeet.databinding.ActivityEventEditBinding
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
@@ -30,7 +32,7 @@ import java.util.Calendar
 
 
 @AndroidEntryPoint
-class EventEditActivity: AppCompatActivity() {
+class GroupEventEditActivity: AppCompatActivity() {
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
     private lateinit var binding : ActivityEventEditBinding
@@ -157,6 +159,8 @@ class EventEditActivity: AppCompatActivity() {
                         this.finish()
                     }
                     unlockUI()
+                    Log.i("EventEditActivity","Date: "+selectedCalendar.toString())
+                    Log.i("EventEditActivity","Location ID: $selectedLocationID")
                 }
                 is Resource.Error -> {
                     unlockUI()
@@ -182,7 +186,7 @@ class EventEditActivity: AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     //resource.data!!
-                    Toast.makeText(this, "Zedytowano wydarzenie", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Edytowano wydarzenie", Toast.LENGTH_SHORT).show()
                     intent = Intent()
                         .putExtra("newEventData",gson.toJson(resource.data))
                     this.setResult(Activity.RESULT_OK,intent)

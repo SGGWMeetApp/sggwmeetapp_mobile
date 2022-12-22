@@ -155,4 +155,30 @@ class EventRepository(
             emit(Resource.Error(TechnicalException("An error occurred during authorization")))
         }
     }
+
+    suspend fun createGroupEvent(eventCreateRequest: EventCreatePublicRequest, group_id: Int) : Flow<Resource<EventResponse>> = flow {
+        val functionTAG = "createGroupEvent"
+        emit(Resource.Loading())
+        try {
+            val response = connector.createGroupEvent(eventCreateRequest, group_id)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Created group event")
+                emit(Resource.Success(responseBody))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
 }
