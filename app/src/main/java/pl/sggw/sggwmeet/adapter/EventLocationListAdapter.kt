@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.transition.AutoTransition
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +15,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.activity.event.EventShowOnMapActivity
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 
 class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>, activity: Activity): RecyclerView.Adapter<EventLocationListAdapter.ViewHolder>() {
@@ -80,6 +81,11 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
             activity.setResult(Activity.RESULT_OK,intent)
             activity.finish()
         }
+        holder.locationMapButton.setOnClickListener{
+            val newActivity = Intent(holder.itemView.context, EventShowOnMapActivity::class.java)
+                .putExtra("locationId",model.id.toInt())
+            activity.startActivityForResult(newActivity, 123)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -97,6 +103,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
         lateinit var locationItemArea: LinearLayout
         lateinit var locationHiddenView: LinearLayout
         lateinit var locationRoot: ConstraintLayout
+        lateinit var locationMapButton: ImageButton
         val transition = AutoTransition()
 
 
@@ -111,6 +118,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
             locationItemArea = itemView.findViewById(R.id.event_loc_info_area)
             locationHiddenView = itemView.findViewById(R.id.event_loc_hidden)
             locationRoot = itemView.findViewById(R.id.event_loc_root)
+            locationMapButton = itemView.findViewById(R.id.event_loc_show_on_map_BT)
             transition.duration=200
         }
     }
