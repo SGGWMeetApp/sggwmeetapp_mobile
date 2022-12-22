@@ -13,8 +13,10 @@ import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
+import pl.sggw.sggwmeet.model.connector.dto.request.ResetPasswordRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserRegisterRequestData
 import pl.sggw.sggwmeet.model.connector.dto.response.ErrorResponse
+import pl.sggw.sggwmeet.model.connector.dto.response.ResetPasswordResponse
 import pl.sggw.sggwmeet.util.Resource
 
 class AuthorizationRepository(
@@ -110,4 +112,28 @@ class AuthorizationRepository(
         return password.length > MIN_PASSWORD_LENGTH
     }
 
+    suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest) : Flow<Resource<ResetPasswordResponse>> = flow {
+        val functionTAG = "resetPassword"
+        emit(Resource.Loading())
+        try {
+            val response = connector.resetPassword(resetPasswordRequest)
+            if(response.isSuccessful) {
+                Log.i(TAG, "Password reset request sent")
+                emit(Resource.Success())
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
 }

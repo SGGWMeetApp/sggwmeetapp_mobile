@@ -21,6 +21,11 @@
     <string name="login_register_info">Nie mam jeszcze konta</string>
     <string name="login_register_link"><a href="">Zarejestruj</a></string>
     <string name="login_wrong">Niepoprawne dane</string>
+    <string name="reset_password_info">Nie pamiętam hasła</string>
+    <string name="reset_password">Zresetuj hasło</string>
+    <string name="reset_password_link"><a href="">Zresetuj hasło</a></string>
+    <string name="go_back">Wróć</string>
+    <string name="reset_email_sent">Wysłano wiadomość z linkiem do resetu hasła.\n\nSprawdź skrzynkę pocztową.</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

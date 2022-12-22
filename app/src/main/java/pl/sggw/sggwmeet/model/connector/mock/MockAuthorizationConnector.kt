@@ -4,8 +4,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
+import pl.sggw.sggwmeet.model.connector.dto.request.ResetPasswordRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserLoginRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserRegisterRequest
+import pl.sggw.sggwmeet.model.connector.dto.response.ResetPasswordResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.UserLoginResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.UserRegisterResponse
 import retrofit2.Response
@@ -53,5 +55,9 @@ class MockAuthorizationConnector : AuthorizationConnector {
             )
         )
 
+    }
+
+    override suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest): Response<ResetPasswordResponse> {
+        TODO("Not yet implemented")
     }
 }

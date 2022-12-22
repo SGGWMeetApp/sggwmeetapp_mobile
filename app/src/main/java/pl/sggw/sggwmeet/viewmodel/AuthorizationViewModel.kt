@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import pl.sggw.sggwmeet.domain.UserCredentials
 import pl.sggw.sggwmeet.domain.UserData
+import pl.sggw.sggwmeet.model.connector.dto.request.ResetPasswordRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.UserRegisterRequestData
+import pl.sggw.sggwmeet.model.connector.dto.response.ResetPasswordResponse
 import pl.sggw.sggwmeet.model.repository.AuthorizationRepository
 import pl.sggw.sggwmeet.util.Resource
 import javax.inject.Inject
@@ -39,6 +41,19 @@ class AuthorizationViewModel @Inject constructor(
         viewModelScope.launch {
             authorizationRepository.register(userCredentials, userData).onEach {
                 _registerState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _resetPasswordState: MutableLiveData<Resource<ResetPasswordResponse>> = MutableLiveData()
+    val resetPasswordState: LiveData<Resource<ResetPasswordResponse>>
+        get() = _resetPasswordState
+
+    fun resetPassword(resetPasswordRequest: ResetPasswordRequest) {
+        viewModelScope.launch {
+            authorizationRepository.resetPassword(resetPasswordRequest).onEach {
+                _resetPasswordState.value = it
             }
                 .launchIn(viewModelScope)
         }

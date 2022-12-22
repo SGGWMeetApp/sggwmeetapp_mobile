@@ -83,6 +83,9 @@ class LoginFragment : Fragment() {
         binding.registerLinkTV.setOnClickListener {
             this.findNavController().navigate(R.id.registerFragment)
         }
+        binding.resetLinkTV.setOnClickListener {
+            this.findNavController().navigate(R.id.resetPasswordFragment)
+        }
 
     }
 
