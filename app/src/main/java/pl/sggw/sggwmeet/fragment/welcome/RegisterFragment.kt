@@ -222,11 +222,11 @@ class RegisterFragment : Fragment() {
                             showTechnicalErrorMessage()
                         }
                         is ServerException -> {
-                            showLoginFailedMessage()
+                            showRegisterFailedMessage()
                             handleServerErrorCode(resource.exception.errorCode)
                         }
                         is ClientException -> {
-                            showLoginFailedMessage()
+                            showRegisterFailedMessage()
                             //handleClientErrorCode(resource.exception.errorCode)
                         }
                     }
@@ -279,12 +279,16 @@ class RegisterFragment : Fragment() {
             )
         )
     }
+    private fun showRegisterFailedMessage() {
+        Toast.makeText(context, "Rejestracja nie powiodła się", Toast.LENGTH_SHORT).show()
+    }
+
     private fun showLoginFailedMessage() {
-        Toast.makeText(context, getString(R.string.login_failed), Toast.LENGTH_LONG).show()
+        Toast.makeText(context, getString(R.string.login_failed), Toast.LENGTH_SHORT).show()
     }
 
     private fun showTechnicalErrorMessage() {
-        Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
+        Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_SHORT).show()
     }
 
     private fun handleServerErrorCode(errorCode: String) {

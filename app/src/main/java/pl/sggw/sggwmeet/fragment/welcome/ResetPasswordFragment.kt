@@ -135,7 +135,7 @@ class ResetPasswordFragment : Fragment() {
         }
     }
     private fun showLoginFailedMessage() {
-        Toast.makeText(context, getString(R.string.login_failed), Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Reset hasła nie powiódł się", Toast.LENGTH_LONG).show()
     }
 
     private fun showTechnicalErrorMessage() {

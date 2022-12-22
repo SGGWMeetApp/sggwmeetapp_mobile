@@ -189,11 +189,11 @@ class UserEditFragment : Fragment() {
 
 
     private fun showLoginFailedMessage() {
-        Toast.makeText(context, getString(R.string.login_failed), Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Zmiana danych się nie powiodła", Toast.LENGTH_SHORT).show()
     }
 
     private fun showTechnicalErrorMessage() {
-        Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
+        Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_SHORT).show()
     }
 
     private fun setAnimations(){
