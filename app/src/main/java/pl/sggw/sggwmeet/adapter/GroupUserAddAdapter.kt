@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import pl.sggw.sggwmeet.R
@@ -21,7 +22,7 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
     private var userList: ArrayList<UserToGroupResponse>
     private lateinit var activity: GroupAddUserListActivity
     private lateinit var picasso: Picasso
-    private var visibilityState: ArrayList<Int> = ArrayList<Int>()
+    private var visibilityState: ArrayList<Boolean> = ArrayList<Boolean>()
     private lateinit var groupViewModel: GroupViewModel
 
     fun filterList(filterList: ArrayList<UserToGroupResponse>) {
@@ -34,7 +35,22 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model: UserToGroupResponse = userList[position]
-        holder.sendButton.visibility=visibilityState[position]
+        holder.internalPosition=position
+        if(visibilityState[position]){
+            holder.sendButton.isClickable=true
+            holder.sendButton.setImageResource(R.drawable.asset_plus)
+            holder.sendButton.setOnClickListener{
+                setViewModelListener(holder, model)
+                groupViewModel.addUserToGroup(GroupAddUserRequest(
+                    model.id,
+                    position
+                ), activity.groupId)
+            }
+        }
+        else{
+            holder.sendButton.isClickable=false
+            holder.sendButton.setImageResource(R.drawable.asset_tick)
+        }
         holder.userName.setText("${model.firstName} ${model.lastName}")
         holder.email.setText(model.email)
         if(model.avatarUrl.isNullOrBlank()){
@@ -45,14 +61,6 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
                 .load(model.avatarUrl)
                 .placeholder(R.drawable.avatar_1)
                 .into(holder.profilePicture)
-        }
-
-        holder.sendButton.setOnClickListener{
-            setViewModelListener(holder, model)
-            groupViewModel.addUserToGroup(GroupAddUserRequest(
-                model.id,
-                position
-            ), activity.groupId)
         }
     }
 
@@ -66,6 +74,7 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
         lateinit var email: TextView
         lateinit var sendButton: ImageButton
         lateinit var profilePicture: ImageView
+        var internalPosition=-1
 
         init {
             // initializing our views with their ids.
@@ -83,7 +92,7 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
         this.userList = userList
         this.activity = activity
         for(item in userList){
-            visibilityState.add(View.VISIBLE)
+            visibilityState.add(true)
         }
     }
 
@@ -95,11 +104,13 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
                     activity.lockUI()
                 }
                 is Resource.Success -> {
-                    Toast.makeText(activity, "Dodano ${model.firstName} ${model.lastName} do grupy", Toast.LENGTH_SHORT).show()
-                    holder.sendButton.visibility=View.INVISIBLE
-                    visibilityState[resource.data!!.position]=View.INVISIBLE
-                    activity.setResult(Activity.RESULT_OK,activity.intent)
-                    activity.unlockUI()
+                    if(holder.internalPosition == resource.data!!.position) {
+                        holder.sendButton.setImageResource(R.drawable.asset_tick)
+                        holder.sendButton.isClickable=false
+                        visibilityState[resource.data!!.position] = false
+                        activity.setResult(Activity.RESULT_OK, activity.intent)
+                        activity.unlockUI()
+                    }
                 }
                 is Resource.Error -> {
                     Toast.makeText(activity, "Nie dodano ${model.firstName} ${model.lastName} do grupy", Toast.LENGTH_SHORT).show()

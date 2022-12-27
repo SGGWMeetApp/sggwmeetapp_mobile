@@ -28,7 +28,6 @@ import pl.sggw.sggwmeet.viewmodel.GroupViewModel
 import java.text.SimpleDateFormat
 
 
-//TODO, usuwanie nie działa po stronie backendu
 @AndroidEntryPoint
 class EventShowActivity: AppCompatActivity() {
     private lateinit var animationDim : Animation
@@ -156,6 +155,7 @@ class EventShowActivity: AppCompatActivity() {
                 }
                 is Resource.Error -> {
                     unlockUI()
+                    binding.eventGroupNotificationSwitchTV.isChecked=binding.eventGroupNotificationSwitchTV.isChecked.not()
                     when(resource.exception) {
 
                         is TechnicalException -> {
