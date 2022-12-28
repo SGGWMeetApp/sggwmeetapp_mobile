@@ -104,7 +104,7 @@ class ResetPasswordFragment : Fragment() {
         )
     }
     private fun setViewModelListener() {
-        authorizationViewModel.registerState.observe(viewLifecycleOwner) { resource ->
+        authorizationViewModel.resetPasswordState.observe(viewLifecycleOwner) { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     lockUI()
