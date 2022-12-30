@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import pl.sggw.sggwmeet.domain.Review
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.*
 import pl.sggw.sggwmeet.model.connector.mock.MockAuthorizationConnector
@@ -62,6 +63,12 @@ object ConnectorModule {
     @Provides
     fun provideGroupConnector(@AuthorizedRetrofitInstance retrofit : Retrofit) : GroupConnector {
         return retrofit.create(GroupConnector::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideReviewConnector(@AuthorizedRetrofitInstance retrofit : Retrofit) : ReviewConnector {
+        return retrofit.create(ReviewConnector::class.java)
     }
 
     private fun <T, T1 : T, T2 : T> restConnectorOrMock(restConnector : T1, mockConnector : T2) : T {

@@ -40,7 +40,7 @@
         tools:layout="@layout/fragment_groups" />
     <fragment
         android:id="@+id/placeDetailsFragment"
-        android:name="pl.sggw.sggwmeet.fragment.core.PlaceDetailsFragment"
+        android:name="pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment"
         android:label="fragment_place_details"
         tools:layout="@layout/fragment_place_details" />
 </navigation>

@@ -58,6 +58,7 @@ dependencies {
     def activity_ktx_version = '1.6.1'
     def cardview_version = "1.0.0"
     def picasso_version = '2.8'
+    def recyclerview_version = "1.2.1"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
@@ -102,6 +103,9 @@ dependencies {
 
     //Picasso - for url image loading
     implementation "com.squareup.picasso:picasso:$picasso_version"
+
+    //RecyclerView
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
 }
 
 kapt {

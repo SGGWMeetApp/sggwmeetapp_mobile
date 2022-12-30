@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="8dp"
+    app:cardCornerRadius="5dp"
+    android:layout_marginBottom="5dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <!-- comment header-->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/place_image_wrapper"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:cardCornerRadius="5dp"
+                android:elevation="1dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/author_avatar_IV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@drawable/asset_loading" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Name and publication Date -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="5dp">
+
+                <TextView
+                    android:id="@+id/author_full_name_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/black"
+                    android:textFontWeight="500"
+                    android:textSize="15sp"
+                    android:text="Andrzej Wajda"/>
+
+                <TextView
+                    android:id="@+id/publication_date_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="czerwiec 2022"/>
+
+            </LinearLayout>
+
+            <!-- IsPositive indicator -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/is_positive_IV"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:adjustViewBounds="true"
+                app:srcCompat="@drawable/asset_like"/>
+
+            <!-- Likes container -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/like_wrapper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/like_IV"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="25dp"
+                        android:adjustViewBounds="true"
+                        app:srcCompat="@drawable/asset_like"/>
+
+                    <TextView
+                        android:id="@+id/like_counter_TV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:text="1"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/dislike_wrapper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/dislike_IV"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="25dp"
+                        android:adjustViewBounds="true"
+                        app:srcCompat="@drawable/asset_dislike"/>
+
+                    <TextView
+                        android:id="@+id/dislike_counter_TV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:text="5"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <TextView
+            android:id="@+id/comment_content_TV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="Testowy komentarz"
+            android:textColor="@color/black"
+            android:fontFamily="@font/roboto"
+            android:layout_margin="10dp"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.cardview.widget.CardView>

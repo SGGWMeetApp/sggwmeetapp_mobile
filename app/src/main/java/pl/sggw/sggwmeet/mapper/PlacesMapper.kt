@@ -13,6 +13,7 @@ class PlacesMapper {
     fun mapToPlaceDetails(placeResponse: PlaceDetailsResponse, userEmail: String) : PlaceDetails {
         return PlaceDetails(
             placeResponse.name,
+            placeResponse.description,
             placeResponse.rating.positivePercent,
             placeResponse.rating.reviews.size,
             placeResponse.textLocation,

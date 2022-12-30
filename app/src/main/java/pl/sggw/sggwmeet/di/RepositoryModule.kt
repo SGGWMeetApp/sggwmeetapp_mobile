@@ -65,4 +65,12 @@ object RepositoryModule {
     ) : GroupRepository {
         return GroupRepository(groupConnector, groupMapper, userDataStore)
     }
+
+    @Singleton
+    @Provides
+    fun provideReviewRepository(
+        reviewConnector: ReviewConnector
+    ) : ReviewRepository {
+        return ReviewRepository(reviewConnector)
+    }
 }

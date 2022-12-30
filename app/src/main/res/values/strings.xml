@@ -161,6 +161,7 @@
 
     <!-- PlaceDetailsFragment -->
     <string name="place_review_count_TV">%1$d opinii</string>
+    <string name="no_description_info">Brak opisu.</string>
 
 
     <!-- Edytuj użytkownika -->
@@ -229,6 +230,14 @@
     <string name="group_leave">Opuść grupę</string>
     <string name="group">Grupa</string>
 
+    <!-- Dummy texts   -->
+    <string name="lorem_tiny">Ipsum dolor varius massa non.</string>
+    <string name="lorem_short">
+        Ipsum dolor varius massa non. Condimentum cras egestas malesuada commodo cras quam fames volutpat ac
+    </string>
+    <string name="lorem_medium">
+        Ipsum dolor varius massa non. Condimentum cras egestas malesuada commodo cras quam fames volutpat ac. Aliquet proin viverra eget sit accumsan. In hendrerit lectus urna suscipit nisi vitae arcu gravida. Volutpat sed amet placerat pharetra. Aliquam aenean pellentesque dolor ipsum odio
+    </string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

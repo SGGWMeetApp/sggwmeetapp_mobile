@@ -26,6 +26,7 @@ import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.FragmentMapBinding
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment
 import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
