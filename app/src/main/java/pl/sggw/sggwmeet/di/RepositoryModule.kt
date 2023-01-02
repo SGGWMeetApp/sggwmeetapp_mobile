@@ -69,8 +69,10 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideReviewRepository(
-        reviewConnector: ReviewConnector
+        reviewConnector: ReviewConnector,
+        placesMapper: PlacesMapper,
+        userDataStore: UserDataStore
     ) : ReviewRepository {
-        return ReviewRepository(reviewConnector)
+        return ReviewRepository(reviewConnector, placesMapper, userDataStore)
     }
 }

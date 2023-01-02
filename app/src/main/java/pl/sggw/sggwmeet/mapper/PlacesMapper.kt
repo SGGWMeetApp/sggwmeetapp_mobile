@@ -25,10 +25,10 @@ class PlacesMapper {
         )
     }
 
-    private fun mapReview(responseReview: PlaceDetailsResponse.Rating.Review, userEmail: String) : Review {
+    fun mapReview(responseReview: PlaceDetailsResponse.Rating.Review, userEmail: String) : Review {
         return Review(
             responseReview.id,
-            responseReview.comment,
+            responseReview.comment ?: "",
             mapReviewer(responseReview.author),
             responseReview.isPositive,
             responseReview.upvoteCount,

@@ -161,6 +161,7 @@
 
     <!-- PlaceDetailsFragment -->
     <string name="place_review_count_TV">%1$d opinii</string>
+    <string name="place_review_count_reviews_panel_TV">%1$d z %2$d opinii</string>
     <string name="no_description_info">Brak opisu.</string>
 
 

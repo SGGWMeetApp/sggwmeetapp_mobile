@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
@@ -24,8 +25,32 @@ class ReviewRecyclerViewAdapter(
 
     private var onAllowedLikeClick: ((reviewId: String) -> Unit)? = null
     private var onAllowedDislikeClick: ((reviewId: String) -> Unit)? = null
+    private var onEditClick: ((review: Review) -> Unit)? = null
 
     private var processingPosition: Int? = null
+
+    fun addItemOnTop(review: Review) {
+        val newList = currentList.toMutableList()
+        newList.add(0, review)
+        submitList(newList)
+    }
+
+    fun markAsEditing(reviewId: String) {
+        val position = currentList.indexOf(currentList.first{ it.id == reviewId})
+        currentList[position].isEditProcessing = true
+        notifyItemChanged(position)
+    }
+
+    fun confirmEdit(review: Review) {
+        if(processingPosition != null) {
+            val oldReview = getItem(processingPosition!!)
+            oldReview.isEditProcessing = false
+            oldReview.comment = review.comment
+            oldReview.isPositive = review.isPositive
+            notifyItemChanged(processingPosition!!)
+            processingPosition = null
+        }
+    }
 
     fun confirmUserLike() {
         if(processingPosition != null) {
@@ -65,6 +90,15 @@ class ReviewRecyclerViewAdapter(
         }
     }
 
+    fun cancelReviewEditing() {
+        if(processingPosition != null) {
+            val review = getItem(processingPosition!!)
+            review.isEditProcessing
+            notifyItemChanged(processingPosition!!)
+            processingPosition = null
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view =
             LayoutInflater.from(parent.context)
@@ -78,7 +112,7 @@ class ReviewRecyclerViewAdapter(
 
         loadAvatar(review.author.avatarUrl, binder.authorAvatarIV)
         binder.authorFulNameTV.text = "${review.author.firstName} ${review.author.lastName}"
-        binder.publicationDateTV.text = "${review.publicationDate.getPolishMonthName()} ${review.publicationDate.year}"
+        binder.publicationDateTV.text = "${review.publicationDate.getPolishMonthName()} ${review.publicationDate.year + 1900}"
         setIsPositiveIndicator(review.isPositive, binder.isPositiveIV)
 
         binder.likeCounterTV.text = review.upvoteCount.toString()
@@ -88,11 +122,34 @@ class ReviewRecyclerViewAdapter(
         setLikeIndicator(review, binder.likeIV, binder.likeCounterTV)
         setDislikeIndicator(review, binder.dislikeIV, binder.dislikeCounterTV)
 
-        setLikeButtonListener(position, review, binder.likeBT, binder.likeIV)
-        setDislikeButtonListener(position, review, binder.dislikeBT, binder.dislikeIV)
+        setLikeButtonListener(position, review, binder.likeBT)
+        setDislikeButtonListener(position, review, binder.dislikeBT)
+
+        setEditButton(position, review, binder.editBT)
     }
 
-    private fun setLikeButtonListener(position: Int, review: Review, button: LinearLayoutCompat, image: AppCompatImageView) {
+    private fun setEditButton(position: Int, review: Review, button: AppCompatImageButton) {
+        if(!review.isOwnedByUser) {
+            button.visibility = View.GONE
+            return
+        }
+
+        if(review.isEditProcessing) {
+            button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.asset_loading))
+            return
+        }
+
+        button.setOnClickListener {
+            if(processingPosition != null) {
+                return@setOnClickListener
+            }
+            processingPosition = position
+            val review = getItem(processingPosition!!)
+            onEditClick!!(review)
+        }
+    }
+
+    private fun setLikeButtonListener(position: Int, review: Review, button: LinearLayoutCompat) {
         button.setOnClickListener {
             if(processingPosition != null) {
                 return@setOnClickListener
@@ -111,7 +168,7 @@ class ReviewRecyclerViewAdapter(
         }
     }
 
-    private fun setDislikeButtonListener(position: Int, review: Review, button: LinearLayoutCompat, image: AppCompatImageView) {
+    private fun setDislikeButtonListener(position: Int, review: Review, button: LinearLayoutCompat) {
         button.setOnClickListener {
             if(processingPosition != null) {
                 return@setOnClickListener
@@ -208,6 +265,8 @@ class ReviewRecyclerViewAdapter(
         val dislikeCounterTV: TextView = itemView.findViewById(R.id.dislike_counter_TV)
 
         val commentContentTV: TextView = itemView.findViewById(R.id.comment_content_TV)
+
+        val editBT: AppCompatImageButton = itemView.findViewById(R.id.edit_BT)
     }
 
     fun setOnAllowedLikeClickListener(action : (reviewId: String) -> Unit) {
@@ -216,5 +275,9 @@ class ReviewRecyclerViewAdapter(
 
     fun setOnAllowedDislikeClickListener(action : (reviewId: String) -> Unit) {
         this.onAllowedDislikeClick = action
+    }
+
+    fun setOnEditClickListener(action: (review: Review) -> Unit) {
+        this.onEditClick = action
     }
 }

@@ -300,6 +300,44 @@
                         android:visibility="gone"
                         tools:visibility="visible">
 
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:gravity="center_vertical">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="25dp"
+                                android:layout_height="match_parent"
+                                app:srcCompat="@drawable/asset_percent" />
+
+                            <TextView
+                                android:id="@+id/place_review_positive_percent_review_panel_TV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="5dp"
+                                android:fontFamily="@font/roboto"
+                                android:text="66 z 5 opinii"
+                                android:textColor="@color/black"
+                                android:textFontWeight="500"
+                                android:textSize="20sp" />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1" />
+
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/add_review_BT"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_marginHorizontal="10dp"
+                                android:backgroundTint="@color/black"
+                                android:src="@drawable/asset_plus"
+                                android:tint="@color/white" />
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/reviews_RV"
                             android:layout_width="match_parent"

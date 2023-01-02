@@ -16,9 +16,10 @@ data class Review(
 
     var isLikeProcessing = false
     var isDislikeProcessing = false
+    var isEditProcessing = false
 
     fun containsSameDataAs(review : Review) : Boolean {
-        return comment == comment &&
+        return comment == review.comment &&
                 author == review.author &&
                 isPositive == review.isPositive &&
                 upvoteCount == review.upvoteCount &&

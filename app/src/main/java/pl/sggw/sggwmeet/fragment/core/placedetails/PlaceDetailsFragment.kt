@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,10 +17,13 @@ import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.FragmentPlaceDetailsBinding
 import pl.sggw.sggwmeet.domain.PlaceDetails
 import pl.sggw.sggwmeet.domain.Review
+import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.ReviewRecyclerViewAdapter
+import pl.sggw.sggwmeet.ui.dialog.ReviewDialog
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
 import pl.sggw.sggwmeet.viewmodel.ReviewsViewModel
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -63,6 +69,25 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         reviewAdapter.setOnAllowedDislikeClickListener { reviewId ->
             reviewsViewModel.dislike(placeId, reviewId)
         }
+
+        reviewAdapter.setOnEditClickListener { review ->
+            promptEditReviewDialog(review)
+        }
+    }
+
+    private fun promptEditReviewDialog(review: Review) {
+        ReviewDialog(requireActivity(), review)
+            .onAddButtonClick { actions, comment ->
+                if(comment.text.toString().isNotBlank()) {
+                    actions.dismissAlertDialog()
+                    val data = actions.getReviewData()
+                    reviewsViewModel.editReview(placeId, review.id, data.comment, data.isPositive)
+                    reviewAdapter.markAsEditing(review.id)
+                } }
+            .onBackButtonClick { actions ->
+                actions.dismissAlertDialog()
+            }
+            .startAlertDialog()
     }
 
     private fun setListeners() {
@@ -86,6 +111,29 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         binding.menuSectionBT.setOnClickListener {
             showMenuPanel()
         }
+
+        binding.addReviewBT.setOnClickListener {
+            promptAddReviewDialog()
+        }
+
+        binding.backBT.setOnClickListener {
+            this.findNavController().navigate(R.id.action_placeDetailsFragment_to_mapFragment)
+        }
+    }
+
+    private fun promptAddReviewDialog() {
+        ReviewDialog(requireActivity())
+            .onAddButtonClick { actions, comment ->
+                if(comment.text.toString().isNotBlank()) {
+                    actions.dismissAlertDialog()
+                    val data = actions.getReviewData()
+                    reviewsViewModel.addReview(placeId, data.comment, data.isPositive)
+
+            } }
+            .onBackButtonClick { actions ->
+                actions.dismissAlertDialog()
+            }
+            .startAlertDialog()
     }
 
     private fun setViewModelListeners() {
@@ -117,7 +165,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
             }
         }
 
-        reviewsViewModel.reviewDislikeStateListState.observe(viewLifecycleOwner) {resource ->
+        reviewsViewModel.reviewDislikeState.observe(viewLifecycleOwner) { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     //TODO
@@ -130,6 +178,70 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 }
             }
         }
+
+        reviewsViewModel.addReviewState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockAddReviewButton()
+                }
+                is Resource.Success -> {
+                    unlockAddReviewButton()
+                    reviewAdapter.addItemOnTop(resource.data!!)
+                    recalculateReviewSummaryData(reviewAdapter.currentList)
+                    Toast.makeText(requireContext(), "Pomyślnie dodano recenzje", Toast.LENGTH_SHORT).show()
+                }
+                is Resource.Error -> {
+                    unlockAddReviewButton()
+                    if(resource.exception is ServerException ) {
+                        if(ServerException.REVIEW_DUPLICATION_CODE == resource.exception.errorCode) {
+                            Toast.makeText(requireContext(), "Utworzyłeś/aś już recenzję dla tego miejsca.", Toast.LENGTH_SHORT).show()
+
+                        } else {
+                            Toast.makeText(requireContext(), "Nie udało się dodać recenzji", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Nie udało się dodać recenzji", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        reviewsViewModel.editReviewState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    //TODO
+                }
+                is Resource.Success -> {
+                    reviewAdapter.confirmEdit(resource.data!!)
+                    recalculateReviewSummaryData(reviewAdapter.currentList)
+                    Toast.makeText(requireContext(), "Pomyślnie edytowano recenzje", Toast.LENGTH_SHORT).show()
+                }
+                is Resource.Error -> {
+                    reviewAdapter.cancelReviewEditing()
+                    Toast.makeText(requireContext(), "Nie udało się edytować recenzji", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun recalculateReviewSummaryData(currentList: List<Review>) {
+        val reviewsCount = currentList.size
+        val positivePercent = currentList.filter { it.isPositive }.size.toFloat() * 100 / reviewsCount
+
+        binding.placeReviewPositivePercentReviewPanelTV.text = getString(R.string.place_review_count_reviews_panel_TV, positivePercent.toInt(), reviewsCount)
+        binding.placeReviewCountTV.text = getString(R.string.place_review_count_TV, reviewsCount)
+        binding.placeReviewPositivePercentTV.text = DecimalFormat("#.00").format(positivePercent)
+
+    }
+
+    private fun unlockAddReviewButton() {
+        binding.addReviewBT.isEnabled = true
+        binding.addReviewBT.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.asset_plus))
+    }
+
+    private fun lockAddReviewButton() {
+        binding.addReviewBT.isEnabled = false
+        binding.addReviewBT.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.asset_loading))
     }
 
     private fun injectDataToView(data: PlaceDetails) {
@@ -137,13 +249,14 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         injectTextValues(data)
         loadPlaceImage(data)
         injectDescription(data.description)
-        injectReviews(data.reviews)
+        injectReviews(data)
         showMainLayout()
         showReviewsPanel()
     }
 
-    private fun injectReviews(reviews : List<Review>) {
-        reviewAdapter.submitList(reviews)
+    private fun injectReviews(data: PlaceDetails) {
+        reviewAdapter.submitList(data.reviews)
+        binding.placeReviewPositivePercentReviewPanelTV.text = getString(R.string.place_review_count_reviews_panel_TV, data.positivePercent.toInt(), data.reviewsCount)
     }
 
     private fun injectDescription(description: String?) {

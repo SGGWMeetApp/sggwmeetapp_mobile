@@ -20,7 +20,7 @@ data class PlaceDetailsResponse(
     ) {
         data class Review(
             var id: String,
-            var comment: String,
+            var comment: String?,
             var author: Author,
             var upvoteCount: Int,
             var downvoteCount: Int,

@@ -42,5 +42,9 @@
         android:id="@+id/placeDetailsFragment"
         android:name="pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment"
         android:label="fragment_place_details"
-        tools:layout="@layout/fragment_place_details" />
+        tools:layout="@layout/fragment_place_details" >
+        <action
+            android:id="@+id/action_placeDetailsFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
 </navigation>
