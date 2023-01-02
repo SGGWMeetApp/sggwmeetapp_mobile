@@ -163,6 +163,8 @@
     <string name="place_review_count_TV">%1$d opinii</string>
     <string name="place_review_count_reviews_panel_TV">%1$d z %2$d opinii</string>
     <string name="no_description_info">Brak opisu.</string>
+    <string name="events_count_TV">%1$d wydarzeń w najbliższym czasie</string>
+    <string name="event_creator_TV">Utworzył: %1$s</string>
 
 
     <!-- Edytuj użytkownika -->

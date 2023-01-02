@@ -3,6 +3,7 @@ package pl.sggw.sggwmeet.model.repository
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import pl.sggw.sggwmeet.domain.PlaceEvent
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
@@ -14,6 +15,7 @@ import pl.sggw.sggwmeet.model.connector.dto.request.EventEditRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.util.Resource
+import retrofit2.Response
 
 class EventRepository(
     private val connector: EventConnector,
@@ -74,6 +76,32 @@ class EventRepository(
         } catch (exception : Exception) {
             Log.e(TAG, "An exception occurred during $functionTAG", exception)
             emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun getPlacePublicEvents(placeId: String) : Flow<Resource<List<PlaceEvent>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = connector.getPlacePublicEvents(placeId)
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                Log.i(TAG, "Received place public events : $responseBody")
+                val mappedEvents = mapper.mapPlaceEvents(responseBody!!)
+                emit(Resource.Success(mappedEvents))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during fetching place public events : ${response.errorBody()}")
+                emit(Resource.Error(ServerException(response.code().toString(), response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during fetching place public events", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during fetching place public events", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during fetching place public events", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during fetching place public events")))
         }
     }
 

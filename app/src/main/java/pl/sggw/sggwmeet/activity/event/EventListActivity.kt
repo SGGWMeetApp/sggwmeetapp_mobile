@@ -270,7 +270,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
             else if("${item.author.firstName} ${item.author.lastName}".lowercase().contains(text.lowercase())){
                 filteredlist.add(item)
             }
-            else if(!item.description.isNullOrBlank()&&item.description.lowercase().contains(text.lowercase())){
+            else if(!item.description.isNullOrBlank() && item.description!!.lowercase().contains(text.lowercase())){
                 filteredlist.add(item)
             }
         }

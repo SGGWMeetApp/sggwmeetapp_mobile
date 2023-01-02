@@ -18,9 +18,11 @@ import pl.sggw.sggwmeet.databinding.FragmentPlaceDetailsBinding
 import pl.sggw.sggwmeet.domain.PlaceDetails
 import pl.sggw.sggwmeet.domain.Review
 import pl.sggw.sggwmeet.exception.ServerException
+import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.EventRecyclerViewAdapter
 import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.ReviewRecyclerViewAdapter
 import pl.sggw.sggwmeet.ui.dialog.ReviewDialog
 import pl.sggw.sggwmeet.util.Resource
+import pl.sggw.sggwmeet.viewmodel.EventViewModel
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
 import pl.sggw.sggwmeet.viewmodel.ReviewsViewModel
 import java.text.DecimalFormat
@@ -37,10 +39,12 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
     lateinit var placeId : String
     private val placesViewModel by viewModels<PlacesViewModel>()
     private val reviewsViewModel by viewModels<ReviewsViewModel>()
+    private val eventViewModel by viewModels<EventViewModel>()
     @Inject
     lateinit var picasso: Picasso
 
     private lateinit var reviewAdapter: ReviewRecyclerViewAdapter
+    private lateinit var eventsAdapter: EventRecyclerViewAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentPlaceDetailsBinding.inflate(inflater, container, false)
@@ -52,6 +56,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
 
         setListeners()
         initReviewRecyclerView()
+        initEventsRecyclerView()
         placeId = requireArguments().getString(PLACE_ID_BUNDLE_KEY, "")
         placesViewModel.getPlaceDetails(placeId)
     }
@@ -73,6 +78,13 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         reviewAdapter.setOnEditClickListener { review ->
             promptEditReviewDialog(review)
         }
+    }
+
+    private fun initEventsRecyclerView() {
+        eventsAdapter = EventRecyclerViewAdapter(requireContext())
+        binding.eventsRV.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.eventsRV.adapter = eventsAdapter
     }
 
     private fun promptEditReviewDialog(review: Review) {
@@ -97,19 +109,27 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
 
     private fun setButtonListeners() {
         binding.descriptionSectionBT.setOnClickListener{
-            showDescriptionPanel()
+            if(binding.descriptionPanel.visibility != View.VISIBLE) {
+                showDescriptionPanel()
+            }
         }
 
         binding.reviewsSectionBT.setOnClickListener {
-            showReviewsPanel()
+            if(binding.reviewsPanel.visibility != View.VISIBLE) {
+                showReviewsPanel()
+            }
         }
 
         binding.eventsSectionBT.setOnClickListener {
-            showEventsPanel()
+            if(binding.eventsPanel.visibility != View.VISIBLE) {
+                showEventsPanel()
+            }
         }
 
         binding.menuSectionBT.setOnClickListener {
-            showMenuPanel()
+            if(binding.menuPanel.visibility != View.VISIBLE) {
+                showMenuPanel()
+            }
         }
 
         binding.addReviewBT.setOnClickListener {
@@ -222,6 +242,23 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 }
             }
         }
+
+        eventViewModel.getPlaceEventsState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    triggerEventsPanelLoading()
+                }
+                is Resource.Success -> {
+                    eventsAdapter.submitList(resource.data)
+                    showEventList()
+                    binding.eventsCountTV.text = getString(R.string.events_count_TV, resource.data!!.size)
+                }
+                is Resource.Error -> {
+                    turnOffEventsPanelLoading()
+                    Toast.makeText(requireContext(), "Nie udało się pobrać wydarzeń", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun recalculateReviewSummaryData(currentList: List<Review>) {
@@ -321,6 +358,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
 
         binding.eventsSectionBTUnderline.visibility = View.VISIBLE
         binding.eventsPanel.visibility = View.VISIBLE
+        eventViewModel.getPlacePublicEvents(placeId)
     }
 
     private fun showMenuPanel() {
@@ -350,5 +388,20 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
     private fun hideMenuPanel() {
         binding.menuSectionBTUnderline.visibility = View.GONE
         binding.menuPanel.visibility = View.GONE
+    }
+
+    private fun triggerEventsPanelLoading() {
+        binding.eventsLoadingPB.visibility = View.VISIBLE
+        binding.eventsContentPanel.visibility = View.GONE
+        eventsAdapter.submitList(arrayListOf())
+    }
+
+    private fun showEventList() {
+        binding.eventsLoadingPB.visibility = View.GONE
+        binding.eventsContentPanel.visibility = View.VISIBLE
+    }
+
+    private fun turnOffEventsPanelLoading() {
+        binding.eventsLoadingPB.visibility = View.GONE
     }
 }
