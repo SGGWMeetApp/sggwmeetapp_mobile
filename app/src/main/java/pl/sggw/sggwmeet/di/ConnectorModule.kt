@@ -71,6 +71,12 @@ object ConnectorModule {
         return retrofit.create(ReviewConnector::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun provideMenuConnector(@NonAuthorizedRetrofitInstance retrofit : Retrofit) : MenuConnector {
+        return retrofit.create(MenuConnector::class.java)
+    }
+
     private fun <T, T1 : T, T2 : T> restConnectorOrMock(restConnector : T1, mockConnector : T2) : T {
         if(ExecutionHelper.isRunningInMockMode()) {
             return mockConnector

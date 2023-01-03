@@ -165,6 +165,7 @@
     <string name="no_description_info">Brak opisu.</string>
     <string name="events_count_TV">%1$d wydarzeń w najbliższym czasie</string>
     <string name="event_creator_TV">Utworzył: %1$s</string>
+    <string name="food_item_price_TV">%1$s zł</string>
 
 
     <!-- Edytuj użytkownika -->

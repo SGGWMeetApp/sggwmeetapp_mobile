@@ -75,4 +75,13 @@ object RepositoryModule {
     ) : ReviewRepository {
         return ReviewRepository(reviewConnector, placesMapper, userDataStore)
     }
+
+    @Singleton
+    @Provides
+    fun provideMenuRepository(
+        menuConnector: MenuConnector,
+        menuMapper: MenuMapper,
+    ) : MenuRepository {
+        return MenuRepository(menuConnector, menuMapper)
+    }
 }

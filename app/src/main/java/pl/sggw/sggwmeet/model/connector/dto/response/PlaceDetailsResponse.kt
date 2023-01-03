@@ -12,7 +12,8 @@ data class PlaceDetailsResponse(
     var photoPath: String?,
     var textLocation: String?,
     var rating: Rating,
-    var locationCategoryCodes: List<PlaceCategory>
+    var locationCategoryCodes: List<PlaceCategory>,
+    var menuPath: String?
 ) {
     data class Rating(
         var positivePercent : Float,
