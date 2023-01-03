@@ -126,6 +126,91 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                <LinearLayout
+                    android:id="@+id/event_attenders_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/attenders" />
+
+                    <TextView
+                        android:id="@+id/event_attenders_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:id="@+id/event_attender_joined_not"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone"
+                        tools:visibility="visible" >
+
+                        <TextView
+                            style="@style/profile_main_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:text="@string/event_joined_not"
+                            android:textSize="20sp" />
+
+                        <Button
+                            android:id="@+id/event_join_BT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_weight="0"
+                            android:backgroundTint="#4CAF50"
+                            android:text="@string/event_join" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/event_attender_joined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone"
+                        tools:visibility="visible" >
+
+                        <TextView
+                            style="@style/profile_main_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:text="@string/event_joined"
+                            android:textSize="20sp" />
+
+                        <Button
+                            android:id="@+id/event_quit_BT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_weight="0"
+                            android:backgroundTint="#FF4444"
+                            android:text="@string/event_quit" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/event_group_layout"
                         android:layout_width="match_parent"

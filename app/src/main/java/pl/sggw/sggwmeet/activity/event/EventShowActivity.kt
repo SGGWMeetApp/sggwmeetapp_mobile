@@ -24,6 +24,7 @@ import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.model.connector.dto.request.GroupEventNotificationRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.util.Resource
+import pl.sggw.sggwmeet.viewmodel.EventViewModel
 import pl.sggw.sggwmeet.viewmodel.GroupViewModel
 import java.text.SimpleDateFormat
 
@@ -39,6 +40,7 @@ class EventShowActivity: AppCompatActivity() {
     private var groupId = -1
     private var groupName: String? = null
     private val groupViewModel by viewModels<GroupViewModel>()
+    private val eventViewModel by viewModels<EventViewModel>()
     private lateinit var deleteAlertDialog: AlertDialog
     private var canEdit = false
 
@@ -83,6 +85,9 @@ class EventShowActivity: AppCompatActivity() {
                     setUpSwitch()
                     setUpDeleteAlertDialog()
                 }
+            }
+            else{
+                showAttendersDetails()
             }
         }
         catch (e:Exception){
@@ -198,6 +203,68 @@ class EventShowActivity: AppCompatActivity() {
                 }
             }
         }
+        eventViewModel.addUserToEventState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    unlockUI()
+                    this.setResult(Activity.RESULT_OK)
+                    eventData.userAttends=true
+                    eventData.attendersCount++
+                    binding.eventAttendersTV.setText(eventData.attendersCount.toString())
+                    binding.eventAttenderJoined.visibility=View.VISIBLE
+                    binding.eventAttenderJoinedNot.visibility=View.GONE
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
+        eventViewModel.deleteUserFromEventState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    unlockUI()
+                    this.setResult(Activity.RESULT_OK)
+                    eventData.userAttends=false
+                    eventData.attendersCount--
+                    binding.eventAttendersTV.setText(eventData.attendersCount.toString())
+                    binding.eventAttenderJoinedNot.visibility=View.VISIBLE
+                    binding.eventAttenderJoined.visibility=View.GONE
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun handleClientErrorCode(errorCode: ClientErrorCode) {
@@ -248,6 +315,36 @@ class EventShowActivity: AppCompatActivity() {
         )
     }
 
+    private fun showAttendersDetails(){
+        binding.eventAttendersTV.setText(eventData.attendersCount.toString())
+        if(eventData.userAttends){
+            binding.eventAttenderJoined.visibility=View.VISIBLE
+            binding.eventAttenderJoinedNot.visibility=View.GONE
+        }
+        else{
+            binding.eventAttenderJoinedNot.visibility=View.VISIBLE
+            binding.eventAttenderJoined.visibility=View.GONE
+        }
+        binding.eventAttendersLayout.visibility=View.VISIBLE
+        setUpAttendersButtons()
+    }
+
+    private fun setUpAttendersButtons(){
+        binding.eventQuitBT.setOnClickListener {
+            eventQuit()
+        }
+        binding.eventJoinBT.setOnClickListener {
+            eventJoin()
+        }
+    }
+
+    private fun eventQuit(){
+        eventViewModel.deleteUserFromEvent(eventData.id,Prefs.read().content("userId",0))
+    }
+
+    private fun eventJoin(){
+        eventViewModel.addUserToEvent(eventData.id,Prefs.read().content("userId",0))
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

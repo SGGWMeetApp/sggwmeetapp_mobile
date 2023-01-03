@@ -13,6 +13,7 @@ import pl.sggw.sggwmeet.activity.event.EventListActivity
 import pl.sggw.sggwmeet.activity.event.EventShowActivity
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import java.text.SimpleDateFormat
+import kotlin.coroutines.coroutineContext
 
 class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity): RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
     private var eventList: ArrayList<EventResponse>
@@ -35,6 +36,7 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
         holder.eventLocation.setText(model.locationData.name)
         holder.eventAuthor.setText(model.author.firstName+" "+model.author.lastName)
         holder.eventDescription.setText(model.description)
+        holder.eventAttenders.setText("Uczestnicy: ${model.attendersCount}")
         if(model.description.isNullOrBlank()){
             holder.eventDescription.visibility=View.GONE
         }
@@ -57,6 +59,7 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
         lateinit var eventLocation: TextView
         lateinit var eventAuthor: TextView
         lateinit var eventDescription: TextView
+        lateinit var eventAttenders: TextView
 
 
         init {
@@ -66,6 +69,7 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
             eventLocation = itemView.findViewById(R.id.event_location)
             eventAuthor = itemView.findViewById(R.id.event_author)
             eventDescription = itemView.findViewById(R.id.event_description)
+            eventAttenders = itemView.findViewById(R.id.event_attenders)
         }
     }
 

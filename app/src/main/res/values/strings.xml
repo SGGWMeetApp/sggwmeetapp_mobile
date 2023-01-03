@@ -212,6 +212,11 @@
     <string name="event_type_public">Publiczne</string>
     <string name="event_type_group">Grupowe</string>
     <string name="group_select_list">Wybierz grupę</string>
+    <string name="attenders">Uczestnicy</string>
+    <string name="event_join">Dołącz</string>
+    <string name="event_quit">Opuść</string>
+    <string name="event_joined">Zapisany</string>
+    <string name="event_joined_not">Niezapisany</string>
 
     <!-- Settings -->
     <string name="user_settings">Opcje użytkownika</string>

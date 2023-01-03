@@ -82,7 +82,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         setUpFloatingButton()
         refreshList(binding.spinner.selectedItemPosition)
     }
-    private val items = arrayOf<String>("Wszystkie wydarzenia", "Nadchodzące wydarzenia")
+    private val items = arrayOf<String>("Wszystkie wydarzenia", "Nadchodzące wydarzenia", "Zapisane wydarzenia")
     override fun onItemSelected(parent: AdapterView<*>?,
                                 view: View, position: Int,
                                 id: Long) {
@@ -193,6 +193,35 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
                 }
             }
         }
+        eventViewModel.getUserEventsState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    unlockUI()
+                    eventList= resource.data!!
+                    buildRecyclerView()
+                    setUpSearch()
+                    filter(binding.searchBar.text)
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
@@ -216,6 +245,9 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
     private fun getUpcomingEvents(){
         eventViewModel.getUpcomingEvents()
+    }
+    private fun getUserEvents(){
+        eventViewModel.getUserEvents(Prefs.read().content("userId",0))
     }
 
     private fun buildRecyclerView(){
@@ -292,6 +324,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         when(position){
             0 -> getAllEvents()
             1 -> getUpcomingEvents()
+            2 -> getUserEvents()
         }
     }
     fun setUpFloatingButton(){

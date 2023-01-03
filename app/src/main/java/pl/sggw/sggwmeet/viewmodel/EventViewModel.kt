@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import pl.sggw.sggwmeet.domain.PlaceEvent
 import pl.sggw.sggwmeet.model.connector.dto.request.EventCreatePublicRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.EventEditRequest
+import pl.sggw.sggwmeet.model.connector.dto.response.EventAddUserResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.model.repository.EventRepository
@@ -111,4 +112,44 @@ class EventViewModel @Inject constructor(
                 .launchIn(viewModelScope)
         }
     }
+
+    private val _addUserToEventState: MutableLiveData<Resource<EventAddUserResponse>> = MutableLiveData()
+    val addUserToEventState: LiveData<Resource<EventAddUserResponse>>
+        get() = _addUserToEventState
+
+    fun addUserToEvent(event_id: Int, user_id: Int) {
+        viewModelScope.launch {
+            eventRepository.addUserToEvent(event_id, user_id).onEach {
+                _addUserToEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _deleteUserFromEventState: MutableLiveData<Resource<String>> = MutableLiveData()
+    val deleteUserFromEventState: LiveData<Resource<String>>
+        get() = _deleteUserFromEventState
+
+    fun deleteUserFromEvent(event_id: Int, user_id: Int) {
+        viewModelScope.launch {
+            eventRepository.deleteUserFromEvent(event_id, user_id).onEach {
+                _deleteUserFromEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _getUserEventsState: MutableLiveData<Resource<ArrayList<EventResponse>>> = MutableLiveData()
+    val getUserEventsState: LiveData<Resource<ArrayList<EventResponse>>>
+        get() = _getUserEventsState
+
+    fun getUserEvents(user_id: Int) {
+        viewModelScope.launch {
+            eventRepository.getUserEvents(user_id).onEach {
+                _getUserEventsState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
 }

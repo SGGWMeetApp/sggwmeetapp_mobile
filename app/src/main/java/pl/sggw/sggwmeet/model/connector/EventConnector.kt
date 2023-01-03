@@ -2,6 +2,7 @@ package pl.sggw.sggwmeet.model.connector
 
 import pl.sggw.sggwmeet.model.connector.dto.request.EventCreatePublicRequest
 import pl.sggw.sggwmeet.model.connector.dto.request.EventEditRequest
+import pl.sggw.sggwmeet.model.connector.dto.response.EventAddUserResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.GetEventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.PlaceListResponse
@@ -48,6 +49,24 @@ interface EventConnector {
      */
     @POST("/api/groups/{id}/events")
     suspend fun createGroupEvent(@Body eventCreatePublicRequest: EventCreatePublicRequest, @Path("id") groupId: Int) : Response<EventResponse>
+
+    /**
+     * Adds user attendance to event
+     */
+    @POST("/api/events/{event_id}/attenders/{user_id}")
+    suspend fun addUserToEvent(@Path("event_id") eventId: Int, @Path("user_id") user_id: Int) : Response<EventAddUserResponse>
+
+    /**
+     * Deletes user attendance from event
+     */
+    @DELETE("/api/events/{event_id}/attenders/{user_id}")
+    suspend fun deleteUserFromEvent(@Path("event_id") eventId: Int, @Path("user_id") user_id: Int) : Response<String>
+
+    /**
+     * Gets user's attended events
+     */
+    @GET("/api/users/{user_id}/events")
+    suspend fun getUserEvents(@Path("user_id") user_id: Int) : Response<GetEventResponse>
 
     @GET("/api/places/{placeId}/events")
     suspend fun getPlacePublicEvents(@Path("placeId") placeId: String) : Response<GetEventResponse>

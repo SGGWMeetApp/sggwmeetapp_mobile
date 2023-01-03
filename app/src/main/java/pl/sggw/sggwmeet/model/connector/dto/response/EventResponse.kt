@@ -11,5 +11,7 @@ data class EventResponse(
     var startDate: Date,
     var author: EventAuthorResponse,
     var canEdit: Boolean,
-    var notification24hEnabled: Boolean
+    var notification24hEnabled: Boolean,
+    var attendersCount: Int = 0,
+    var userAttends: Boolean = false
 ) :ErrorResponse()
