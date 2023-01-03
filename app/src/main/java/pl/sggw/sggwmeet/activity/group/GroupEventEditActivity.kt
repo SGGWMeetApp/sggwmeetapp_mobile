@@ -101,7 +101,7 @@ class GroupEventEditActivity: AppCompatActivity() {
         }
     }
     private fun selectDate(){
-        val dateDialog = DatePickerDialog(this, { _, year, monthOfYear, dayOfMonth ->
+        val dateDialog = DatePickerDialog(this, R.style.DatePicker, { _, year, monthOfYear, dayOfMonth ->
             selectedCalendar.set(year,monthOfYear,dayOfMonth)
             binding.eventStartDateTV.setText(timeFormat.format(selectedCalendar.time))
         }, selectedCalendar.get(Calendar.YEAR), selectedCalendar.get(Calendar.MONTH),
@@ -110,7 +110,7 @@ class GroupEventEditActivity: AppCompatActivity() {
     }
 
     private fun selectTime(){
-        val timeDialog = TimePickerDialog(this, { _, hourOfDay, minute ->
+        val timeDialog = TimePickerDialog(this, R.style.DatePicker, { _, hourOfDay, minute ->
             selectedCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
             selectedCalendar.set(Calendar.MINUTE, minute)
             binding.eventStartDateTV.setText(timeFormat.format(selectedCalendar.time))
