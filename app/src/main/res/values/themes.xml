@@ -16,4 +16,13 @@
         <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textColorPrimary">"@color/blackAlpha"</item>
     </style>
+    <style name="DatePicker" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorAccent">@color/secondary_accent</item>
+        <item name="android:colorAccent">@color/secondary_accent</item>
+        <item name="colorControlActivated">@color/secondary_accent_alt</item>
+        <item name="colorControlHighlight">@color/default_text_view_color</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="colorOnPrimary">@color/black</item>
+    </style>
 </resources>

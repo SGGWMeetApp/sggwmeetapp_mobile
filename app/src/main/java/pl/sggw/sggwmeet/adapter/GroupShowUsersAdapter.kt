@@ -1,5 +1,6 @@
 package pl.sggw.sggwmeet.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,8 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.activity.UserShowActivity
+import pl.sggw.sggwmeet.activity.event.EventShowActivity
 import pl.sggw.sggwmeet.activity.group.GroupShowActivity
 import pl.sggw.sggwmeet.model.connector.dto.response.GroupMemberResponse
 
@@ -22,6 +25,12 @@ class GroupShowUsersAdapter(userList: ArrayList<GroupMemberResponse>, activity: 
         val model: GroupMemberResponse = userList[position]
         holder.userName.setText("${model.firstName} ${model.lastName}")
         holder.userEmail.setText(model.email)
+
+        holder.itemView.setOnClickListener{
+            val newActivity = Intent(holder.itemView.context, UserShowActivity::class.java)
+                .putExtra("userId",model.id)
+            activity.startActivity(newActivity)
+        }
     }
 
     override fun getItemCount(): Int {
