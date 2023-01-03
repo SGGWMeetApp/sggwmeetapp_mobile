@@ -32,6 +32,10 @@
                     android:orientation="vertical"
                     android:padding="15dp">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/group" />
 
                     <TextView
                         android:id="@+id/group_info_name_TV"
