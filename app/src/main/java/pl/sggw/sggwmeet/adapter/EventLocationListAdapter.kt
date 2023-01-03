@@ -38,6 +38,11 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
         val model: SimplePlaceResponseData = locationList[position]
         holder.locationHiddenView.visibility=visibilityState[position]
 
+        if(holder.locationHiddenView.visibility==View.VISIBLE){
+            holder.locationDetailExpand.visibility=View.INVISIBLE
+        }
+        else holder.locationDetailExpand.visibility=View.VISIBLE
+
         holder.locationName.setText(model.name)
         holder.locationAddress.setText(model.textLocation)
         if(model.reviewSummary.reviewsCount!! > 0){
@@ -67,11 +72,27 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
                 TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
                 holder.locationHiddenView.visibility=View.VISIBLE
                 visibilityState[position]=View.VISIBLE
+                holder.locationDetailExpand.visibility=View.INVISIBLE
             }
             else{
                 TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
                 holder.locationHiddenView.visibility=View.GONE
                 visibilityState[position]=View.GONE
+                holder.locationDetailExpand.visibility=View.VISIBLE
+            }
+        }
+        holder.locationDetailExpand.setOnClickListener{
+            if(holder.locationHiddenView.isGone){
+                TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
+                holder.locationHiddenView.visibility=View.VISIBLE
+                visibilityState[position]=View.VISIBLE
+                holder.locationDetailExpand.visibility=View.INVISIBLE
+            }
+            else{
+                TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
+                holder.locationHiddenView.visibility=View.GONE
+                visibilityState[position]=View.GONE
+                holder.locationDetailExpand.visibility=View.VISIBLE
             }
         }
         holder.locationSelectBT.setOnClickListener {
@@ -104,6 +125,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
         lateinit var locationHiddenView: LinearLayout
         lateinit var locationRoot: ConstraintLayout
         lateinit var locationMapButton: ImageButton
+        lateinit var locationDetailExpand: TextView
         val transition = AutoTransition()
 
 
@@ -119,6 +141,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
             locationHiddenView = itemView.findViewById(R.id.event_loc_hidden)
             locationRoot = itemView.findViewById(R.id.event_loc_root)
             locationMapButton = itemView.findViewById(R.id.event_loc_show_on_map_BT)
+            locationDetailExpand = itemView.findViewById(R.id.event_loc_detail_info)
             transition.duration=200
         }
     }
