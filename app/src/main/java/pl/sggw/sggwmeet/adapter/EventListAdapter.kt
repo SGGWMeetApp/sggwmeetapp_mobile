@@ -40,6 +40,9 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
         if(model.description.isNullOrBlank()){
             holder.eventDescription.visibility=View.GONE
         }
+        else{
+            holder.eventDescription.visibility=View.VISIBLE
+        }
         holder.itemView.setOnClickListener{
             val newActivity = Intent(holder.itemView.context, EventShowActivity::class.java)
                 .putExtra("eventData",gson.toJson(model))
