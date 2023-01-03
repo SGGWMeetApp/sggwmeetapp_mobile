@@ -92,6 +92,16 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         binding.eventsRV.layoutManager = LinearLayoutManager(requireContext())
 
         binding.eventsRV.adapter = eventsAdapter
+
+        eventsAdapter.setOnJoinClickListener { eventId ->
+            eventViewModel.joinPublicEvent(eventId)
+            eventsAdapter.markAsJoining(eventId)
+        }
+
+        eventsAdapter.setOnLeaveClickListener { eventId ->
+            eventViewModel.leavePublicEvent(eventId)
+            eventsAdapter.markAsLeaving(eventId)
+        }
     }
 
     private fun initFoodMenuAdapter() {
@@ -289,6 +299,36 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 is Resource.Error -> {
                     showMenuLoaded()
                     Toast.makeText(requireContext(), "Błąd podczas ładowania menu!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        eventViewModel.joinPublicEventState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    //TODO
+                }
+                is Resource.Success -> {
+                    eventsAdapter.confirmJoin()
+                }
+                is Resource.Error -> {
+                    eventsAdapter.unmarkJoining()
+                    Toast.makeText(requireContext(), "Błąd podczas dołączania do wydarzenia!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        eventViewModel.leavePublicEventState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    //TODO
+                }
+                is Resource.Success -> {
+                    eventsAdapter.confirmLeave()
+                }
+                is Resource.Error -> {
+                    eventsAdapter.unmarkLeaving()
+                    Toast.makeText(requireContext(), "Błąd podczas opuszcznia wydarzenia!", Toast.LENGTH_SHORT).show()
                 }
             }
         }

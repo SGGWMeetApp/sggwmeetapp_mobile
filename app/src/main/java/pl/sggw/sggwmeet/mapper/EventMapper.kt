@@ -20,7 +20,9 @@ class EventMapper {
             event.description ?: "",
             event.startDate,
             "${event.author.firstName} ${event.author.lastName}",
-            event.canEdit
+            event.canEdit,
+            event.attendersCount,
+            event.userAttends
         )
     }
 }

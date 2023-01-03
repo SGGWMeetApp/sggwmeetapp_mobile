@@ -166,6 +166,7 @@
     <string name="events_count_TV">%1$d wydarzeń w najbliższym czasie</string>
     <string name="event_creator_TV">Utworzył: %1$s</string>
     <string name="food_item_price_TV">%1$s zł</string>
+    <string name="event_participant_count_TV">Weżmie udział: %1$d osób</string>
 
 
     <!-- Edytuj użytkownika -->

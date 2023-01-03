@@ -65,6 +65,66 @@
             android:textSize="15sp"
             android:layout_marginVertical="10dp"/>
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/participants_count_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Weżmie udział: 10 osób"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/user_participating_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ty też bierzesz udział"
+                    android:textColor="@android:color/holo_green_dark" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/join_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/asset_plus"
+                    android:backgroundTint="@color/black"
+                    android:tint="@color/white"/>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/leave_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/asset_minus"
+                    android:backgroundTint="@color/black"
+                    android:tint="@color/white"/>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/edit_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/asset_edit_pen"
+                    android:backgroundTint="@color/black"
+                    android:tint="@color/white"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.cardview.widget.CardView>

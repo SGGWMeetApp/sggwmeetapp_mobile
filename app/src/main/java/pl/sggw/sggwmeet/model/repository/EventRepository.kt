@@ -237,6 +237,56 @@ class EventRepository(
         }
     }
 
+    suspend fun joinPublicEvent(eventId: Int) : Flow<Resource<Void>> = flow {
+        emit(Resource.Loading())
+        try {
+            val userId = userDataStore.getUserId()
+            val response = connector.addUserToEvent(eventId, userId)
+            if(response.isSuccessful) {
+                Log.i(TAG, "User joined event successfully")
+                emit(Resource.Success())
+            }
+            else {
+                Log.e(TAG, "An exception occurred during joining public event, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during during joining public event", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during during joining public event", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during during joining public event", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun leavePublicEvent(eventId: Int) : Flow<Resource<Void>> = flow {
+        emit(Resource.Loading())
+        try {
+            val userId = userDataStore.getUserId()
+            val response = connector.deleteUserFromEvent(eventId, userId)
+            if(response.isSuccessful) {
+                Log.i(TAG, "User leaved event successfully")
+                emit(Resource.Success())
+            }
+            else {
+                Log.e(TAG, "An exception occurred during leaving public event, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during during leaving public event", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during during leaving public event", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during during leaving public event", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
     suspend fun deleteUserFromEvent(event_id: Int, user_id: Int) : Flow<Resource<String>> = flow {
         val functionTAG = "deleteUserFromEvent"
         emit(Resource.Loading())

@@ -127,6 +127,13 @@ class UserDataStore(
     }
 
     /**
+     * Returns currently authorized user id
+     */
+    fun getUserId() : Int {
+        return Prefs.read().content(USER_ID_KEY,0)
+    }
+
+    /**
      * Gets token from the storage. If token is not valid anymore then login request will be sent with stored user data
      * to renew the token
      */

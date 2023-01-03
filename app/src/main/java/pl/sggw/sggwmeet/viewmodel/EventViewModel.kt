@@ -152,4 +152,30 @@ class EventViewModel @Inject constructor(
         }
     }
 
+    private val _joinPublicEventState: MutableLiveData<Resource<Void>> = MutableLiveData()
+    val joinPublicEventState: LiveData<Resource<Void>>
+        get() = _joinPublicEventState
+
+    fun joinPublicEvent(eventId: Int) {
+        viewModelScope.launch {
+            eventRepository.joinPublicEvent(eventId).onEach {
+                _joinPublicEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _leavePublicEventState: MutableLiveData<Resource<Void>> = MutableLiveData()
+    val leavePublicEventState: LiveData<Resource<Void>>
+        get() = _leavePublicEventState
+
+    fun leavePublicEvent(eventId: Int) {
+        viewModelScope.launch {
+            eventRepository.leavePublicEvent(eventId).onEach {
+                _leavePublicEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
 }
