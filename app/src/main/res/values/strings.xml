@@ -238,6 +238,9 @@
     <string name="group_leave">Opuść grupę</string>
     <string name="group">Grupa</string>
 
+    <!-- Places -->
+    <string name="filter_button_text">Filtruj</string>
+
     <!-- Dummy texts   -->
     <string name="lorem_tiny">Ipsum dolor varius massa non.</string>
     <string name="lorem_short">

@@ -1,25 +1,23 @@
 package pl.sggw.sggwmeet.fragment.core
 
-import androidx.fragment.app.Fragment
-
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
@@ -53,6 +51,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private val markerIdsToPlacesData : MutableMap<Marker, PlaceMarkerData> = HashMap()
     lateinit var chosenPlaceId : String
 
+    lateinit var placesDialog: AlertDialog
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
         return this.binding.root
@@ -62,6 +62,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         super.onViewCreated(view, savedInstanceState)
         customizeMap()
         setListeners()
+        this.placesDialog = this.setupPlacesDialog()
     }
 
     private fun setListeners() {
@@ -147,6 +148,10 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         binding.zoomOutBT.setOnClickListener {
             map.moveCamera(CameraUpdateFactory.zoomOut())
         }
+
+        binding.arrowBT.setOnClickListener {
+            this.placesDialog.show()
+        }
     }
 
     private fun setViewModelListeners() {
@@ -195,4 +200,28 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private fun zoomToRootLocation(marker : PlaceMarkerData) {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(marker.geolocation.latitude, marker.geolocation.longitude), DEFAULT_ZOOM))
     }
+
+    private fun setupPlacesDialog(): AlertDialog {
+        val alertBuilder = AlertDialog.Builder(this.requireContext())
+        val layout = this.layoutInflater.inflate(R.layout.places_dialog_layout, null)
+
+        val filterButton = layout.findViewById<Button>(R.id.button_filter)
+        val arrowButton = layout.findViewById<AppCompatImageButton>(R.id.arrow_button)
+        val placesList = layout.findViewById<RecyclerView>(R.id.places_list)
+        alertBuilder.setView(layout)
+
+        val alert = alertBuilder.create()
+        alert.setCanceledOnTouchOutside(true)
+        alert.setOnCancelListener {
+            alert.dismiss()
+        }
+
+        arrowButton.setOnClickListener {
+            alert.dismiss()
+        }
+
+        return alert
+    }
+
+
 }
