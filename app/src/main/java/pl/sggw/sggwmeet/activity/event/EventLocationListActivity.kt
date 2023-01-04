@@ -66,6 +66,12 @@ class EventLocationListActivity : AppCompatActivity() {
         binding.navbarActivity.closeBT.setOnClickListener {
             this.finish()
         }
+
+        binding.selectFromMapBT.setOnClickListener {
+            val newActivity = Intent(this, EventShowOnMapActivity::class.java)
+                .putExtra("locationId",-2)
+            startActivityForResult(newActivity, 123)
+        }
     }
     private fun setAnimations(){
         animationDim = AnimationUtils.loadAnimation(this,R.anim.background_dim_anim)

@@ -61,10 +61,10 @@ class EventShowOnMapActivity: AppCompatActivity() {
         if(locationId == -1){
             this.finish()
         }
-        setViewModelListeners()
-        customizeMap()
         setClosePlaceDetailsButtonPopupListener()
         setPlaceDetailsButtonPopupListener()
+        setViewModelListeners()
+        customizeMap()
     }
 
     private fun setClosePlaceDetailsButtonPopupListener() {
@@ -88,26 +88,30 @@ class EventShowOnMapActivity: AppCompatActivity() {
         map.setOnMarkerClickListener {
 
             val data = markerIdsToPlacesData[it]!!
-            if(PlaceCategory.ROOT_LOCATION != data.category) {
-                chosenPlaceId = data.id
-                chosenPlaceName = data.name
-
-                binding.showOnMapName.text = data.name
-                binding.showOnMapLocation.text = data.textLocation
-                if(data.reviewsCount > 0){
-                    binding.showOnMapRating.setText(
-                        "Ocena: ${String.format("%.0f",data.positiveReviewsPercent)}% (${data.reviewsCount} ocen)"
-                    )
-                }
-                else{
-                    binding.showOnMapRating.setText(
-                        "Brak ocen"
-                    )
-                }
-                binding.placeDescriptionCV.visibility = View.VISIBLE
-            }
+            markerClick(data)
 
             true
+        }
+    }
+
+    private fun markerClick(data: PlaceMarkerData){
+        if(PlaceCategory.ROOT_LOCATION != data.category) {
+            chosenPlaceId = data.id
+            chosenPlaceName = data.name
+
+            binding.showOnMapName.text = data.name
+            binding.showOnMapLocation.text = data.textLocation
+            if(data.reviewsCount > 0){
+                binding.showOnMapRating.setText(
+                    "Ocena: ${String.format("%.0f",data.positiveReviewsPercent)}% (${data.reviewsCount} ocen)"
+                )
+            }
+            else{
+                binding.showOnMapRating.setText(
+                    "Brak ocen"
+                )
+            }
+            binding.placeDescriptionCV.visibility = View.VISIBLE
         }
     }
 
@@ -137,7 +141,12 @@ class EventShowOnMapActivity: AppCompatActivity() {
         clearOldMarkers()
 
         markers.forEach { markerData ->
-            if(!markerData.id.isNullOrBlank()) {
+            if(locationId==-2){
+                if(PlaceCategory.ROOT_LOCATION == markerData.category) {
+                    zoomToRootLocation(markerData)
+                }
+            }
+            else if(!markerData.id.isNullOrBlank()) {
                 if (markerData.id.toInt() == locationId) {
                     zoomToRootLocation(markerData)
                 }

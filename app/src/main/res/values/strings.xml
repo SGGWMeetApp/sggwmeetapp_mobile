@@ -222,6 +222,7 @@
     <string name="event_joined">Zapisany</string>
     <string name="event_joined_not">Niezapisany</string>
     <string name="expand">Rozwiń szczegóły</string>
+    <string name="select_from_map">Wybierz z mapy</string>
 
     <!-- Settings -->
     <string name="user_settings">Opcje użytkownika</string>
