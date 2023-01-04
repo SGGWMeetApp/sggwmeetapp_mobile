@@ -43,6 +43,7 @@ class EventShowActivity: AppCompatActivity() {
     private val eventViewModel by viewModels<EventViewModel>()
     private lateinit var deleteAlertDialog: AlertDialog
     private var canEdit = false
+    private var wasEdited = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +88,10 @@ class EventShowActivity: AppCompatActivity() {
                 }
             }
             else{
-                showAttendersDetails()
+                if(wasEdited){
+                    wasEdited=false
+                }
+                else showAttendersDetails()
             }
         }
         catch (e:Exception){
@@ -350,6 +354,7 @@ class EventShowActivity: AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode==103 && resultCode == Activity.RESULT_OK) {
             if (data != null) {
+                wasEdited=true
                 setUpEvent(data.getStringExtra("newEventData"))
                 this.setResult(Activity.RESULT_OK)
             }
