@@ -1,11 +1,15 @@
 package pl.sggw.sggwmeet.activity.event
 
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -15,7 +19,9 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.ActivityEventShowOnMapBinding
+import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment
 import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
@@ -39,6 +45,9 @@ class EventShowOnMapActivity: AppCompatActivity() {
     private val markerIdsToPlacesData : MutableMap<Marker, PlaceMarkerData> = HashMap()
     private var locationId = -1
 
+    lateinit var chosenPlaceId : String
+    private var chosenPlaceName = ""
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +63,55 @@ class EventShowOnMapActivity: AppCompatActivity() {
         }
         setViewModelListeners()
         customizeMap()
+        setClosePlaceDetailsButtonPopupListener()
+        setPlaceDetailsButtonPopupListener()
+    }
+
+    private fun setClosePlaceDetailsButtonPopupListener() {
+        binding.placeDescriptionCloseBT.setOnClickListener {
+            binding.placeDescriptionCV.visibility = View.GONE
+        }
+    }
+
+    private fun setPlaceDetailsButtonPopupListener() {
+        binding.placeDescriptionViewBT.setOnClickListener {
+
+            val intent = Intent()
+            intent.putExtra("returnedLocationID",chosenPlaceId.toInt())
+                .putExtra("returnedLocationName",chosenPlaceName)
+            this.setResult(Activity.RESULT_OK,intent)
+            this.finish()
+        }
+    }
+
+    private fun setOnMarkerClickListener() {
+        map.setOnMarkerClickListener {
+
+            val data = markerIdsToPlacesData[it]!!
+            if(PlaceCategory.ROOT_LOCATION != data.category) {
+                chosenPlaceId = data.id
+                chosenPlaceName = data.name
+
+                binding.placeDescriptionNameTV.text = data.name
+                loadImageBasedOnPath(data)
+                binding.placeDescriptionCV.visibility = View.VISIBLE
+            }
+
+            true
+        }
+    }
+
+    private fun loadImageBasedOnPath(data : PlaceMarkerData) {
+        data.photoPath?.let { photoPath ->
+            picasso
+                .load(photoPath)
+                .placeholder(R.drawable.asset_loading)
+                .into(binding.placeDescriptionIV)
+        } ?: run {
+            picasso
+                .load(R.drawable.asset_no_image_available)
+                .into(binding.placeDescriptionIV)
+        }
     }
 
     private fun setUpButtons() {
@@ -68,6 +126,7 @@ class EventShowOnMapActivity: AppCompatActivity() {
 
             this.map = map
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+            setOnMarkerClickListener()
             placesViewModel.getPlaceMarkers(null)
         }
 

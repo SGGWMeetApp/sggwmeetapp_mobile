@@ -1,5 +1,7 @@
 package pl.sggw.sggwmeet.activity.event
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -237,6 +239,16 @@ class EventLocationListActivity : AppCompatActivity() {
             tempString=tempString.replace(" ",", ")
             tempString=tempString.replace("_"," ")
             locationCategoryMap.put(item.id,tempString)
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode==123 && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                this.setResult(Activity.RESULT_OK,data)
+                this.finish()
+            }
+
         }
     }
 }
