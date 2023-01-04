@@ -250,6 +250,7 @@
     <string name="filter_button_text">Filtruj</string>
 
     <!-- Location categories -->
+    <string name="loc_cat_all">wszystkie</string>
     <string name="loc_cat_restaurant">restauracja</string>
     <string name="loc_cat_bar">bar</string>
     <string name="loc_cat_pub">pub</string>

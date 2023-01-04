@@ -225,6 +225,7 @@ class EventLocationListActivity : AppCompatActivity() {
             else{
                 for (category in item.locationCategoryCodes){
                     when (category){
+                        PlaceCategory.ALL -> tempString += getString(R.string.loc_cat_all)
                         PlaceCategory.RESTAURANT -> tempString+=getString(R.string.loc_cat_restaurant)
                         PlaceCategory.BAR -> tempString+=getString(R.string.loc_cat_bar)
                         PlaceCategory.PUB -> tempString+=getString(R.string.loc_cat_pub)
