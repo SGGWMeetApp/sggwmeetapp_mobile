@@ -149,6 +149,7 @@ class EventShowOnMapActivity: AppCompatActivity() {
             else if(!markerData.id.isNullOrBlank()) {
                 if (markerData.id.toInt() == locationId) {
                     zoomToRootLocation(markerData)
+                    markerClick(markerData)
                 }
             }
             val marker = map.addMarker(
