@@ -46,7 +46,8 @@
                     android:layout_marginBottom="40dp"
                     android:background="@drawable/rounded_corner"
                     android:orientation="vertical"
-                    android:padding="30dp">
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="30dp">
 
 
                     <TextView
