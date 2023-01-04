@@ -71,6 +71,12 @@ class EventShowActivity: AppCompatActivity() {
             binding.eventNameTV.setText(eventData.name)
             binding.eventStartDateTV.setText(timeFormat.format(eventData.startDate))
             binding.eventLocationTV.setText(eventData.locationData.name)
+            binding.eventShowOnMapTV.setOnClickListener {
+                val newActivity = Intent(this, EventShowOnMapActivity::class.java)
+                    .putExtra("locationId",eventData.locationData.id)
+                    .putExtra("disablePicking",true)
+                startActivity(newActivity)
+            }
             binding.eventDescriptionTV.setText(eventData.description)
             binding.eventAuthorTV.setText("${eventData.author.firstName} ${eventData.author.lastName}")
             binding.eventEmailTV.setText(eventData.author.email)

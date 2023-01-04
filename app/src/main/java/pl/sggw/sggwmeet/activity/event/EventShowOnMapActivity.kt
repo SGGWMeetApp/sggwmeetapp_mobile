@@ -47,6 +47,7 @@ class EventShowOnMapActivity: AppCompatActivity() {
 
     lateinit var chosenPlaceId : String
     private var chosenPlaceName = ""
+    private var disablePicking = false
 
 
 
@@ -61,6 +62,7 @@ class EventShowOnMapActivity: AppCompatActivity() {
         if(locationId == -1){
             this.finish()
         }
+        disablePicking = intent.getBooleanExtra("disablePicking",false)
         setClosePlaceDetailsButtonPopupListener()
         setPlaceDetailsButtonPopupListener()
         setViewModelListeners()
@@ -74,13 +76,21 @@ class EventShowOnMapActivity: AppCompatActivity() {
     }
 
     private fun setPlaceDetailsButtonPopupListener() {
-        binding.showOnMapSelectBT.setOnClickListener {
+        if(disablePicking){
+            binding.showOnMapSelectBT.visibility=View.INVISIBLE
+            binding.showOnMapSelectBT.isClickable=false
+        }
+        else{
+            binding.showOnMapSelectBT.visibility=View.VISIBLE
+            binding.showOnMapSelectBT.isClickable=true
+            binding.showOnMapSelectBT.setOnClickListener {
 
-            val intent = Intent()
-            intent.putExtra("returnedLocationID",chosenPlaceId.toInt())
-                .putExtra("returnedLocationName",chosenPlaceName)
-            this.setResult(Activity.RESULT_OK,intent)
-            this.finish()
+                val intent = Intent()
+                intent.putExtra("returnedLocationID",chosenPlaceId.toInt())
+                    .putExtra("returnedLocationName",chosenPlaceName)
+                this.setResult(Activity.RESULT_OK,intent)
+                this.finish()
+            }
         }
     }
 

@@ -223,6 +223,7 @@
     <string name="event_joined_not">Niezapisany</string>
     <string name="expand">Rozwiń szczegóły</string>
     <string name="select_from_map">Wybierz z mapy</string>
+    <string name="event_show_on_map"><a href="">Pokaż na mapie</a></string>
 
     <!-- Settings -->
     <string name="user_settings">Opcje użytkownika</string>
@@ -239,7 +240,7 @@
     <string name="group_name">Nazwa grupy</string>
     <string name="group_create_title">Utwórz grupę</string>
     <string name="add_user">Dodaj użytkownika</string>
-    <string name="group_create_event_title">Utwórz wydarzenie prywatne</string>
+    <string name="group_create_event_title">Utwórz wydarzenie grupowe</string>
     <string name="group_delete">Usuń grupę</string>
     <string name="group_leave">Opuść grupę</string>
     <string name="group">Grupa</string>
