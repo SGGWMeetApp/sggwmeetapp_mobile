@@ -68,13 +68,13 @@ class EventShowOnMapActivity: AppCompatActivity() {
     }
 
     private fun setClosePlaceDetailsButtonPopupListener() {
-        binding.placeDescriptionCloseBT.setOnClickListener {
+        binding.showOnMapCloseBT.setOnClickListener {
             binding.placeDescriptionCV.visibility = View.GONE
         }
     }
 
     private fun setPlaceDetailsButtonPopupListener() {
-        binding.placeDescriptionViewBT.setOnClickListener {
+        binding.showOnMapSelectBT.setOnClickListener {
 
             val intent = Intent()
             intent.putExtra("returnedLocationID",chosenPlaceId.toInt())
@@ -92,25 +92,22 @@ class EventShowOnMapActivity: AppCompatActivity() {
                 chosenPlaceId = data.id
                 chosenPlaceName = data.name
 
-                binding.placeDescriptionNameTV.text = data.name
-                loadImageBasedOnPath(data)
+                binding.showOnMapName.text = data.name
+                binding.showOnMapLocation.text = data.textLocation
+                if(data.reviewsCount > 0){
+                    binding.showOnMapRating.setText(
+                        "Ocena: ${String.format("%.0f",data.positiveReviewsPercent)}% (${data.reviewsCount} ocen)"
+                    )
+                }
+                else{
+                    binding.showOnMapRating.setText(
+                        "Brak ocen"
+                    )
+                }
                 binding.placeDescriptionCV.visibility = View.VISIBLE
             }
 
             true
-        }
-    }
-
-    private fun loadImageBasedOnPath(data : PlaceMarkerData) {
-        data.photoPath?.let { photoPath ->
-            picasso
-                .load(photoPath)
-                .placeholder(R.drawable.asset_loading)
-                .into(binding.placeDescriptionIV)
-        } ?: run {
-            picasso
-                .load(R.drawable.asset_no_image_available)
-                .into(binding.placeDescriptionIV)
         }
     }
 

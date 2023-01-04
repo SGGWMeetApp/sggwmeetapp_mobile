@@ -59,7 +59,8 @@ class PlacesMapper {
             simplePlaceData.name,
             resolveCategoryCode(simplePlaceData.locationCategoryCodes),
             simplePlaceData.geolocation,
-            simplePlaceData.photoPath
+            simplePlaceData.photoPath,
+            simplePlaceData.textLocation
         )
         simplePlaceData.reviewSummary.reviewsCount?.let { markerData.reviewsCount = it }
         simplePlaceData.reviewSummary.positivePercent?.let { markerData.positiveReviewsPercent = it }

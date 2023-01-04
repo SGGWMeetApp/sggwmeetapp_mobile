@@ -8,6 +8,9 @@
         <item name="android:layout_height">48dp</item>
         <item name="android:background">#00000000</item>
     </style>
+    <style name="transparentButton">
+        <item name="android:background">#00000000</item>
+    </style>
 
     <style name="welcome_sheet_text">
         <item name="android:gravity">center_horizontal</item>

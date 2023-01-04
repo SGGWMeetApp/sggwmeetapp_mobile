@@ -5,7 +5,8 @@ data class PlaceMarkerData(
     val name : String,
     val category : PlaceCategory,
     val geolocation: Geolocation,
-    val photoPath: String?
+    val photoPath: String?,
+    var textLocation: String=""
 ) {
     var positiveReviewsPercent: Float? = 0.00f
     var reviewsCount: Int = 0
