@@ -139,6 +139,7 @@
     <string name="email_taken">Wybrany email jest zajęty</string>
     <string name="phone_taken">Już istnieje użytkownik o wybranym numerze</string>
     <string name="user_exists">Użytkownik o tych danych już istnieje</string>
+    <string name="phone_error">Niepoprawne dane</string>
 
     <!-- Wspólne komunikaty -->
     <string name="technical_error_message">Błąd techniczny</string>

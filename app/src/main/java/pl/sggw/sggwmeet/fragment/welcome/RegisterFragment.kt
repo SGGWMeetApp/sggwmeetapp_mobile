@@ -298,6 +298,14 @@ class RegisterFragment : Fragment() {
                         binding.regPhoneTextInputLayout.error=getString(R.string.user_exists)
                         binding.regPhonePrefixTextInputLayout.error=getString(R.string.user_exists)
                 }
+            "400" -> {
+                if(!binding.regPhone.text.toString().contains("[0-9]".toRegex())){
+                    binding.regPhoneTextInputLayout.error=getString(R.string.phone_error)
+                }
+                if(!binding.regPhonePrefix.text.toString().contains("[0-9]".toRegex())){
+                    binding.regPhonePrefixTextInputLayout.error=getString(R.string.phone_error)
+                }
+                }
             }
         }
 
