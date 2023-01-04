@@ -25,7 +25,7 @@
     <TextView
         android:id="@+id/place_name_TV"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
         app:layout_constraintTop_toBottomOf="@id/horizontal_guideline"
@@ -39,7 +39,7 @@
     <TextView
         android:id="@+id/place_category_TV"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
         app:layout_constraintTop_toBottomOf="@id/place_name_TV"
@@ -60,11 +60,11 @@
     <TextView
         android:id="@+id/place_distance_TV"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="40dp"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizontal_guideline"
-        app:layout_constraintBottom_toTopOf="@id/place_positive_reviews_percent_TV"
+        app:layout_constraintBottom_toTopOf="@id/place_positive_reviews_TV"
         android:fontFamily="@font/montserratromanmedium"
         android:textSize="18sp"
         android:text="@string/place_test_distance"
@@ -72,9 +72,9 @@
         android:gravity="center"/>
 
     <TextView
-        android:id="@+id/place_positive_reviews_percent_TV"
+        android:id="@+id/place_positive_reviews_TV"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="20dp"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/place_distance_TV"

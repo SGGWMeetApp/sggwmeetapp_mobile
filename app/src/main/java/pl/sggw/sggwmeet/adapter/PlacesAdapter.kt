@@ -39,7 +39,7 @@ class PlacesAdapter(private val picasso: Picasso): RecyclerView.Adapter<PlacesAd
         holder.nameTV.text = item.name
         holder.categoryTV.text = item.category.polishTranslation
         holder.distanceTV.text = this.measureDistance(item.geolocation)
-        holder.positiveReviewsPercentTV.text = this.formatPositiveReviewsPercent(item.positiveReviewsPercent)
+        holder.positiveReviewsTV.text = this.formatReviews(item.reviewsCount, item.positiveReviewsPercent)
         this.setImage(holder, item)
     }
 
@@ -61,7 +61,11 @@ class PlacesAdapter(private val picasso: Picasso): RecyclerView.Adapter<PlacesAd
         }
     }
 
-    private fun formatPositiveReviewsPercent(percent: Float?): String {
+    private fun formatReviews(opinions: Int, percent: Float?): String {
+        return "${this.formatReviewsPercent(percent)} z $opinions"
+    }
+
+    private fun formatReviewsPercent(percent: Float?): String {
         if (percent == null) return "0.00%"
         val df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.HALF_UP
@@ -84,7 +88,7 @@ class PlacesAdapter(private val picasso: Picasso): RecyclerView.Adapter<PlacesAd
         val nameTV: TextView = itemView.findViewById(R.id.place_name_TV)
         val categoryTV: TextView = itemView.findViewById(R.id.place_category_TV)
         val distanceTV: TextView = itemView.findViewById(R.id.place_distance_TV)
-        val positiveReviewsPercentTV: TextView = itemView.findViewById(R.id.place_positive_reviews_percent_TV)
+        val positiveReviewsTV: TextView = itemView.findViewById(R.id.place_positive_reviews_TV)
         val imageIV: ImageView = itemView.findViewById(R.id.place_image_IV)
     }
 }
