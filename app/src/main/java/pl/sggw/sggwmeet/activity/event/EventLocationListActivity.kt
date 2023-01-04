@@ -237,7 +237,6 @@ class EventLocationListActivity : AppCompatActivity() {
             tempString=tempString.replace(" ",", ")
             tempString=tempString.replace("_"," ")
             locationCategoryMap.put(item.id,tempString)
-            Log.i(item.id,tempString)
         }
     }
 }
