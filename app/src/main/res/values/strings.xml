@@ -242,6 +242,15 @@
     <string name="group_leave">Opuść grupę</string>
     <string name="group">Grupa</string>
 
+    <!-- Location categories -->
+    <string name="loc_cat_restaurant">restauracja</string>
+    <string name="loc_cat_bar">bar</string>
+    <string name="loc_cat_pub">pub</string>
+    <string name="loc_cat_gym">siłownia</string>
+    <string name="loc_cat_cinema">kino</string>
+    <string name="loc_cat_root">korzeń</string>
+    <string name="loc_cat_other">inna_kategoria</string>
+
     <!-- Dummy texts   -->
     <string name="lorem_tiny">Ipsum dolor varius massa non.</string>
     <string name="lorem_short">
