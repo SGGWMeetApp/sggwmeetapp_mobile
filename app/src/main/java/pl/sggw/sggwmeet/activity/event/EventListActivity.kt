@@ -39,7 +39,6 @@ import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -341,7 +340,6 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
     private fun setTopSheet(){
         binding.topSheetLayout.searchBar.visibility=View.GONE
-        binding.topSheetLayout.menuPlacesBT.visibility=View.GONE
         binding.topSheetLayout.menuEventBT.isEnabled=false
         binding.navbarActivity.popupButton.setOnClickListener{
             topSheetTransition.duration=200

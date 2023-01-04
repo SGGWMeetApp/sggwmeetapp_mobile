@@ -1,6 +1,7 @@
 package pl.sggw.sggwmeet.domain
 
 enum class PlaceCategory {
+    ALL,
     RESTAURANT,
     BAR,
     PUB,

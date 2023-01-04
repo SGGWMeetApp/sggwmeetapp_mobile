@@ -1,18 +1,26 @@
 package pl.sggw.sggwmeet.fragment.core
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,6 +29,7 @@ import com.google.android.gms.maps.model.*
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
+import pl.sggw.sggwmeet.adapter.PlacesAdapter
 import pl.sggw.sggwmeet.databinding.FragmentMapBinding
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
@@ -37,9 +46,18 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         private const val DEFAULT_ZOOM = 15.0f
 
         private const val TAG = "MapFragment"
+
+        private const val LOCATION_UPDATE_INTERVAL = 100L
+        private const val LOCATION_UPDATE_DISTANCE = 0.01F
     }
 
+    lateinit var placesDialog: AlertDialog
+    lateinit var adapter: PlacesAdapter
     private val placesViewModel by viewModels<PlacesViewModel>()
+    @Inject
+    lateinit var locationManager: LocationManager
+
+
     @Inject
     lateinit var markerBitmapGenerator: MarkerBitmapGenerator
     @Inject
@@ -51,7 +69,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private val markerIdsToPlacesData : MutableMap<Marker, PlaceMarkerData> = HashMap()
     lateinit var chosenPlaceId : String
 
-    lateinit var placesDialog: AlertDialog
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -62,7 +80,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         super.onViewCreated(view, savedInstanceState)
         customizeMap()
         setListeners()
-        this.placesDialog = this.setupPlacesDialog()
+        this.setupPlacesListCardView()
     }
 
     private fun setListeners() {
@@ -163,6 +181,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
                 is Resource.Success -> {
                     binding.mapPB.visibility = View.GONE
                     reloadMarkers(resource.data!!)
+                    this.adapter.submitItems(resource.data)
                 }
                 is Resource.Error -> {
                     binding.mapPB.visibility = View.GONE
@@ -201,27 +220,93 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(marker.geolocation.latitude, marker.geolocation.longitude), DEFAULT_ZOOM))
     }
 
-    private fun setupPlacesDialog(): AlertDialog {
-        val alertBuilder = AlertDialog.Builder(this.requireContext())
-        val layout = this.layoutInflater.inflate(R.layout.places_dialog_layout, null)
 
-        val filterButton = layout.findViewById<Button>(R.id.button_filter)
-        val arrowButton = layout.findViewById<AppCompatImageButton>(R.id.arrow_button)
-        val placesList = layout.findViewById<RecyclerView>(R.id.places_list)
-        alertBuilder.setView(layout)
+    private fun setupPlacesListCardView() {
+        this.setupLocationManager()
 
-        val alert = alertBuilder.create()
-        alert.setCanceledOnTouchOutside(true)
-        alert.setOnCancelListener {
-            alert.dismiss()
+        this.binding.arrowBT.setOnClickListener {
+            this.showPlacesListCardView(true)
+        }
+        this.binding.placesListArrowButton.setOnClickListener {
+            this.showPlacesListCardView(false)
         }
 
-        arrowButton.setOnClickListener {
-            alert.dismiss()
+        this.adapter = PlacesAdapter(this.picasso)
+        with(this.binding.placesListRecyclerView) {
+            this.layoutManager = LinearLayoutManager(this@MapFragment.requireContext())
+            this.adapter = this@MapFragment.adapter
         }
+        this.setupPlacesListSpinner()
 
-        return alert
+        LocationListenerImpl.userLocation.observe(this.viewLifecycleOwner) {
+            this.adapter.submitUserLocation(it)
+        }
     }
 
+    private fun showPlacesListCardView(show: Boolean) {
+        fun visible(visible: Boolean): Int {
+            return if (visible) View.VISIBLE
+            else View.GONE
+        }
 
+        with (this.binding) {
+            this.arrowBT.visibility = visible(!show)
+            this.zoomInBT.visibility = visible(!show)
+            this.zoomOutBT.visibility = visible(!show)
+            this.placesListCardView.visibility = visible(show)
+        }
+    }
+
+    private fun setupPlacesListSpinner() {
+        val spinner = this.binding.placesListCategorySpinner
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            private fun changePlacesCategory(category: PlaceCategory?) {
+                this@MapFragment.placesViewModel.getPlaceMarkers(category)
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val category: PlaceCategory = spinner.selectedItem as PlaceCategory
+                if (category == PlaceCategory.ALL) this.changePlacesCategory(null)
+                else this.changePlacesCategory(category)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+        val adapter: ArrayAdapter<PlaceCategory> = ArrayAdapter(
+            this.requireContext(),
+            R.layout.category_spinner_text_view,
+            PlaceCategory.values()
+        )
+        adapter.setDropDownViewResource(R.layout.category_spinner_text_view)
+        spinner.adapter = adapter
+    }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ActivityCompat.checkSelfPermission(this.requireContext(), permission) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun setupLocationManager() {
+        try {
+            if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
+            if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
+            this.locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                LOCATION_UPDATE_INTERVAL,
+                LOCATION_UPDATE_DISTANCE,
+                LocationListenerImpl
+            )
+        } catch (ex: SecurityException) {
+            ex.printStackTrace()
+        }
+    }
+
+    private object LocationListenerImpl: LocationListener {
+        private val _userLocation: MutableLiveData<Location> = MutableLiveData()
+        val userLocation: LiveData<Location> = this._userLocation
+        override fun onLocationChanged(location: Location) {
+            this._userLocation.postValue(location)
+        }
+    }
 }

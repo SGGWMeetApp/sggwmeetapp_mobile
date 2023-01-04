@@ -2,7 +2,6 @@ package pl.sggw.sggwmeet.activity
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -10,6 +9,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.findNavController
 import com.google.gson.Gson
@@ -85,12 +85,6 @@ class CoreActivity : AppCompatActivity() {
         binding.topSheetHideHitbox.setOnClickListener{
             topSheetTransition.duration=200
             closeTopSheet()
-        }
-
-        binding.topSheetLayout.menuPlacesBT.setOnClickListener {
-            this.navigateToFragment(R.id.placesFragment)
-            this.topSheetTransition.duration = 100
-            this.closeTopSheet()
         }
 
         binding.topSheetLayout.menuMapBT.setOnClickListener {

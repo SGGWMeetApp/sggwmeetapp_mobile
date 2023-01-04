@@ -40,7 +40,6 @@ import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
 import pl.sggw.sggwmeet.viewmodel.GroupViewModel
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class GroupListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -319,7 +318,6 @@ class GroupListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
     private fun setTopSheet(){
         binding.topSheetLayout.searchBar.visibility=View.GONE
-        binding.topSheetLayout.menuPlacesBT.visibility=View.GONE
         binding.topSheetLayout.menuGroupsBT.isEnabled=false
         binding.navbarActivity.popupButton.setOnClickListener{
             topSheetTransition.duration=200

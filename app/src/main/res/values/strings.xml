@@ -250,6 +250,10 @@
     <string name="lorem_medium">
         Ipsum dolor varius massa non. Condimentum cras egestas malesuada commodo cras quam fames volutpat ac. Aliquet proin viverra eget sit accumsan. In hendrerit lectus urna suscipit nisi vitae arcu gravida. Volutpat sed amet placerat pharetra. Aliquam aenean pellentesque dolor ipsum odio
     </string>
+    <string name="place_test_name">Test Name</string>
+    <string name="place_test_category">Test Category</string>
+    <string name="place_test_distance">Test Distance</string>
+    <string name="place_test_positive_reviews_percent">TPRP</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
