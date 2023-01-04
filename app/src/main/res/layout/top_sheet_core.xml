@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/topSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -39,7 +40,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent">
+            app:layout_constraintTop_toBottomOf="parent"
+            tools:visibility="visible">
 
             <com.mancj.materialsearchbar.MaterialSearchBar
                 android:id="@+id/searchBar"
@@ -47,18 +49,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto"
+                android:visibility="gone"
                 app:mt_hint="@string/menu_search_text"
                 app:mt_maxSuggestionsCount="0"
                 app:mt_placeholder="@string/menu_search_text"
                 app:mt_placeholderColor="@color/primary_accent"
-                app:mt_speechMode="false" />
+                app:mt_speechMode="false"
+                tools:visibility="visible" />
 
             <View
                 android:id="@+id/searchBar_underline"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="12dp"
-                android:background="#D9D9D9" />
+                android:background="#D9D9D9"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <Button
                 android:id="@+id/menu_map_BT"
@@ -147,8 +153,8 @@
                     android:layout_marginVertical="10dp"
                     android:layout_weight="0"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="10dp"
-                    app:cardMaxElevation="10dp">
+                    app:cardElevation="6dp"
+                    app:cardMaxElevation="6dp">
 
                     <ImageView
                         android:id="@+id/avatar_preview_IV"
