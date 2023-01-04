@@ -14,7 +14,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
     <string name="action_sign_in_short">Zaloguj</string>
-    <string name="welcome">"Welcome!"</string>
+    <string name="welcome">"Witaj,"</string>
     <string name="invalid_email">Niepoprawny email</string>
     <string name="invalid_password">Hasło musi mieć >=8 znaków</string>
     <string name="login_failed">"Logowanie nie powiodło się"</string>
@@ -141,7 +141,7 @@
     <string name="user_exists">Użytkownik o tych danych już istnieje</string>
 
     <!-- Wspólne komunikaty -->
-    <string name="technical_error_message">Technical error occurred!</string>
+    <string name="technical_error_message">Błąd techniczny</string>
 
     <!-- Menu -->
     <string name="menu_start_BT">Start</string>

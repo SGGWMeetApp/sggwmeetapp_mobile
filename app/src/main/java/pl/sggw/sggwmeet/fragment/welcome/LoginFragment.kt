@@ -166,8 +166,7 @@ class LoginFragment : Fragment() {
 
     private fun updateUiWithUser(userData: UserData) {
         val welcome = "${getString(R.string.welcome)} ${userData.firstName} ${userData.lastName}"
-        // TODO : initiate successful logged in experience
-        Toast.makeText(context, welcome, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, welcome, Toast.LENGTH_SHORT).show()
     }
 
     private fun showLoginFailedMessage() {
