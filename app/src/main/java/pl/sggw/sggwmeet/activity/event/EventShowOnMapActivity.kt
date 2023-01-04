@@ -135,7 +135,7 @@ class EventShowOnMapActivity: AppCompatActivity() {
             this.map = map
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
             setOnMarkerClickListener()
-            placesViewModel.getPlaceMarkers(null)
+            placesViewModel.getPlaceMarkers(arrayOf(null))
         }
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map_view) as SupportMapFragment?

@@ -13,7 +13,7 @@ import retrofit2.Response
 
 class MockPlacesConnector : PlacesConnector {
 
-    override suspend fun getPlaces(category: PlaceCategory?): Response<PlaceListResponse> {
+    override suspend fun getPlaces(categoryCodes: Array<PlaceCategory?>): Response<PlaceListResponse> {
 
         //mock network delay
         withContext(Dispatchers.IO) {

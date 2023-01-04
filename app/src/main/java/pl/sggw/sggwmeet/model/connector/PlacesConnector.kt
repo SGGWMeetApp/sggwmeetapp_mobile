@@ -17,7 +17,7 @@ interface PlacesConnector {
      * Returns basic places data near SGGW, category parameter is optional
      */
     @GET("/api/places")
-    suspend fun getPlaces(@Query("category") category : PlaceCategory?) : Response<PlaceListResponse>
+    suspend fun getPlaces(@Query("categoryCodes[]") categoryCodes : Array<PlaceCategory?>) : Response<PlaceListResponse>
 
     @GET("/api/places/{id}")
     suspend fun getPlaceDetails(@Path("id") id : String) : Response<PlaceDetailsResponse>

@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.flow
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceDetails
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.exception.ServerException
+import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.mapper.PlacesMapper
+import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.PlacesConnector
 import pl.sggw.sggwmeet.model.connector.dto.response.ErrorResponse
 import pl.sggw.sggwmeet.provider.RootMarkerProvider
 import pl.sggw.sggwmeet.util.Resource
-import pl.sggw.sggwmeet.exception.ServerException
-import pl.sggw.sggwmeet.exception.TechnicalException
-import pl.sggw.sggwmeet.model.UserDataStore
 
 class PlacesRepository(
     private val connector: PlacesConnector,
@@ -26,10 +26,10 @@ class PlacesRepository(
         private const val TAG = "PlacesRepository"
     }
 
-    suspend fun getSimplePlaceListForMarkers(category: PlaceCategory?) : Flow<Resource<List<PlaceMarkerData>>> = flow {
+    suspend fun getSimplePlaceListForMarkers(categoryCodes: Array<PlaceCategory?>) : Flow<Resource<List<PlaceMarkerData>>> = flow {
         emit(Resource.Loading())
         try {
-            val response = connector.getPlaces(category).body()
+            val response = connector.getPlaces(categoryCodes).body()
 //            interceptBackendErrors(response)
             val result = mapper.mapToMarkers(response!!.places) as MutableList
             //add SGGW marker

@@ -144,7 +144,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             showMapButtons()
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style))
             setOnMarkerClickListener()
-            placesViewModel.getPlaceMarkers(null)
+            placesViewModel.getPlaceMarkers(arrayOf(null))
         }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -261,7 +261,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         val spinner = this.binding.placesListCategorySpinner
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             private fun changePlacesCategory(category: PlaceCategory?) {
-                this@MapFragment.placesViewModel.getPlaceMarkers(category)
+                this@MapFragment.placesViewModel.getPlaceMarkers(arrayOf(category))
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

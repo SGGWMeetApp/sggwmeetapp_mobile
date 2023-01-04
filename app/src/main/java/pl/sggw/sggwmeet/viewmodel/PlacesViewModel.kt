@@ -5,8 +5,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import pl.sggw.sggwmeet.domain.*
-import pl.sggw.sggwmeet.model.repository.AuthorizationRepository
+import pl.sggw.sggwmeet.domain.PlaceCategory
+import pl.sggw.sggwmeet.domain.PlaceDetails
+import pl.sggw.sggwmeet.domain.PlaceMarkerData
 import pl.sggw.sggwmeet.model.repository.PlacesRepository
 import pl.sggw.sggwmeet.util.Resource
 import javax.inject.Inject
@@ -25,9 +26,9 @@ class PlacesViewModel @Inject constructor(
     val placeDetailsState: LiveData<Resource<PlaceDetails>>
         get() = _placeDetailsState
 
-    fun getPlaceMarkers(category: PlaceCategory?) {
+    fun getPlaceMarkers(categoryCodes: Array<PlaceCategory?>) {
         viewModelScope.launch {
-            placesRepository.getSimplePlaceListForMarkers(category).onEach {
+            placesRepository.getSimplePlaceListForMarkers(categoryCodes).onEach {
                 _placeMarkerListState.value = it
             }
                 .launchIn(viewModelScope)
