@@ -64,10 +64,17 @@ class UserDataStore(
     fun store(response: UserRegisterResponse, userCredentials: UserCredentials) {
         Log.d("token: ", response.token)
         Log.d("userData: ", response.toString())
+        var avatarUrl=""
+        if (response.userData.avatarUrl!=null){
+            avatarUrl=response.userData.avatarUrl.toString()
+        }
         Prefs.write()
             .content(TOKEN_KEY, response.token)
             .content(TOKEN_GENERATION_TIMESTAMP_KEY, System.currentTimeMillis())
             .content(EMAIL_KEY, userCredentials.username)
+            .content(USER_DATA_KEY, gson.toJson(response.userData))
+            .content(USER_ID_KEY, response.userData.id)
+            .content(AVATAR_KEY, avatarUrl)
             .apply()
 
         Prefs.securely().write()

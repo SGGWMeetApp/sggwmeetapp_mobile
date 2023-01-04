@@ -49,7 +49,6 @@ class RegisterFragment : Fragment() {
         setFormListeners()
         setButtonListeners()
         setViewModelListener()
-        setViewModelLoginListener()
         setAnimations()
     }
 
@@ -210,9 +209,9 @@ class RegisterFragment : Fragment() {
                     lockUI()
                 }
                 is Resource.Success -> {
-                    loginUser()
-                    //unlockUI()
-
+                    unlockUI()
+                    startActivity(Intent(context, CoreActivity::class.java))
+                    requireActivity().finish()
                 }
                 is Resource.Error -> {
                     unlockUI()
@@ -235,50 +234,6 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    /**
-     * Logowanie po rejestracji.
-     * Brzmi głupio, ale w taki sposób zwracane jest UserData z ID użytkownika.
-     */
-    private fun setViewModelLoginListener(){
-        authorizationViewModel.loginState.observe(viewLifecycleOwner) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    lockUI()
-                }
-                is Resource.Success -> {
-                    unlockUI()
-                    startActivity(Intent(context, CoreActivity::class.java))
-                    requireActivity().finish()
-                }
-                is Resource.Error -> {
-                    unlockUI()
-                    when(resource.exception) {
-
-                        is TechnicalException -> {
-                            showTechnicalErrorMessage()
-                        }
-                        is ServerException -> {
-                            showLoginFailedMessage()
-                            //handleServerErrorCode(resource.exception.errorCode, resource.exception.message)
-                        }
-                        is ClientException -> {
-                            showLoginFailedMessage()
-                            //handleClientErrorCode(resource.exception.errorCode)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    private fun loginUser(){
-        resetErrors()
-        authorizationViewModel.login(
-            UserCredentials(
-                binding.regEmail.text.toString(),
-                binding.regPassword1.text.toString()
-            )
-        )
-    }
     private fun showRegisterFailedMessage() {
         Toast.makeText(context, "Rejestracja nie powiodła się", Toast.LENGTH_SHORT).show()
     }
