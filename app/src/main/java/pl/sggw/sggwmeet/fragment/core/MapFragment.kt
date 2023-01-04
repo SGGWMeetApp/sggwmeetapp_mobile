@@ -265,7 +265,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val category: PlaceCategory = spinner.selectedItem as PlaceCategory
+                val translation = spinner.selectedItem as String
+                val category = PlaceCategory.getCategoryByTranslation(translation)
                 if (category == PlaceCategory.ALL) this.changePlacesCategory(null)
                 else this.changePlacesCategory(category)
             }
@@ -274,10 +275,10 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
             }
         }
-        val adapter: ArrayAdapter<PlaceCategory> = ArrayAdapter(
+        val adapter: ArrayAdapter<String> = ArrayAdapter(
             this.requireContext(),
             R.layout.category_spinner_text_view,
-            PlaceCategory.values()
+            PlaceCategory.getPolishTranslations()
         )
         adapter.setDropDownViewResource(R.layout.category_spinner_text_view)
         spinner.adapter = adapter

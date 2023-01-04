@@ -8,5 +8,18 @@ enum class PlaceCategory(val polishTranslation: String) {
     GYM("siłownia"),
     CINEMA("kino"),
     ROOT_LOCATION("źródło"),
-    OTHER("inne")
+    OTHER("inne");
+
+    companion object {
+        fun getPolishTranslations(): Array<String> {
+            val list = mutableListOf<String>()
+            for (category in PlaceCategory.values()) list.add(category.polishTranslation)
+            return Array(list.size) { index -> list[index] }
+        }
+
+        fun getCategoryByTranslation(translation: String): PlaceCategory? {
+            for (category in PlaceCategory.values()) if (category.polishTranslation == translation) return category
+            return null
+        }
+    }
 }

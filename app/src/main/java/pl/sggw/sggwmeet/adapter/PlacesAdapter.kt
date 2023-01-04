@@ -37,7 +37,7 @@ class PlacesAdapter(private val picasso: Picasso): RecyclerView.Adapter<PlacesAd
         if (items == null) return
         val item = items!![position]
         holder.nameTV.text = item.name
-        holder.categoryTV.text = item.category.toString()
+        holder.categoryTV.text = item.category.polishTranslation
         holder.distanceTV.text = this.measureDistance(item.geolocation)
         holder.positiveReviewsPercentTV.text = this.formatPositiveReviewsPercent(item.positiveReviewsPercent)
         this.setImage(holder, item)
