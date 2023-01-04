@@ -16,13 +16,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.FragmentPlaceDetailsBinding
 import pl.sggw.sggwmeet.domain.PlaceDetails
+import pl.sggw.sggwmeet.domain.PlaceEvent
 import pl.sggw.sggwmeet.domain.Review
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.EventRecyclerViewAdapter
-import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.FoodItemRecyclerViewAdapter
 import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.FoodItemsSectionRecyclerViewAdapter
 import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.ReviewRecyclerViewAdapter
 import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.model.FoodMenuSection
+import pl.sggw.sggwmeet.mapper.EventMapper
+import pl.sggw.sggwmeet.ui.dialog.AddPublicEventDialog
 import pl.sggw.sggwmeet.ui.dialog.ReviewDialog
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
@@ -47,6 +49,8 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
     private val foodMenuViewModel by viewModels<FoodMenuViewModel>()
     @Inject
     lateinit var picasso: Picasso
+    @Inject
+    lateinit var eventMapper: EventMapper
 
     private lateinit var reviewAdapter: ReviewRecyclerViewAdapter
     private lateinit var eventsAdapter: EventRecyclerViewAdapter
@@ -101,6 +105,10 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         eventsAdapter.setOnLeaveClickListener { eventId ->
             eventViewModel.leavePublicEvent(eventId)
             eventsAdapter.markAsLeaving(eventId)
+        }
+
+        eventsAdapter.setOnEditClickListener {
+            promptEditEventDialog(it)
         }
     }
 
@@ -163,6 +171,45 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         binding.backBT.setOnClickListener {
             this.findNavController().navigate(R.id.action_placeDetailsFragment_to_mapFragment)
         }
+
+        binding.addEventBT.setOnClickListener {
+            promptCreateEventDialog()
+        }
+    }
+
+    private fun promptCreateEventDialog() {
+        AddPublicEventDialog(requireActivity(), null)
+            .onBackButtonClick { actions ->
+                actions.dismissAlertDialog()
+            }
+            .onConfirmButtonClick { actions, eventSnapshot ->
+                if(eventSnapshot.eventName.isBlank() || eventSnapshot.eventDescription.isBlank()) {
+                    Toast.makeText(requireContext(), "Uzupełnij wymagane dane!", Toast.LENGTH_SHORT).show()
+                } else {
+                    actions.dismissAlertDialog()
+                    val createEventRequest = eventMapper.buildEventCreateRequest(eventSnapshot, placeId.toInt())
+                    eventViewModel.createPublicEvent(createEventRequest)
+                }
+            }
+            .startAlertDialog()
+    }
+
+    private fun promptEditEventDialog(event: PlaceEvent) {
+        AddPublicEventDialog(requireActivity(), event)
+            .onBackButtonClick { actions ->
+                actions.dismissAlertDialog()
+            }
+            .onConfirmButtonClick { actions, eventSnapshot ->
+                if(eventSnapshot.eventName.isBlank() || eventSnapshot.eventDescription.isBlank()) {
+                    Toast.makeText(requireContext(), "Uzupełnij wymagane dane!", Toast.LENGTH_SHORT).show()
+                } else {
+                    actions.dismissAlertDialog()
+                    val editEventRequest = eventMapper.buildEventEditRequest(eventSnapshot, placeId.toInt())
+                    eventViewModel.editEvent(editEventRequest, event.id.toInt())
+                    eventsAdapter.markAsEditing(event.id.toInt())
+                }
+            }
+            .startAlertDialog()
     }
 
     private fun promptAddReviewDialog() {
@@ -332,6 +379,49 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 }
             }
         }
+
+        eventViewModel.createPublicEventState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    disableAddButton()
+                }
+                is Resource.Success -> {
+                    enableAddButton()
+                    val parsedEvent = eventMapper.mapPlaceEvent(resource.data!!)
+                    eventsAdapter.addItemOnTop(parsedEvent)
+                }
+                is Resource.Error -> {
+                    enableAddButton()
+                    Toast.makeText(requireContext(), "Błąd podczas tworzenia wydarzenia!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        eventViewModel.editEventState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    //TODO
+                }
+                is Resource.Success -> {
+                    val mappedEvent = eventMapper.mapPlaceEvent(resource.data!!)
+                    eventsAdapter.confirmEdit(mappedEvent)
+                }
+                is Resource.Error -> {
+                    eventsAdapter.unmarkEditing()
+                    Toast.makeText(requireContext(), "Błąd podczas edytowania wydarzenia!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun disableAddButton() {
+        binding.addEventBT.isEnabled = false
+        binding.addEventBT.alpha = .5f
+    }
+
+    private fun enableAddButton() {
+        binding.addEventBT.isEnabled = true
+        binding.addEventBT.alpha = 1.0f
     }
 
     private fun showMenuLoading() {
