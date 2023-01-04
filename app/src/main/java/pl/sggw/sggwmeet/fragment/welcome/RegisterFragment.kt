@@ -45,8 +45,8 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textViewOpenLink(view.findViewById<View>(R.id.reg_linkTos) as TextView)
-        setFormListeners()
+        //textViewOpenLink(view.findViewById<View>(R.id.reg_linkTos) as TextView)
+        //setFormListeners()
         setButtonListeners()
         setViewModelListener()
         setAnimations()
