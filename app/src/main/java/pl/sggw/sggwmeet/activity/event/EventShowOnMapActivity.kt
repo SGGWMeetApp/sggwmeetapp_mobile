@@ -67,20 +67,20 @@ class EventShowOnMapActivity: AppCompatActivity() {
     }
 
     private fun setClosePlaceDetailsButtonPopupListener() {
-        binding.showOnMapCloseBT.setOnClickListener {
+        binding.placeDescriptionCloseBT.setOnClickListener {
             binding.placeDescriptionCV.visibility = View.GONE
         }
     }
 
     private fun setPlaceDetailsButtonPopupListener() {
         if(disablePicking){
-            binding.showOnMapSelectBT.visibility=View.INVISIBLE
-            binding.showOnMapSelectBT.isClickable=false
+            binding.placeDescriptionSelectBT.visibility=View.INVISIBLE
+            binding.placeDescriptionSelectBT.isClickable=false
         }
         else{
-            binding.showOnMapSelectBT.visibility=View.VISIBLE
-            binding.showOnMapSelectBT.isClickable=true
-            binding.showOnMapSelectBT.setOnClickListener {
+            binding.placeDescriptionSelectBT.visibility=View.VISIBLE
+            binding.placeDescriptionSelectBT.isClickable=true
+            binding.placeDescriptionSelectBT.setOnClickListener {
 
                 val intent = Intent()
                 intent.putExtra("returnedLocationID",chosenPlaceId.toInt())
@@ -106,18 +106,15 @@ class EventShowOnMapActivity: AppCompatActivity() {
             chosenPlaceId = data.id
             chosenPlaceName = data.name
 
-            binding.showOnMapName.text = data.name
-            binding.showOnMapLocation.text = data.textLocation
+            binding.placeDescriptionNameTV.text = data.name
+            binding.placeDescriptionAddressTV.text = data.textLocation
             if(data.reviewsCount > 0){
-                binding.showOnMapRating.setText(
-                    "Ocena: ${String.format("%.0f",data.positiveReviewsPercent)}% (${data.reviewsCount} ocen)"
-                )
+                binding.placeDescriptionRatingTV.text = "Ocena: ${String.format("%.0f",data.positiveReviewsPercent)}% (${data.reviewsCount} ocen)"
             }
             else{
-                binding.showOnMapRating.setText(
-                    "Brak ocen"
-                )
+                binding.placeDescriptionRatingTV.text = "Brak ocen"
             }
+            loadImageBasedOnPath(data)
             binding.placeDescriptionCV.visibility = View.VISIBLE
         }
     }
@@ -200,6 +197,21 @@ class EventShowOnMapActivity: AppCompatActivity() {
                     showErrorMessage()
                 }
             }
+        }
+    }
+
+    private fun loadImageBasedOnPath(data : PlaceMarkerData) {
+        data.photoPath?.let { photoPath ->
+            binding.placeDescriptionImageCV.visibility=View.VISIBLE
+            picasso
+                .load(photoPath)
+                .placeholder(R.drawable.asset_loading)
+                .into(binding.placeDescriptionIV)
+        } ?: run {
+            binding.placeDescriptionImageCV.visibility=View.GONE
+            picasso
+                .load(R.drawable.asset_no_image_available)
+                .into(binding.placeDescriptionIV)
         }
     }
 }

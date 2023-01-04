@@ -115,6 +115,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
                 chosenPlaceId = data.id
 
                 binding.placeDescriptionNameTV.text = data.name
+                binding.placeDescriptionAddressTV.text = data.textLocation
+                if(data.reviewsCount > 0){
+                    binding.placeDescriptionRatingTV.text = "Ocena: ${String.format("%.0f",data.positiveReviewsPercent)}% (${data.reviewsCount} ocen)"
+                }
+                else{
+                    binding.placeDescriptionRatingTV.text = "Brak ocen"
+                }
                 loadImageBasedOnPath(data)
                 binding.placeDescriptionCV.visibility = View.VISIBLE
             }
@@ -125,11 +132,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private fun loadImageBasedOnPath(data : PlaceMarkerData) {
         data.photoPath?.let { photoPath ->
+            binding.placeDescriptionImageCV.visibility=View.VISIBLE
             picasso
                 .load(photoPath)
                 .placeholder(R.drawable.asset_loading)
                 .into(binding.placeDescriptionIV)
         } ?: run {
+            binding.placeDescriptionImageCV.visibility=View.GONE
             picasso
                 .load(R.drawable.asset_no_image_available)
                 .into(binding.placeDescriptionIV)

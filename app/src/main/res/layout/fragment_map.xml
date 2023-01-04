@@ -1,57 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".fragment.core.MapFragment"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:animateLayoutChanges="true">
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:animateLayoutChanges="true"
+    tools:context=".fragment.core.MapFragment">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/arrow_BT"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/asset_arrow_right"
-        android:scaleType="fitXY"
-        android:padding="5dp"
+        android:layout_margin="10dp"
         android:background="@drawable/bg_white_rounded"
         android:elevation="10dp"
-        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/asset_arrow_right"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"
-        tools:visibility="invisible"/>
+        tools:visibility="invisible" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/zoom_in_BT"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/asset_plus"
-        android:scaleType="fitXY"
-        android:padding="5dp"
+        android:layout_margin="10dp"
         android:background="@drawable/bg_white_rounded"
         android:elevation="10dp"
-        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/asset_plus"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"
-        tools:visibility="invisible"/>
+        tools:visibility="invisible" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/zoom_out_BT"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/asset_minus"
-        android:scaleType="fitXY"
-        android:padding="5dp"
+        android:layout_margin="10dp"
         android:background="@drawable/bg_white_rounded"
         android:elevation="10dp"
-        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/asset_minus"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/zoom_in_BT"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"
-        tools:visibility="invisible"/>
+        tools:visibility="invisible" />
+
 
     <fragment
         android:id="@+id/map"
@@ -60,15 +61,16 @@
         android:layout_height="match_parent"
         tools:context=".fragment.core.MapFragment" />
 
+
     <ProgressBar
         android:id="@+id/map_PB"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/places_list_card_view"
@@ -125,81 +127,147 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/place_description_CV"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:cardElevation="25dp"
-        app:cardCornerRadius="5dp"
-        android:layout_margin="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="7dp"
+        android:layout_marginBottom="15dp"
+        android:elevation="25dp"
         android:visibility="gone"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/place_description_wrapper_CL"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/base_cardview"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/place_description_GL_first"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent=".33"/>
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/place_description_GL_second"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent=".66"/>
-
-            <ImageView
-                android:id="@+id/place_description_IV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/place_description_GL_first"
-                tools:src="@drawable/asset_small_logo_green"
-                app:layout_constraintWidth_percent=".3"
-                android:layout_margin="10dp"/>
-
-            <TextView
-                android:id="@+id/place_description_name_TV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                tools:text="Klub SGGW Lorem Ipsum"
-                android:fontFamily="@font/montserrat"
-                android:textFontWeight="900"
-                app:layout_constraintStart_toStartOf="@id/place_description_GL_first"
-                app:layout_constraintEnd_toEndOf="@id/place_description_GL_second"/>
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/place_description_close_BT"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/asset_close"
-                android:layout_margin="3dp"
-                />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/place_description_view_BT"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:textSize="12sp"
-                android:text="@string/map_fragment_details_BT"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/place_description_close_BT"
-                app:layout_constraintStart_toStartOf="@id/place_description_GL_second"
-                app:layout_constraintWidth_max="100dp"
-                />
+                app:layout_constraintStart_toStartOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/place_description_image_CV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginVertical="10dp"
+                                android:layout_marginLeft="5dp"
+                                android:layout_weight="0"
+                                app:cardCornerRadius="3dp">
+
+                                <ImageView
+                                    android:id="@+id/place_description_IV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="1"
+                                    android:adjustViewBounds="true"
+                                    android:maxWidth="100dp"
+                                    android:maxHeight="75dp"
+                                    tools:src="@drawable/asset_icon_logo" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginVertical="5dp"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginRight="2dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/place_description_name_TV"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:fontFamily="@font/montserrat"
+                                    android:textFontWeight="700"
+                                    android:textSize="16sp"
+                                    tools:text="Klub SGGW Lorem Ipsum" />
+
+                                <TextView
+                                    android:id="@+id/place_description_address_TV"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginVertical="3dp"
+                                    android:fontFamily="@font/montserrat"
+                                    android:textFontWeight="500"
+                                    tools:text="ul. Nowowiejska 1" />
+
+                                <TextView
+                                    android:id="@+id/place_description_rating_TV"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:fontFamily="@font/montserrat"
+                                    android:textFontWeight="400"
+                                    tools:text="Ocena: 20%" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|top"
+                        android:layout_weight="0"
+                        android:orientation="vertical">
+
+                        <ImageButton
+                            android:id="@+id/place_description_close_BT"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="#00000000"
+                            android:paddingVertical="5dp"
+                            android:src="@drawable/asset_close" />
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <ImageButton
+                                android:id="@+id/place_description_view_BT"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:src="@drawable/asset_info" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
