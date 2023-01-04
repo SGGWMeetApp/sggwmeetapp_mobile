@@ -43,6 +43,7 @@ class EventShowActivity: AppCompatActivity() {
     private val eventViewModel by viewModels<EventViewModel>()
     private lateinit var deleteAlertDialog: AlertDialog
     private var canEdit = false
+    private var wasEdited = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +71,12 @@ class EventShowActivity: AppCompatActivity() {
             binding.eventNameTV.setText(eventData.name)
             binding.eventStartDateTV.setText(timeFormat.format(eventData.startDate))
             binding.eventLocationTV.setText(eventData.locationData.name)
+            binding.eventShowOnMapTV.setOnClickListener {
+                val newActivity = Intent(this, EventShowOnMapActivity::class.java)
+                    .putExtra("locationId",eventData.locationData.id)
+                    .putExtra("disablePicking",true)
+                startActivity(newActivity)
+            }
             binding.eventDescriptionTV.setText(eventData.description)
             binding.eventAuthorTV.setText("${eventData.author.firstName} ${eventData.author.lastName}")
             binding.eventEmailTV.setText(eventData.author.email)
@@ -83,11 +90,17 @@ class EventShowActivity: AppCompatActivity() {
                 binding.eventGroupNotificationSwitchTV.isClickable=canEdit
                 if(canEdit){
                     setUpSwitch()
-                    setUpDeleteAlertDialog()
+                    setUpDeleteGroupEventAlertDialog()
                 }
             }
             else{
-                showAttendersDetails()
+                if(wasEdited){
+                    wasEdited=false
+                }
+                else showAttendersDetails()
+                if(canEdit){
+                    setUpDeleteAlertDialog()
+                }
             }
         }
         catch (e:Exception){
@@ -265,6 +278,33 @@ class EventShowActivity: AppCompatActivity() {
                 }
             }
         }
+        eventViewModel.deleteEventState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    unlockUI()
+                    this.setResult(Activity.RESULT_OK)
+                    this.finish()
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun handleClientErrorCode(errorCode: ClientErrorCode) {
@@ -283,6 +323,36 @@ class EventShowActivity: AppCompatActivity() {
 
     private fun showTechnicalErrorMessage() {
         Toast.makeText(this, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
+    }
+
+    private fun setUpDeleteGroupEventAlertDialog(){
+        binding.deleteBT.visibility=View.VISIBLE
+        val builder = AlertDialog.Builder(this)
+        builder
+            .setCancelable(true)
+            .setMessage("Czy usunąć wydarzenie?")
+            .setNegativeButton("Nie",
+                DialogInterface.OnClickListener { dialog, which ->
+                    dialog.cancel()
+                }
+            )
+            .setPositiveButton("Tak",
+                DialogInterface.OnClickListener { dialog, which ->
+                    deleteGroupEvent()
+                    dialog.dismiss()
+                }
+            )
+        deleteAlertDialog=builder.create()
+        binding.deleteBT.setOnClickListener {
+            deleteAlertDialog.show()
+        }
+    }
+
+    private fun deleteGroupEvent(){
+        groupViewModel.deleteGroupEvent(
+            groupId,
+            eventData.id
+        )
     }
 
     private fun setUpDeleteAlertDialog(){
@@ -309,8 +379,7 @@ class EventShowActivity: AppCompatActivity() {
     }
 
     private fun deleteEvent(){
-        groupViewModel.deleteGroupEvent(
-            groupId,
+        eventViewModel.deleteEvent(
             eventData.id
         )
     }
@@ -350,6 +419,7 @@ class EventShowActivity: AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode==103 && resultCode == Activity.RESULT_OK) {
             if (data != null) {
+                wasEdited=true
                 setUpEvent(data.getStringExtra("newEventData"))
                 this.setResult(Activity.RESULT_OK)
             }

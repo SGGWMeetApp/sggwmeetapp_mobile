@@ -16,7 +16,6 @@ import pl.sggw.sggwmeet.model.connector.dto.response.EventAddUserResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.util.Resource
-import retrofit2.Response
 
 class EventRepository(
     private val connector: EventConnector,
@@ -237,6 +236,56 @@ class EventRepository(
         }
     }
 
+    suspend fun joinPublicEvent(eventId: Int) : Flow<Resource<Void>> = flow {
+        emit(Resource.Loading())
+        try {
+            val userId = userDataStore.getUserId()
+            val response = connector.addUserToEvent(eventId, userId)
+            if(response.isSuccessful) {
+                Log.i(TAG, "User joined event successfully")
+                emit(Resource.Success())
+            }
+            else {
+                Log.e(TAG, "An exception occurred during joining public event, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during during joining public event", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during during joining public event", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during during joining public event", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun leavePublicEvent(eventId: Int) : Flow<Resource<Void>> = flow {
+        emit(Resource.Loading())
+        try {
+            val userId = userDataStore.getUserId()
+            val response = connector.deleteUserFromEvent(eventId, userId)
+            if(response.isSuccessful) {
+                Log.i(TAG, "User leaved event successfully")
+                emit(Resource.Success())
+            }
+            else {
+                Log.e(TAG, "An exception occurred during leaving public event, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during during leaving public event", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during during leaving public event", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during during leaving public event", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
     suspend fun deleteUserFromEvent(event_id: Int, user_id: Int) : Flow<Resource<String>> = flow {
         val functionTAG = "deleteUserFromEvent"
         emit(Resource.Loading())
@@ -272,6 +321,31 @@ class EventRepository(
                 val responseBody = response.body()
                 Log.i(TAG, "Received user events")
                 emit(Resource.Success(responseBody!!.events))
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun deleteEvent(eventId: Int) : Flow<Resource<Void>> = flow {
+        val functionTAG = "deleteEvent"
+        emit(Resource.Loading())
+        try {
+            val response = connector.deleteEvent(eventId)
+            if(response.isSuccessful) {
+                Log.i(TAG, "Deleted event")
+                emit(Resource.Success())
             }
             else{
                 Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())

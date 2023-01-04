@@ -40,4 +40,10 @@ object MapperModule {
     fun provideGroupMapper() : GroupMapper {
         return GroupMapper()
     }
+
+    @Singleton
+    @Provides
+    fun provideMenuMapper() : MenuMapper {
+        return MenuMapper()
+    }
 }

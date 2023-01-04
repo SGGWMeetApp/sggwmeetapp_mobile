@@ -7,5 +7,6 @@ data class PlaceDetails(
     val reviewsCount: Int,
     val textLocation: String?,
     val photoPath: String?,
-    val reviews: List<Review>
+    val reviews: List<Review>,
+    val menuPath: String?
 )

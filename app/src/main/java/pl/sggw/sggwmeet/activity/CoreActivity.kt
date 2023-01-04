@@ -72,7 +72,6 @@ class CoreActivity : AppCompatActivity() {
         binding.backgroundDimmer.startAnimation(animationLit)
     }
     private fun setTopSheet(){
-        binding.topSheetLayout.menuMapBT.isEnabled=false
         binding.popupButton.setOnClickListener{
             topSheetTransition.duration=200
             if(binding.topSheetLayout.hiddenView.visibility==View.VISIBLE){
@@ -88,9 +87,7 @@ class CoreActivity : AppCompatActivity() {
         }
 
         binding.topSheetLayout.menuMapBT.setOnClickListener {
-//            this.navigateToFragment(R.id.mapFragment)
-//            this.topSheetTransition.duration = 100
-//            this.closeTopSheet()
+            closeTopSheet()
         }
 
         binding.topSheetLayout.menuEventBT.setOnClickListener {

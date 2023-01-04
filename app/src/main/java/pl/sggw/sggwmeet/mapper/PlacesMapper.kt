@@ -20,8 +20,14 @@ class PlacesMapper {
             placeResponse.photoPath,
             placeResponse.rating.reviews
                 .map { mapReview(it, userEmail) }
-                .sortedByDescending { it.isOwnedByUser }
-                .sortedByDescending { it.publicationDate }
+                .sortedWith(
+                    compareBy(
+                        { it.isOwnedByUser },
+                        { it.publicationDate }
+                    )
+                )
+                .asReversed(),
+            placeResponse.menuPath
         )
     }
 
@@ -53,7 +59,8 @@ class PlacesMapper {
             simplePlaceData.name,
             resolveCategoryCode(simplePlaceData.locationCategoryCodes),
             simplePlaceData.geolocation,
-            simplePlaceData.photoPath
+            simplePlaceData.photoPath,
+            simplePlaceData.textLocation
         )
         simplePlaceData.reviewSummary.reviewsCount?.let { markerData.reviewsCount = it }
         simplePlaceData.reviewSummary.positivePercent?.let { markerData.positiveReviewsPercent = it }

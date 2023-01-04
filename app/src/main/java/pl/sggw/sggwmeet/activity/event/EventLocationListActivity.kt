@@ -1,5 +1,7 @@
 package pl.sggw.sggwmeet.activity.event
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.adapter.EventLocationListAdapter
 import pl.sggw.sggwmeet.databinding.ActivityEventLocationListBinding
+import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
@@ -25,7 +28,7 @@ import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
-import kotlin.collections.ArrayList
+import java.util.*
 
 @AndroidEntryPoint
 class EventLocationListActivity : AppCompatActivity() {
@@ -35,6 +38,7 @@ class EventLocationListActivity : AppCompatActivity() {
 
     private lateinit var adapter: EventLocationListAdapter
     private var locationList = ArrayList<SimplePlaceResponseData>()
+    private lateinit var locationCategoryMap : HashMap<String,String>
 
     private val eventViewModel by viewModels<EventViewModel>()
 
@@ -57,6 +61,12 @@ class EventLocationListActivity : AppCompatActivity() {
     private fun setUpButton(){
         binding.navbarActivity.closeBT.setOnClickListener {
             this.finish()
+        }
+
+        binding.selectFromMapBT.setOnClickListener {
+            val newActivity = Intent(this, EventShowOnMapActivity::class.java)
+                .putExtra("locationId",-2)
+            startActivityForResult(newActivity, 123)
         }
     }
     private fun setAnimations(){
@@ -97,6 +107,9 @@ class EventLocationListActivity : AppCompatActivity() {
                 is Resource.Success -> {
                     unlockUI()
                     resource.data!!.toCollection(locationList)
+
+                    createCategoryMap()
+
                     buildRecyclerView()
                     setUpSearch()
                     filter(binding.searchBar.text)
@@ -142,7 +155,7 @@ class EventLocationListActivity : AppCompatActivity() {
     }
 
     private fun buildRecyclerView(){
-        adapter= EventLocationListAdapter(locationList,this)
+        adapter= EventLocationListAdapter(locationList,this, locationCategoryMap)
         val manager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager=manager
         binding.recyclerView.adapter=adapter
@@ -190,10 +203,54 @@ class EventLocationListActivity : AppCompatActivity() {
             else if(item.textLocation.lowercase().contains(text.lowercase())){
                 filteredlist.add(item)
             }
+            else if(!locationCategoryMap.isNullOrEmpty()){
+                if(locationCategoryMap.get(item.id)!!.lowercase().contains(text.lowercase())){
+                    filteredlist.add(item)
+                }
+            }
         }
         if (filteredlist.isEmpty()) {
             //
         }
         adapter.filterList(filteredlist)
+    }
+
+    private fun createCategoryMap(){
+        locationCategoryMap = HashMap<String,String>()
+        for (item in locationList){
+            var tempString = ""
+            if (item.locationCategoryCodes.isNullOrEmpty()){
+                tempString=getString(R.string.loc_cat_other)
+            }
+            else{
+                for (category in item.locationCategoryCodes){
+                    when (category){
+                        PlaceCategory.RESTAURANT -> tempString+=getString(R.string.loc_cat_restaurant)
+                        PlaceCategory.BAR -> tempString+=getString(R.string.loc_cat_bar)
+                        PlaceCategory.PUB -> tempString+=getString(R.string.loc_cat_pub)
+                        PlaceCategory.GYM -> tempString+=getString(R.string.loc_cat_gym)
+                        PlaceCategory.CINEMA -> tempString+=getString(R.string.loc_cat_cinema)
+                        PlaceCategory.ROOT_LOCATION -> tempString+=getString(R.string.loc_cat_root)
+                        PlaceCategory.OTHER -> tempString+=getString(R.string.loc_cat_other)
+                    }
+                    tempString+=" "
+                }
+            }
+            tempString=tempString.trim()
+            tempString=tempString.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+            tempString=tempString.replace(" ",", ")
+            tempString=tempString.replace("_"," ")
+            locationCategoryMap.put(item.id,tempString)
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode==123 && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                this.setResult(Activity.RESULT_OK,data)
+                this.finish()
+            }
+
+        }
     }
 }

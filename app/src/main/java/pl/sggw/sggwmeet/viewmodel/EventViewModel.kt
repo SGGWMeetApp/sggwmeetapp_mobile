@@ -13,7 +13,6 @@ import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.model.repository.EventRepository
 import pl.sggw.sggwmeet.util.Resource
-import java.io.InputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -147,6 +146,45 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             eventRepository.getUserEvents(user_id).onEach {
                 _getUserEventsState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _joinPublicEventState: MutableLiveData<Resource<Void>> = MutableLiveData()
+    val joinPublicEventState: LiveData<Resource<Void>>
+        get() = _joinPublicEventState
+
+    fun joinPublicEvent(eventId: Int) {
+        viewModelScope.launch {
+            eventRepository.joinPublicEvent(eventId).onEach {
+                _joinPublicEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _leavePublicEventState: MutableLiveData<Resource<Void>> = MutableLiveData()
+    val leavePublicEventState: LiveData<Resource<Void>>
+        get() = _leavePublicEventState
+
+    fun leavePublicEvent(eventId: Int) {
+        viewModelScope.launch {
+            eventRepository.leavePublicEvent(eventId).onEach {
+                _leavePublicEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _deleteEventState: MutableLiveData<Resource<Void>> = MutableLiveData()
+    val deleteEventState: LiveData<Resource<Void>>
+        get() = _deleteEventState
+
+    fun deleteEvent(eventId: Int) {
+        viewModelScope.launch {
+            eventRepository.deleteEvent(eventId).onEach {
+                _deleteEventState.value = it
             }
                 .launchIn(viewModelScope)
         }

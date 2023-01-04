@@ -19,10 +19,13 @@ import pl.sggw.sggwmeet.domain.PlaceDetails
 import pl.sggw.sggwmeet.domain.Review
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.EventRecyclerViewAdapter
+import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.FoodItemsSectionRecyclerViewAdapter
 import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.ReviewRecyclerViewAdapter
+import pl.sggw.sggwmeet.fragment.core.placedetails.adapters.model.FoodMenuSection
 import pl.sggw.sggwmeet.ui.dialog.ReviewDialog
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
+import pl.sggw.sggwmeet.viewmodel.FoodMenuViewModel
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
 import pl.sggw.sggwmeet.viewmodel.ReviewsViewModel
 import java.text.DecimalFormat
@@ -40,11 +43,13 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
     private val placesViewModel by viewModels<PlacesViewModel>()
     private val reviewsViewModel by viewModels<ReviewsViewModel>()
     private val eventViewModel by viewModels<EventViewModel>()
+    private val foodMenuViewModel by viewModels<FoodMenuViewModel>()
     @Inject
     lateinit var picasso: Picasso
 
     private lateinit var reviewAdapter: ReviewRecyclerViewAdapter
     private lateinit var eventsAdapter: EventRecyclerViewAdapter
+    private lateinit var foodMenuAdapter: FoodItemsSectionRecyclerViewAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentPlaceDetailsBinding.inflate(inflater, container, false)
@@ -57,6 +62,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         setListeners()
         initReviewRecyclerView()
         initEventsRecyclerView()
+        initFoodMenuAdapter()
         placeId = requireArguments().getString(PLACE_ID_BUNDLE_KEY, "")
         placesViewModel.getPlaceDetails(placeId)
     }
@@ -85,6 +91,23 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         binding.eventsRV.layoutManager = LinearLayoutManager(requireContext())
 
         binding.eventsRV.adapter = eventsAdapter
+
+        eventsAdapter.setOnJoinClickListener { eventId ->
+            eventViewModel.joinPublicEvent(eventId)
+            eventsAdapter.markAsJoining(eventId)
+        }
+
+        eventsAdapter.setOnLeaveClickListener { eventId ->
+            eventViewModel.leavePublicEvent(eventId)
+            eventsAdapter.markAsLeaving(eventId)
+        }
+    }
+
+    private fun initFoodMenuAdapter() {
+        foodMenuAdapter = FoodItemsSectionRecyclerViewAdapter(requireContext(), picasso)
+        binding.foodMenuRV.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.foodMenuRV.adapter = foodMenuAdapter
     }
 
     private fun promptEditReviewDialog(review: Review) {
@@ -164,6 +187,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 }
                 is Resource.Success -> {
                     injectDataToView(resource.data!!)
+                    fetchMenuIfPossible(resource.data.menuPath)
                 }
                 is Resource.Error -> {
                     //TODO
@@ -258,6 +282,70 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                     Toast.makeText(requireContext(), "Nie udało się pobrać wydarzeń", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+
+        foodMenuViewModel.getFoodMenuState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    showMenuLoading()
+                }
+                is Resource.Success -> {
+                    foodMenuAdapter.submitList(
+                        resource.data!!.itemsByCategory.entries.map { FoodMenuSection(it.key, it.value) }
+                    )
+                    showMenuLoaded()
+                }
+                is Resource.Error -> {
+                    showMenuLoaded()
+                    Toast.makeText(requireContext(), "Błąd podczas ładowania menu!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        eventViewModel.joinPublicEventState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    //TODO
+                }
+                is Resource.Success -> {
+                    eventsAdapter.confirmJoin()
+                }
+                is Resource.Error -> {
+                    eventsAdapter.unmarkJoining()
+                    Toast.makeText(requireContext(), "Błąd podczas dołączania do wydarzenia!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        eventViewModel.leavePublicEventState.observe(viewLifecycleOwner) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    //TODO
+                }
+                is Resource.Success -> {
+                    eventsAdapter.confirmLeave()
+                }
+                is Resource.Error -> {
+                    eventsAdapter.unmarkLeaving()
+                    Toast.makeText(requireContext(), "Błąd podczas opuszcznia wydarzenia!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showMenuLoading() {
+        binding.foodMenuLoadingPB.visibility = View.VISIBLE
+        binding.foodMenuRV.visibility = View.GONE
+    }
+
+    private fun showMenuLoaded() {
+        binding.foodMenuLoadingPB.visibility = View.GONE
+        binding.foodMenuRV.visibility = View.VISIBLE
+    }
+
+    private fun fetchMenuIfPossible(menuPath: String?) {
+        if(menuPath != null) {
+            foodMenuViewModel.getFoodMenu(menuPath)
         }
     }
 

@@ -54,6 +54,7 @@
                 app:mt_speechMode="false" />
 
             <View
+                android:id="@+id/searchBar_underline"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="12dp"

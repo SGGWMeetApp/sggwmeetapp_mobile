@@ -1,7 +1,6 @@
 package pl.sggw.sggwmeet.fragment.welcome
 
 import android.content.Intent
-import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,6 +11,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +19,6 @@ import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.activity.CoreActivity
 import pl.sggw.sggwmeet.databinding.FragmentLoginBinding
-import pl.sggw.sggwmeet.viewmodel.AuthorizationViewModel
 import pl.sggw.sggwmeet.domain.UserCredentials
 import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.exception.ClientErrorCode
@@ -27,6 +26,7 @@ import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.util.Resource
+import pl.sggw.sggwmeet.viewmodel.AuthorizationViewModel
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -166,8 +166,7 @@ class LoginFragment : Fragment() {
 
     private fun updateUiWithUser(userData: UserData) {
         val welcome = "${getString(R.string.welcome)} ${userData.firstName} ${userData.lastName}"
-        // TODO : initiate successful logged in experience
-        Toast.makeText(context, welcome, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, welcome, Toast.LENGTH_SHORT).show()
     }
 
     private fun showLoginFailedMessage() {

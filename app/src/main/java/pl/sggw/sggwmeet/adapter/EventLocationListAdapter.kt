@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,11 +19,13 @@ import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.activity.event.EventShowOnMapActivity
 import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 
-class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>, activity: Activity): RecyclerView.Adapter<EventLocationListAdapter.ViewHolder>() {
+class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>, activity: Activity,
+                               locationCategoryMap : HashMap<String,String>): RecyclerView.Adapter<EventLocationListAdapter.ViewHolder>() {
     private var locationList: ArrayList<SimplePlaceResponseData>
     private lateinit var activity: Activity
     private lateinit var picasso: Picasso
     private var visibilityState: ArrayList<Int> = ArrayList<Int>()
+    private lateinit var locationCategoryMap : HashMap<String,String>
 
     fun filterList(filterList: ArrayList<SimplePlaceResponseData>) {
         locationList = filterList
@@ -45,6 +46,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
 
         holder.locationName.setText(model.name)
         holder.locationAddress.setText(model.textLocation)
+        holder.locationCategory.setText(locationCategoryMap.get(model.id))
         if(model.reviewSummary.reviewsCount!! > 0){
             holder.locationRating.setText(
                 "Ocena: ${String.format("%.0f",model.reviewSummary.positivePercent)}% (${model.reviewSummary.reviewsCount} ocen)"
@@ -126,6 +128,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
         lateinit var locationRoot: ConstraintLayout
         lateinit var locationMapButton: ImageButton
         lateinit var locationDetailExpand: TextView
+        lateinit var locationCategory: TextView
         val transition = AutoTransition()
 
 
@@ -142,6 +145,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
             locationRoot = itemView.findViewById(R.id.event_loc_root)
             locationMapButton = itemView.findViewById(R.id.event_loc_show_on_map_BT)
             locationDetailExpand = itemView.findViewById(R.id.event_loc_detail_info)
+            locationCategory = itemView.findViewById(R.id.event_loc_category)
             transition.duration=200
         }
     }
@@ -151,6 +155,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
         picasso.isLoggingEnabled = true
         this.locationList = locationList
         this.activity = activity
+        this.locationCategoryMap = locationCategoryMap
         for(item in locationList){
             visibilityState.add(View.GONE)
         }

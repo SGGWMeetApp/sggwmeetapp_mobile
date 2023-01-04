@@ -71,4 +71,10 @@ interface EventConnector {
     @GET("/api/places/{placeId}/events")
     suspend fun getPlacePublicEvents(@Path("placeId") placeId: String) : Response<GetEventResponse>
 
+    /**
+     * Deletes event
+     */
+    @DELETE("/api/events/{event_id}")
+    suspend fun deleteEvent(@Path("event_id") eventId: Int) : Response<String>
+
 }

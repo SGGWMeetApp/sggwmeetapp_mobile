@@ -1,6 +1,8 @@
 package pl.sggw.sggwmeet.activity.event
 
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -15,6 +17,7 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.databinding.ActivityEventShowOnMapBinding
+import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
 import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
 import pl.sggw.sggwmeet.util.Resource
@@ -39,6 +42,10 @@ class EventShowOnMapActivity: AppCompatActivity() {
     private val markerIdsToPlacesData : MutableMap<Marker, PlaceMarkerData> = HashMap()
     private var locationId = -1
 
+    lateinit var chosenPlaceId : String
+    private var chosenPlaceName = ""
+    private var disablePicking = false
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +59,67 @@ class EventShowOnMapActivity: AppCompatActivity() {
         if(locationId == -1){
             this.finish()
         }
+        disablePicking = intent.getBooleanExtra("disablePicking",false)
+        setClosePlaceDetailsButtonPopupListener()
+        setPlaceDetailsButtonPopupListener()
         setViewModelListeners()
         customizeMap()
+    }
+
+    private fun setClosePlaceDetailsButtonPopupListener() {
+        binding.showOnMapCloseBT.setOnClickListener {
+            binding.placeDescriptionCV.visibility = View.GONE
+        }
+    }
+
+    private fun setPlaceDetailsButtonPopupListener() {
+        if(disablePicking){
+            binding.showOnMapSelectBT.visibility=View.INVISIBLE
+            binding.showOnMapSelectBT.isClickable=false
+        }
+        else{
+            binding.showOnMapSelectBT.visibility=View.VISIBLE
+            binding.showOnMapSelectBT.isClickable=true
+            binding.showOnMapSelectBT.setOnClickListener {
+
+                val intent = Intent()
+                intent.putExtra("returnedLocationID",chosenPlaceId.toInt())
+                    .putExtra("returnedLocationName",chosenPlaceName)
+                this.setResult(Activity.RESULT_OK,intent)
+                this.finish()
+            }
+        }
+    }
+
+    private fun setOnMarkerClickListener() {
+        map.setOnMarkerClickListener {
+
+            val data = markerIdsToPlacesData[it]!!
+            markerClick(data)
+
+            true
+        }
+    }
+
+    private fun markerClick(data: PlaceMarkerData){
+        if(PlaceCategory.ROOT_LOCATION != data.category) {
+            chosenPlaceId = data.id
+            chosenPlaceName = data.name
+
+            binding.showOnMapName.text = data.name
+            binding.showOnMapLocation.text = data.textLocation
+            if(data.reviewsCount > 0){
+                binding.showOnMapRating.setText(
+                    "Ocena: ${String.format("%.0f",data.positiveReviewsPercent)}% (${data.reviewsCount} ocen)"
+                )
+            }
+            else{
+                binding.showOnMapRating.setText(
+                    "Brak ocen"
+                )
+            }
+            binding.placeDescriptionCV.visibility = View.VISIBLE
+        }
     }
 
     private fun setUpButtons() {
@@ -68,6 +134,7 @@ class EventShowOnMapActivity: AppCompatActivity() {
 
             this.map = map
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+            setOnMarkerClickListener()
             placesViewModel.getPlaceMarkers(null)
         }
 
@@ -81,9 +148,15 @@ class EventShowOnMapActivity: AppCompatActivity() {
         clearOldMarkers()
 
         markers.forEach { markerData ->
-            if(!markerData.id.isNullOrBlank()) {
+            if(locationId==-2){
+                if(PlaceCategory.ROOT_LOCATION == markerData.category) {
+                    zoomToRootLocation(markerData)
+                }
+            }
+            else if(!markerData.id.isNullOrBlank()) {
                 if (markerData.id.toInt() == locationId) {
                     zoomToRootLocation(markerData)
+                    markerClick(markerData)
                 }
             }
             val marker = map.addMarker(

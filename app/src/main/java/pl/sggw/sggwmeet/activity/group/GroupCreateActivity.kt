@@ -1,5 +1,6 @@
 package pl.sggw.sggwmeet.activity.group
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -111,6 +112,7 @@ class GroupCreateActivity: AppCompatActivity() {
                             )
                         ))
                     startActivity(newActivity)
+                    this.setResult(Activity.RESULT_OK)
                     this.finish()
                 }
                 is Resource.Error -> {

@@ -2,7 +2,6 @@ package pl.sggw.sggwmeet.fragment.welcome
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Message
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.util.Patterns
@@ -45,11 +44,10 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textViewOpenLink(view.findViewById<View>(R.id.reg_linkTos) as TextView)
-        setFormListeners()
+        //textViewOpenLink(view.findViewById<View>(R.id.reg_linkTos) as TextView)
+        //setFormListeners()
         setButtonListeners()
         setViewModelListener()
-        setViewModelLoginListener()
         setAnimations()
     }
 
@@ -210,9 +208,9 @@ class RegisterFragment : Fragment() {
                     lockUI()
                 }
                 is Resource.Success -> {
-                    loginUser()
-                    //unlockUI()
-
+                    unlockUI()
+                    startActivity(Intent(context, CoreActivity::class.java))
+                    requireActivity().finish()
                 }
                 is Resource.Error -> {
                     unlockUI()
@@ -235,50 +233,6 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    /**
-     * Logowanie po rejestracji.
-     * Brzmi głupio, ale w taki sposób zwracane jest UserData z ID użytkownika.
-     */
-    private fun setViewModelLoginListener(){
-        authorizationViewModel.loginState.observe(viewLifecycleOwner) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    lockUI()
-                }
-                is Resource.Success -> {
-                    unlockUI()
-                    startActivity(Intent(context, CoreActivity::class.java))
-                    requireActivity().finish()
-                }
-                is Resource.Error -> {
-                    unlockUI()
-                    when(resource.exception) {
-
-                        is TechnicalException -> {
-                            showTechnicalErrorMessage()
-                        }
-                        is ServerException -> {
-                            showLoginFailedMessage()
-                            //handleServerErrorCode(resource.exception.errorCode, resource.exception.message)
-                        }
-                        is ClientException -> {
-                            showLoginFailedMessage()
-                            //handleClientErrorCode(resource.exception.errorCode)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    private fun loginUser(){
-        resetErrors()
-        authorizationViewModel.login(
-            UserCredentials(
-                binding.regEmail.text.toString(),
-                binding.regPassword1.text.toString()
-            )
-        )
-    }
     private fun showRegisterFailedMessage() {
         Toast.makeText(context, "Rejestracja nie powiodła się", Toast.LENGTH_SHORT).show()
     }
@@ -297,6 +251,14 @@ class RegisterFragment : Fragment() {
                         binding.regEmailTextInputLayout.error=getString(R.string.user_exists)
                         binding.regPhoneTextInputLayout.error=getString(R.string.user_exists)
                         binding.regPhonePrefixTextInputLayout.error=getString(R.string.user_exists)
+                }
+            "400" -> {
+                if(!binding.regPhone.text.toString().contains("[0-9]".toRegex())){
+                    binding.regPhoneTextInputLayout.error=getString(R.string.phone_error)
+                }
+                if(!binding.regPhonePrefix.text.toString().contains("[0-9]".toRegex())){
+                    binding.regPhonePrefixTextInputLayout.error=getString(R.string.phone_error)
+                }
                 }
             }
         }

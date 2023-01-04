@@ -155,6 +155,14 @@ class UserEditFragment : Fragment() {
                 binding.userEditPhoneTextInputLayout.error=getString(R.string.phone_taken)
                 binding.userEditPhonePrefixTextInputLayout.error=getString(R.string.phone_taken)
             }
+            "400" -> {
+                if(!binding.userEditPhone.text.toString().contains("[0-9]".toRegex())){
+                    binding.userEditPhoneTextInputLayout.error=getString(R.string.phone_error)
+                }
+                if(!binding.userEditPhonePrefix.text.toString().contains("[0-9]".toRegex())){
+                    binding.userEditPhonePrefixTextInputLayout.error=getString(R.string.phone_error)
+                }
+            }
         }
     }
 

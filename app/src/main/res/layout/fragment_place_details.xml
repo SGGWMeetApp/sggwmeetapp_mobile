@@ -226,8 +226,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="4dp"
                             android:background="@drawable/bg_aqua_rounded"
-                            android:visibility="gone"
-                            tools:visibility="visible"/>
+                            android:visibility="gone"/>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -254,7 +253,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="4dp"
                             android:background="@drawable/bg_aqua_rounded"
-                            android:visibility="gone"/>
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -351,8 +351,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:visibility="gone">
 
                         <!-- Loading -->
                         <ProgressBar
@@ -400,7 +399,8 @@
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/events_RV"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                tools:listitem="@layout/row_place_public_event"/>
 
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -413,7 +413,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <ProgressBar
+                            android:id="@+id/food_menu_loading_PB"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_margin="30dp"
+                            android:visibility="gone"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/food_menu_RV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:listitem="@layout/row_food_menu_category"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
 
                     </LinearLayout>
 

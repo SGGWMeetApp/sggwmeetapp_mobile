@@ -14,7 +14,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
     <string name="action_sign_in_short">Zaloguj</string>
-    <string name="welcome">"Welcome!"</string>
+    <string name="welcome">"Witaj,"</string>
     <string name="invalid_email">Niepoprawny email</string>
     <string name="invalid_password">Hasło musi mieć >=8 znaków</string>
     <string name="login_failed">"Logowanie nie powiodło się"</string>
@@ -139,9 +139,10 @@
     <string name="email_taken">Wybrany email jest zajęty</string>
     <string name="phone_taken">Już istnieje użytkownik o wybranym numerze</string>
     <string name="user_exists">Użytkownik o tych danych już istnieje</string>
+    <string name="phone_error">Niepoprawne dane</string>
 
     <!-- Wspólne komunikaty -->
-    <string name="technical_error_message">Technical error occurred!</string>
+    <string name="technical_error_message">Błąd techniczny</string>
 
     <!-- Menu -->
     <string name="menu_start_BT">Start</string>
@@ -158,6 +159,7 @@
 
     <!-- MapFragment -->
     <string name="map_fragment_details_BT">Szczegóły</string>
+    <string name="select">Wybierz</string>
 
     <!-- PlaceDetailsFragment -->
     <string name="place_review_count_TV">%1$d opinii</string>
@@ -165,6 +167,8 @@
     <string name="no_description_info">Brak opisu.</string>
     <string name="events_count_TV">%1$d wydarzeń w najbliższym czasie</string>
     <string name="event_creator_TV">Utworzył: %1$s</string>
+    <string name="food_item_price_TV">%1$s zł</string>
+    <string name="event_participant_count_TV">Weżmie udział: %1$d osób</string>
 
 
     <!-- Edytuj użytkownika -->
@@ -218,6 +222,8 @@
     <string name="event_joined">Zapisany</string>
     <string name="event_joined_not">Niezapisany</string>
     <string name="expand">Rozwiń szczegóły</string>
+    <string name="select_from_map">Wybierz z mapy</string>
+    <string name="event_show_on_map"><a href="">Pokaż na mapie</a></string>
 
     <!-- Settings -->
     <string name="user_settings">Opcje użytkownika</string>
@@ -234,13 +240,24 @@
     <string name="group_name">Nazwa grupy</string>
     <string name="group_create_title">Utwórz grupę</string>
     <string name="add_user">Dodaj użytkownika</string>
-    <string name="group_create_event_title">Utwórz wydarzenie prywatne</string>
+    <string name="group_create_event_title">Utwórz wydarzenie grupowe</string>
     <string name="group_delete">Usuń grupę</string>
     <string name="group_leave">Opuść grupę</string>
     <string name="group">Grupa</string>
 
+
     <!-- Places -->
     <string name="filter_button_text">Filtruj</string>
+
+    <!-- Location categories -->
+    <string name="loc_cat_restaurant">restauracja</string>
+    <string name="loc_cat_bar">bar</string>
+    <string name="loc_cat_pub">pub</string>
+    <string name="loc_cat_gym">siłownia</string>
+    <string name="loc_cat_cinema">kino</string>
+    <string name="loc_cat_root">korzeń</string>
+    <string name="loc_cat_other">inna_kategoria</string>
+
 
     <!-- Dummy texts   -->
     <string name="lorem_tiny">Ipsum dolor varius massa non.</string>

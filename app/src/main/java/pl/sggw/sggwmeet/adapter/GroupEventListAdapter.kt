@@ -30,8 +30,12 @@ class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: Group
         holder.eventLocation.setText(model.locationData.name)
         holder.eventAuthor.setText(model.author.firstName+" "+model.author.lastName)
         holder.eventDescription.setText(model.description)
+        holder.eventAttenders.visibility=View.GONE
         if(model.description.isNullOrBlank()){
             holder.eventDescription.visibility=View.GONE
+        }
+        else{
+            holder.eventDescription.visibility=View.VISIBLE
         }
         holder.itemView.setOnClickListener{
             val newActivity = Intent(holder.itemView.context, EventShowActivity::class.java)
@@ -54,6 +58,7 @@ class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: Group
         lateinit var eventLocation: TextView
         lateinit var eventAuthor: TextView
         lateinit var eventDescription: TextView
+        lateinit var eventAttenders: TextView
 
 
         init {
@@ -63,6 +68,7 @@ class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: Group
             eventLocation = itemView.findViewById(R.id.event_location)
             eventAuthor = itemView.findViewById(R.id.event_author)
             eventDescription = itemView.findViewById(R.id.event_description)
+            eventAttenders = itemView.findViewById(R.id.event_attenders)
         }
     }
 

@@ -51,7 +51,16 @@ class MockAuthorizationConnector : AuthorizationConnector {
 
         return Response.success(
             UserRegisterResponse(
-                TOKEN
+                TOKEN,
+                UserData(
+                    "Pepe",
+                    "the Frog",
+                    "12",
+                    "4567",
+                    null,
+                    "https://www.prospectmagazine.co.uk/content/uploads/2016/11/Pepedankmeems420blazeitohbabyatripledankaestheticafkeepit100.jpg",
+                    1000
+                )
             )
         )
 

@@ -26,7 +26,7 @@ import pl.sggw.sggwmeet.model.connector.dto.response.SimplePlaceResponseData
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -67,7 +67,7 @@ class EventEditActivity: AppCompatActivity() {
             binding.eventStartDateTV.setText(timeFormat.format(selectedCalendar.time))
             binding.eventDescriptionTF.setText(eventData.description)
             binding.eventLocationTV.setText(eventData.locationData.name)
-            eventViewModel.getAllPlaces()
+            selectedLocationID=eventData.locationData.id
         }
         catch (e:Exception){
             this.finish()
@@ -145,36 +145,6 @@ class EventEditActivity: AppCompatActivity() {
     }
 
     private fun setViewModelListener() {
-
-        eventViewModel.getAllPlacesState.observe(this) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    lockUI()
-                }
-                is Resource.Success -> {
-                    selectedLocationID=findLocation(resource.data!!)
-                    if(selectedLocationID == -1){
-                        this.finish()
-                    }
-                    unlockUI()
-                }
-                is Resource.Error -> {
-                    unlockUI()
-                    when(resource.exception) {
-
-                        is TechnicalException -> {
-                            showTechnicalErrorMessage()
-                        }
-                        is ServerException -> {
-                            handleServerErrorCode(resource.exception.errorCode)
-                        }
-                        is ClientException -> {
-                            handleClientErrorCode(resource.exception.errorCode)
-                        }
-                    }
-                }
-            }
-        }
         eventViewModel.editEventState.observe(this) { resource ->
             when(resource) {
                 is Resource.Loading -> {
