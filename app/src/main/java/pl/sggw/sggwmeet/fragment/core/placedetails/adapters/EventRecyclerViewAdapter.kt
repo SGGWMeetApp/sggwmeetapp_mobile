@@ -27,6 +27,12 @@ class EventRecyclerViewAdapter(
     private var onLeaveClick: ((eventId: Int) -> Unit)? = null
     private var onEditClick: ((event: PlaceEvent) -> Unit)? = null
 
+    fun addItemOnTop(event: PlaceEvent) {
+        val newList = currentList.toMutableList()
+        newList.add(0, event)
+        submitList(newList)
+    }
+
     fun markAsJoining(eventId: Int) {
         val position = currentList.indexOf(currentList.first{ it.id.toInt() == eventId })
         getItem(position).isJoining = true
@@ -83,8 +89,9 @@ class EventRecyclerViewAdapter(
 
     fun confirmEdit(placeEvent: PlaceEvent) {
         val position = currentList.indexOf(currentList.first{ it.isEditing})
-        currentList[position] = placeEvent
-        notifyItemChanged(position)
+        val newList = currentList.toMutableList()
+        newList[position] = placeEvent
+        submitList(newList)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
