@@ -241,18 +241,19 @@
                             android:text="@string/notifications"
                             android:textSize="20sp" />
 
-                        <Button
-                            android:id="@+id/delete_BT"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right"
-                            android:layout_marginTop="8dp"
-                            android:backgroundTint="#FF4444"
-                            android:text="@string/event_delete"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
 
                     </LinearLayout>
+
+                    <Button
+                        android:id="@+id/delete_BT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="8dp"
+                        android:backgroundTint="#FF4444"
+                        android:text="@string/event_delete"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
 
                     <Button

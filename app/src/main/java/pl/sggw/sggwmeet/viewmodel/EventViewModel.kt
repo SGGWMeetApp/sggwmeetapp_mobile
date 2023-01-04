@@ -178,4 +178,17 @@ class EventViewModel @Inject constructor(
         }
     }
 
+    private val _deleteEventState: MutableLiveData<Resource<Void>> = MutableLiveData()
+    val deleteEventState: LiveData<Resource<Void>>
+        get() = _deleteEventState
+
+    fun deleteEvent(eventId: Int) {
+        viewModelScope.launch {
+            eventRepository.deleteEvent(eventId).onEach {
+                _deleteEventState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
 }

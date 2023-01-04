@@ -84,7 +84,7 @@ class EventShowActivity: AppCompatActivity() {
                 binding.eventGroupNotificationSwitchTV.isClickable=canEdit
                 if(canEdit){
                     setUpSwitch()
-                    setUpDeleteAlertDialog()
+                    setUpDeleteGroupEventAlertDialog()
                 }
             }
             else{
@@ -92,6 +92,9 @@ class EventShowActivity: AppCompatActivity() {
                     wasEdited=false
                 }
                 else showAttendersDetails()
+                if(canEdit){
+                    setUpDeleteAlertDialog()
+                }
             }
         }
         catch (e:Exception){
@@ -269,6 +272,33 @@ class EventShowActivity: AppCompatActivity() {
                 }
             }
         }
+        eventViewModel.deleteEventState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    unlockUI()
+                    this.setResult(Activity.RESULT_OK)
+                    this.finish()
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun handleClientErrorCode(errorCode: ClientErrorCode) {
@@ -287,6 +317,36 @@ class EventShowActivity: AppCompatActivity() {
 
     private fun showTechnicalErrorMessage() {
         Toast.makeText(this, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
+    }
+
+    private fun setUpDeleteGroupEventAlertDialog(){
+        binding.deleteBT.visibility=View.VISIBLE
+        val builder = AlertDialog.Builder(this)
+        builder
+            .setCancelable(true)
+            .setMessage("Czy usunąć wydarzenie?")
+            .setNegativeButton("Nie",
+                DialogInterface.OnClickListener { dialog, which ->
+                    dialog.cancel()
+                }
+            )
+            .setPositiveButton("Tak",
+                DialogInterface.OnClickListener { dialog, which ->
+                    deleteGroupEvent()
+                    dialog.dismiss()
+                }
+            )
+        deleteAlertDialog=builder.create()
+        binding.deleteBT.setOnClickListener {
+            deleteAlertDialog.show()
+        }
+    }
+
+    private fun deleteGroupEvent(){
+        groupViewModel.deleteGroupEvent(
+            groupId,
+            eventData.id
+        )
     }
 
     private fun setUpDeleteAlertDialog(){
@@ -313,8 +373,7 @@ class EventShowActivity: AppCompatActivity() {
     }
 
     private fun deleteEvent(){
-        groupViewModel.deleteGroupEvent(
-            groupId,
+        eventViewModel.deleteEvent(
             eventData.id
         )
     }
