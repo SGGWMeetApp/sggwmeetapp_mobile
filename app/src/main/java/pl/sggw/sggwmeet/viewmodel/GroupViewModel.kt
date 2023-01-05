@@ -97,19 +97,6 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    private val _leaveGroupGetState: MutableLiveData<Resource<GetGroupsResponse>> = MutableLiveData()
-    val leaveGroupGetState: LiveData<Resource<GetGroupsResponse>>
-        get() = _leaveGroupGetState
-
-    fun leaveGroup(group_id:Int) {
-        viewModelScope.launch {
-            groupRepository.leaveGroup(group_id).onEach {
-                _leaveGroupGetState.value = it
-            }
-                .launchIn(viewModelScope)
-        }
-    }
-
     private val _switchGroupNotificationGetState: MutableLiveData<Resource<EventResponse>> = MutableLiveData()
     val switchGroupNotificationGetState: LiveData<Resource<EventResponse>>
         get() = _switchGroupNotificationGetState
@@ -144,6 +131,32 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             groupRepository.deleteGroup(group_id).onEach {
                 _deleteGroupState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _deleteUserFromGroupState: MutableLiveData<Resource<GetGroupsResponse>> = MutableLiveData()
+    val deleteUserFromGroupState: LiveData<Resource<GetGroupsResponse>>
+        get() = _deleteUserFromGroupState
+
+    fun deleteUser(group_id:Int, user_id:Int) {
+        viewModelScope.launch {
+            groupRepository.deleteUser(group_id, user_id).onEach {
+                _deleteUserFromGroupState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
+
+    private val _leaveGroupNewState: MutableLiveData<Resource<GetGroupsResponse>> = MutableLiveData()
+    val leaveGroupNewState: LiveData<Resource<GetGroupsResponse>>
+        get() = _leaveGroupNewState
+
+    fun leaveGroupNew(group_id:Int, user_id:Int) {
+        viewModelScope.launch {
+            groupRepository.deleteUser(group_id, user_id).onEach {
+                _leaveGroupNewState.value = it
             }
                 .launchIn(viewModelScope)
         }

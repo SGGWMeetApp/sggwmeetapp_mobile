@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.adapter.GroupEventListAdapter
 import pl.sggw.sggwmeet.adapter.GroupShowUsersAdapter
@@ -40,6 +41,10 @@ class GroupShowActivity: AppCompatActivity() {
     private val gson = Gson()
     private var userIsAdmin=false
     private lateinit var leaveAlertDialog: AlertDialog
+    internal lateinit var deleteUserAlertDialog: AlertDialog
+    internal lateinit var userHolder: GroupShowUsersAdapter.ViewHolder
+    internal var userPosition = 0
+    internal var userToDeleteId = 0
 
     private lateinit var adapter: GroupShowUsersAdapter
     private lateinit var adapterEvent: GroupEventListAdapter
@@ -60,6 +65,7 @@ class GroupShowActivity: AppCompatActivity() {
         setUpButtons()
         setAnimations()
         setViewModelListener()
+        setUpDeleteUserAlertDialog()
 
         val retrievedData: String? = intent.getStringExtra("groupData")
         setUpGroup(retrievedData)
@@ -214,16 +220,13 @@ class GroupShowActivity: AppCompatActivity() {
             }
         }
 
-        groupViewModel.leaveGroupGetState.observe(this) { resource ->
+        groupViewModel.deleteGroupState.observe(this) { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     lockUI()
                 }
                 is Resource.Success -> {
-                    if(userIsAdmin){
-                        Toast.makeText(this, "Usunięto grupę", Toast.LENGTH_SHORT).show()
-                    }
-                    else Toast.makeText(this, "Opuszczono grupę", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Usunięto grupę", Toast.LENGTH_SHORT).show()
                     unlockUI()
                     this.setResult(Activity.RESULT_OK)
                     this.finish()
@@ -246,14 +249,46 @@ class GroupShowActivity: AppCompatActivity() {
             }
         }
 
-        groupViewModel.deleteGroupState.observe(this) { resource ->
+        groupViewModel.deleteUserFromGroupState.observe(this) { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     lockUI()
                 }
                 is Resource.Success -> {
-                    Toast.makeText(this, "Usunięto grupę", Toast.LENGTH_SHORT).show()
                     unlockUI()
+                    adapter.visibilityState[userPosition]=View.GONE
+                    val params=userHolder.itemView.layoutParams
+                    params.height=0
+                    params.width=0
+                    userHolder.itemView.layoutParams=params
+                    userHolder.itemView.visibility=View.GONE
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
+
+        groupViewModel.leaveGroupNewState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    unlockUI()
+                    Toast.makeText(this, "Opuszczono grupę", Toast.LENGTH_SHORT).show()
                     this.setResult(Activity.RESULT_OK)
                     this.finish()
                 }
@@ -318,7 +353,7 @@ class GroupShowActivity: AppCompatActivity() {
     }
 
     private fun buildRecyclerView(){
-        adapter= GroupShowUsersAdapter(memberResponse, this)
+        adapter= GroupShowUsersAdapter(memberResponse, this,userIsAdmin)
         val manager = LinearLayoutManager(this)
         binding.groupShowUserList.layoutManager=manager
         binding.groupShowUserList.adapter=adapter
@@ -407,16 +442,40 @@ class GroupShowActivity: AppCompatActivity() {
         leaveAlertDialog=builder.create()
         setUpLeaveButton()
     }
+    private fun setUpDeleteUserAlertDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder
+            .setCancelable(true)
+            .setMessage("Czy usunąć użytkownika z grupy?")
+            .setNegativeButton("Nie",
+                DialogInterface.OnClickListener { dialog, which ->
+                    dialog.cancel()
+                }
+            )
+            .setPositiveButton("Tak",
+                DialogInterface.OnClickListener { dialog, which ->
+                    deleteUser()
+                    dialog.dismiss()
+                }
+            )
+        deleteUserAlertDialog=builder.create()
+        setUpLeaveButton()
+    }
     private fun setUpLeaveButton(){
         binding.leaveGroupBT.setOnClickListener {
             leaveAlertDialog.show()
         }
     }
     private fun leaveGroup(){
-        groupViewModel.leaveGroup(groupData.id)
+        val userId=Prefs.read().content("userId",0)
+        groupViewModel.leaveGroupNew(groupData.id,userId)
     }
 
     private fun deleteGroup(){
         groupViewModel.deleteGroup(groupData.id)
+    }
+
+    private fun deleteUser(){
+        groupViewModel.deleteUser(groupData.id,userToDeleteId)
     }
 }

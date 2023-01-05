@@ -1,5 +1,6 @@
 package pl.sggw.sggwmeet.activity.group
 
+import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -21,6 +22,7 @@ import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
+import pl.sggw.sggwmeet.model.connector.dto.request.GroupAddUserRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.UserToGroupResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
@@ -34,6 +36,8 @@ class GroupAddUserListActivity : AppCompatActivity() {
     private lateinit var animationLit : Animation
     private lateinit var binding : ActivityGroupAddUserListBinding
     internal var groupId = -1
+    internal var userToAddId = 0
+    internal lateinit var holder :GroupUserAddAdapter.ViewHolder
 
     private lateinit var adapter: GroupUserAddAdapter
     private var userList = ArrayList<UserToGroupResponse>()
@@ -125,6 +129,37 @@ class GroupAddUserListActivity : AppCompatActivity() {
                 }
             }
         }
+
+        groupViewModel.addUserToGroupGetState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    holder.sendButton.setImageResource(R.drawable.asset_tick)
+                    holder.sendButton.isClickable=false
+                    adapter.visibilityState[userToAddId] = false
+                    setResult(Activity.RESULT_OK, intent)
+                    unlockUI()
+                }
+                is Resource.Error -> {
+                    Toast.makeText(this, "Nie dodano użytkownika do grupy", Toast.LENGTH_SHORT).show()
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
@@ -201,5 +236,14 @@ class GroupAddUserListActivity : AppCompatActivity() {
             //
         }
         adapter.filterList(filteredlist)
+    }
+
+    internal fun addUser(viewHolder: GroupUserAddAdapter.ViewHolder, userId:Int){
+        holder=viewHolder
+        userToAddId=userId
+        groupViewModel.addUserToGroup(
+            GroupAddUserRequest(
+            userId
+        ), groupId)
     }
 }

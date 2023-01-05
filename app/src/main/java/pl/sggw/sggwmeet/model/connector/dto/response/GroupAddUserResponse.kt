@@ -5,6 +5,5 @@ data class GroupAddUserResponse(
     var lastName: String,
     var email: String,
     var avatarUrl: String?,
-    var isAdmin: Boolean,
-    var position: Int = -1
+    var isAdmin: Boolean
 ) :ErrorResponse()

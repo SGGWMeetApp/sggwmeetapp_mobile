@@ -121,7 +121,6 @@ class GroupRepository(
             val response = connector.addUserToGroup(addUserRequest, group_id)
             if(response.isSuccessful) {
                 val responseBody = response.body()
-                responseBody!!.position=addUserRequest.position
                 Log.i(TAG, "Added user to group")
                 emit(Resource.Success(responseBody!!))
             }
@@ -175,32 +174,6 @@ class GroupRepository(
             if(response.isSuccessful) {
                 val responseBody = response.body()
                 Log.i(TAG, "Received group events")
-                emit(Resource.Success(responseBody!!))
-            }
-            else{
-                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
-                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
-            }
-        } catch (exception : ClientException) {
-            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
-            emit(Resource.Error(exception))
-        } catch (exception : ServerException) {
-            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
-            emit(Resource.Error(exception))
-        } catch (exception : Exception) {
-            Log.e(TAG, "An exception occurred during $functionTAG", exception)
-            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
-        }
-    }
-
-    suspend fun leaveGroup(group_id: Int) : Flow<Resource<GetGroupsResponse>> = flow {
-        val functionTAG = "leaveGroup"
-        emit(Resource.Loading())
-        try {
-            val response = connector.leaveGroup(group_id)
-            if(response.isSuccessful) {
-                val responseBody = response.body()
-                Log.i(TAG, "Left group")
                 emit(Resource.Success(responseBody!!))
             }
             else{
@@ -275,6 +248,31 @@ class GroupRepository(
         emit(Resource.Loading())
         try {
             val response = connector.deleteGroup(group_id)
+            if(response.isSuccessful) {
+                Log.i(TAG, "Deleted group")
+                emit(Resource.Success())
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
+
+    suspend fun deleteUser(group_id: Int, user_id: Int) : Flow<Resource<GetGroupsResponse>> = flow {
+        val functionTAG = "deleteUser"
+        emit(Resource.Loading())
+        try {
+            val response = connector.deleteUser(group_id, user_id)
             if(response.isSuccessful) {
                 Log.i(TAG, "Deleted group")
                 emit(Resource.Success())

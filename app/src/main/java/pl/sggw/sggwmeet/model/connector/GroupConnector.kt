@@ -49,12 +49,6 @@ interface GroupConnector {
     suspend fun getGroupEvents(@Path("group_id") group_id: Int) : Response<GetEventResponse>
 
     /**
-     * Leaves or deletes group
-     */
-    @DELETE("/api/groups/{group_id}/users")
-    suspend fun leaveGroup(@Path("group_id") group_id: Int) : Response<GetGroupsResponse>
-
-    /**
      * Changes notification settings for group for the event
      */
     @POST("/api/groups/{group_id}/events/{event_id}/notifications")
@@ -71,5 +65,11 @@ interface GroupConnector {
      */
     @DELETE("/api/groups/{group_id}")
     suspend fun deleteGroup(@Path("group_id") group_id: Int) : Response<String>
+
+    /**
+     * Deletes user from group
+     */
+    @DELETE("/api/groups/{group_id}/users/{user_id}")
+    suspend fun deleteUser(@Path("group_id") group_id: Int, @Path("user_id") user_Id: Int) : Response<GetGroupsResponse>
 
 }

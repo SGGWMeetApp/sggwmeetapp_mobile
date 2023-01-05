@@ -19,13 +19,13 @@ import pl.sggw.sggwmeet.model.connector.dto.request.GroupAddUserRequest
 import pl.sggw.sggwmeet.model.connector.dto.response.UserToGroupResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.GroupViewModel
+import java.util.HashMap
 
 class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: GroupAddUserListActivity): RecyclerView.Adapter<GroupUserAddAdapter.ViewHolder>() {
     private var userList: ArrayList<UserToGroupResponse>
     private lateinit var activity: GroupAddUserListActivity
     private lateinit var picasso: Picasso
-    private var visibilityState: ArrayList<Boolean> = ArrayList<Boolean>()
-    private lateinit var groupViewModel: GroupViewModel
+    internal var visibilityState: HashMap<Int, Boolean> = HashMap<Int,Boolean>()
 
     fun filterList(filterList: ArrayList<UserToGroupResponse>) {
         userList = filterList
@@ -37,16 +37,11 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model: UserToGroupResponse = userList[position]
-        holder.internalPosition=position
-        if(visibilityState[position]){
+        if(visibilityState[model.id] == true){
             holder.sendButton.isClickable=true
             holder.sendButton.setImageResource(R.drawable.asset_plus)
             holder.sendButton.setOnClickListener{
-                setViewModelListener(holder, model)
-                groupViewModel.addUserToGroup(GroupAddUserRequest(
-                    model.id,
-                    position
-                ), activity.groupId)
+                activity.addUser(holder,model.id)
             }
         }
         else{
@@ -82,7 +77,6 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
         lateinit var sendButton: ImageButton
         lateinit var profilePicture: ImageView
         lateinit var infoArea: LinearLayout
-        var internalPosition=-1
 
         init {
             // initializing our views with their ids.
@@ -97,48 +91,10 @@ class GroupUserAddAdapter(userList: ArrayList<UserToGroupResponse>, activity: Gr
     init {
         picasso = Picasso.get()
         picasso.isLoggingEnabled = true
-        groupViewModel = activity.groupViewModel
         this.userList = userList
         this.activity = activity
         for(item in userList){
-            visibilityState.add(true)
-        }
-    }
-
-    private fun setViewModelListener(holder:ViewHolder, model: UserToGroupResponse) {
-
-        groupViewModel.addUserToGroupGetState.observe(activity) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    activity.lockUI()
-                }
-                is Resource.Success -> {
-                    if(holder.internalPosition == resource.data!!.position) {
-                        holder.sendButton.setImageResource(R.drawable.asset_tick)
-                        holder.sendButton.isClickable=false
-                        visibilityState[resource.data!!.position] = false
-                        activity.setResult(Activity.RESULT_OK, activity.intent)
-                        activity.unlockUI()
-                    }
-                }
-                is Resource.Error -> {
-                    Toast.makeText(activity, "Nie dodano ${model.firstName} ${model.lastName} do grupy", Toast.LENGTH_SHORT).show()
-                    activity.unlockUI()
-                    when(resource.exception) {
-
-                        is TechnicalException -> {
-                            activity.showTechnicalErrorMessage()
-                        }
-                        is ServerException -> {
-                            activity.handleServerErrorCode(resource.exception.errorCode)
-                        }
-                        is ClientException -> {
-                            activity.handleClientErrorCode(resource.exception.errorCode)
-                        }
-                    }
-                    activity.finish()
-                }
-            }
+            visibilityState[item.id] = true
         }
     }
 
