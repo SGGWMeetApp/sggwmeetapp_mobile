@@ -245,6 +245,35 @@ class GroupShowActivity: AppCompatActivity() {
                 }
             }
         }
+
+        groupViewModel.deleteGroupState.observe(this) { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    lockUI()
+                }
+                is Resource.Success -> {
+                    Toast.makeText(this, "Usunięto grupę", Toast.LENGTH_SHORT).show()
+                    unlockUI()
+                    this.setResult(Activity.RESULT_OK)
+                    this.finish()
+                }
+                is Resource.Error -> {
+                    unlockUI()
+                    when(resource.exception) {
+
+                        is TechnicalException -> {
+                            showTechnicalErrorMessage()
+                        }
+                        is ServerException -> {
+                            handleServerErrorCode(resource.exception.errorCode)
+                        }
+                        is ClientException -> {
+                            handleClientErrorCode(resource.exception.errorCode)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun handleClientErrorCode(errorCode: ClientErrorCode) {
@@ -270,7 +299,7 @@ class GroupShowActivity: AppCompatActivity() {
         //binding.groupAddUserBT.visibility=View.VISIBLE
         binding.groupAddEventBT.visibility=View.VISIBLE
         binding.leaveGroupBT.visibility=View.VISIBLE
-        setUpRemoveAlertDialog()
+        setUpDeleteAlertDialog()
         userIsAdmin=true
         setGroupMemberPermission()
     }
@@ -359,7 +388,7 @@ class GroupShowActivity: AppCompatActivity() {
         leaveAlertDialog=builder.create()
         setUpLeaveButton()
     }
-    private fun setUpRemoveAlertDialog(){
+    private fun setUpDeleteAlertDialog(){
         val builder = AlertDialog.Builder(this)
         builder
             .setCancelable(true)
@@ -371,7 +400,7 @@ class GroupShowActivity: AppCompatActivity() {
             )
             .setPositiveButton("Tak",
                 DialogInterface.OnClickListener { dialog, which ->
-                    leaveGroup()
+                    deleteGroup()
                     dialog.dismiss()
                 }
             )
@@ -385,5 +414,9 @@ class GroupShowActivity: AppCompatActivity() {
     }
     private fun leaveGroup(){
         groupViewModel.leaveGroup(groupData.id)
+    }
+
+    private fun deleteGroup(){
+        groupViewModel.deleteGroup(groupData.id)
     }
 }

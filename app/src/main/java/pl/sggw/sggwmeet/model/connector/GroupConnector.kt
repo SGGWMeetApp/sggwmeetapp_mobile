@@ -66,4 +66,10 @@ interface GroupConnector {
     @DELETE("/api/groups/{group_id}/events/{event_id}")
     suspend fun deleteGroupEvent(@Path("group_id") group_id: Int, @Path("event_id") event_id: Int) : Response<String>
 
+    /**
+     * Deletes group
+     */
+    @DELETE("/api/groups/{group_id}")
+    suspend fun deleteGroup(@Path("group_id") group_id: Int) : Response<String>
+
 }

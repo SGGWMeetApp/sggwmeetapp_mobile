@@ -269,4 +269,29 @@ class GroupRepository(
             emit(Resource.Error(TechnicalException("An error occurred during authorization")))
         }
     }
+
+    suspend fun deleteGroup(group_id: Int) : Flow<Resource<String>> = flow {
+        val functionTAG = "deleteGroup"
+        emit(Resource.Loading())
+        try {
+            val response = connector.deleteGroup(group_id)
+            if(response.isSuccessful) {
+                Log.i(TAG, "Deleted group")
+                emit(Resource.Success())
+            }
+            else{
+                Log.e(TAG, "An exception occurred during $functionTAG, CODE: "+response.code()+": "+ response.message())
+                emit(Resource.Error(ServerException(response.code().toString(),response.message())))
+            }
+        } catch (exception : ClientException) {
+            Log.e(TAG, "Client exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : ServerException) {
+            Log.e(TAG, "Backend exception occurred during $functionTAG", exception)
+            emit(Resource.Error(exception))
+        } catch (exception : Exception) {
+            Log.e(TAG, "An exception occurred during $functionTAG", exception)
+            emit(Resource.Error(TechnicalException("An error occurred during authorization")))
+        }
+    }
 }

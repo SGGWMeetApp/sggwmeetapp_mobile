@@ -135,4 +135,17 @@ class GroupViewModel @Inject constructor(
                 .launchIn(viewModelScope)
         }
     }
+
+    private val _deleteGroupState: MutableLiveData<Resource<String>> = MutableLiveData()
+    val deleteGroupState: LiveData<Resource<String>>
+        get() = _deleteGroupState
+
+    fun deleteGroup(group_id:Int) {
+        viewModelScope.launch {
+            groupRepository.deleteGroup(group_id).onEach {
+                _deleteGroupState.value = it
+            }
+                .launchIn(viewModelScope)
+        }
+    }
 }
