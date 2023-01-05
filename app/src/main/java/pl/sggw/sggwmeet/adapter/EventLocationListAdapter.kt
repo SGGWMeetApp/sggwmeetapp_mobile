@@ -24,8 +24,8 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
     private var locationList: ArrayList<SimplePlaceResponseData>
     private lateinit var activity: Activity
     private lateinit var picasso: Picasso
-    private var visibilityState: ArrayList<Int> = ArrayList<Int>()
     private lateinit var locationCategoryMap : HashMap<String,String>
+    private var visibilityState: HashMap<String, Int> = HashMap<String,Int>()
 
     fun filterList(filterList: ArrayList<SimplePlaceResponseData>) {
         locationList = filterList
@@ -37,7 +37,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model: SimplePlaceResponseData = locationList[position]
-        holder.locationHiddenView.visibility=visibilityState[position]
+        holder.locationHiddenView.visibility = visibilityState[model.id]!!
 
         if(holder.locationHiddenView.visibility==View.VISIBLE){
             holder.locationDetailExpand.visibility=View.INVISIBLE
@@ -73,13 +73,13 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
             if(holder.locationHiddenView.isGone){
                 TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
                 holder.locationHiddenView.visibility=View.VISIBLE
-                visibilityState[position]=View.VISIBLE
+                visibilityState[model.id]=View.VISIBLE
                 holder.locationDetailExpand.visibility=View.INVISIBLE
             }
             else{
                 TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
                 holder.locationHiddenView.visibility=View.GONE
-                visibilityState[position]=View.GONE
+                visibilityState[model.id]=View.GONE
                 holder.locationDetailExpand.visibility=View.VISIBLE
             }
         }
@@ -87,13 +87,13 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
             if(holder.locationHiddenView.isGone){
                 TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
                 holder.locationHiddenView.visibility=View.VISIBLE
-                visibilityState[position]=View.VISIBLE
+                visibilityState[model.id]=View.VISIBLE
                 holder.locationDetailExpand.visibility=View.INVISIBLE
             }
             else{
                 TransitionManager.beginDelayedTransition(holder.locationRoot, holder.transition)
                 holder.locationHiddenView.visibility=View.GONE
-                visibilityState[position]=View.GONE
+                visibilityState[model.id]=View.GONE
                 holder.locationDetailExpand.visibility=View.VISIBLE
             }
         }
@@ -157,7 +157,7 @@ class EventLocationListAdapter(locationList: ArrayList<SimplePlaceResponseData>,
         this.activity = activity
         this.locationCategoryMap = locationCategoryMap
         for(item in locationList){
-            visibilityState.add(View.GONE)
+            visibilityState[item.id]=View.GONE
         }
     }
 }
