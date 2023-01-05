@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
     android:elevation="8dp"
     app:cardCornerRadius="8dp">
 
@@ -12,13 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="5sp">
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/group_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/robotomedium"
+            android:fontFamily="@font/montserrat"
+            android:textFontWeight="500"
             android:text="Name"
             android:textColor="@color/blackAlpha"
             android:textSize="18sp" />
@@ -28,21 +30,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Member count"
-            android:textColor="@color/blackAlpha" />
+            android:fontFamily="@font/montserrat"
+            android:layout_marginVertical="0.5dp" />
 
         <TextView
             android:id="@+id/group_admin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Admin"
-            android:textColor="@color/blackAlpha" />
+            android:fontFamily="@font/montserrat"
+            android:layout_marginVertical="0.5dp" />
 
         <TextView
             android:id="@+id/group_event_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Incoming events"
-            android:textColor="@color/blackAlpha" />
+            android:fontFamily="@font/montserrat"
+            android:layout_marginVertical="0.5dp" />
 
     </LinearLayout>
 

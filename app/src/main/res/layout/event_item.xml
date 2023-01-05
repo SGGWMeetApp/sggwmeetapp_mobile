@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
     android:elevation="8dp"
     app:cardCornerRadius="8dp">
 
@@ -12,13 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="5sp">
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/event_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/robotomedium"
+            android:fontFamily="@font/montserrat"
             android:text="Date"
             android:textAlignment="textEnd"
             android:textColor="@color/blackAlpha" />
@@ -27,7 +27,8 @@
             android:id="@+id/event_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/robotomedium"
+            android:fontFamily="@font/montserrat"
+            android:textFontWeight="500"
             android:text="Name"
             android:textColor="@color/blackAlpha"
             android:textSize="18sp" />
@@ -36,25 +37,32 @@
             android:id="@+id/event_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginVertical="0.5dp"
             android:text="Location" />
 
         <TextView
             android:id="@+id/event_author"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginVertical="0.5dp"
             android:text="Autor" />
 
         <TextView
             android:id="@+id/event_attenders"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginVertical="0.5dp"
             android:text="Attenders" />
 
         <TextView
             android:id="@+id/event_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="4dp"
+            android:fontFamily="@font/montserrat"
+            android:paddingTop="1dp"
             android:text="Description"
             android:textColor="@color/blackAlpha" />
 
