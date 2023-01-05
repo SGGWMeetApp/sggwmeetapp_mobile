@@ -256,6 +256,7 @@ class GroupShowActivity: AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     unlockUI()
+                    this.setResult(Activity.RESULT_OK)
                     adapter.visibilityState[userPosition]=View.GONE
                     val params=userHolder.itemView.layoutParams
                     params.height=0
