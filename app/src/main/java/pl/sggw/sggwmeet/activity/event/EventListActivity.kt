@@ -39,6 +39,7 @@ import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
+import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,6 +47,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     private lateinit var animationDim : Animation
     private lateinit var animationLit : Animation
     private val topSheetTransition = AutoTransition()
+    private val timeFormat = SimpleDateFormat("dd.MM.yyyy' 'HH:mm")
     @Inject
     lateinit var picasso: Picasso
 
@@ -304,6 +306,10 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
             else if(!item.description.isNullOrBlank() && item.description!!.lowercase().contains(text.lowercase())){
                 filteredlist.add(item)
             }
+            else if(timeFormat.format(item.startDate)!!.lowercase().contains(text.lowercase())){
+                filteredlist.add(item)
+            }
+
         }
         if (filteredlist.isEmpty()) {
             //
