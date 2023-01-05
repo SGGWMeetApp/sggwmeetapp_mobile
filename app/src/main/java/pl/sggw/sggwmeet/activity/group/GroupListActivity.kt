@@ -318,9 +318,9 @@ class GroupListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
     private fun setTopSheet(){
         binding.topSheetLayout.searchBar.visibility=View.GONE
-        binding.topSheetLayout.menuGroupsBT.isEnabled=false
         binding.topSheetLayout.searchBarUnderline.visibility=View.GONE
         binding.topSheetLayout.menuGroupsBT.setOnClickListener {
+            topSheetTransition.duration=200
             closeTopSheet()
         }
         binding.navbarActivity.popupButton.setOnClickListener{
