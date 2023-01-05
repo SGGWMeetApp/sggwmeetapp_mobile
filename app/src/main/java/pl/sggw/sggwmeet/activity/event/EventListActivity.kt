@@ -1,6 +1,7 @@
 package pl.sggw.sggwmeet.activity.event
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -40,7 +41,9 @@ import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.util.SearchBarSetupUtil
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
 import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -48,6 +51,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     private lateinit var animationLit : Animation
     private val topSheetTransition = AutoTransition()
     private val timeFormat = SimpleDateFormat("dd.MM.yyyy' 'HH:mm")
+    private val timeFormatSimpler = SimpleDateFormat("dd.MM.yyyy")
     @Inject
     lateinit var picasso: Picasso
 
@@ -58,9 +62,14 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
     private val eventViewModel by viewModels<EventViewModel>()
 
+    private var locationId = -1
+    private var selectedDate=""
+    private var selectedCalendar=Calendar.getInstance()
+
     companion object {
         const val EVENT_EDITED = 104
         const val EVENT_ADDED = 105
+        const val LOCATION_SELECTED = 151
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,6 +90,7 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
 
         setUpSpinner()
         setUpFloatingButton()
+        setUpButtons()
         refreshList(binding.spinner.selectedItemPosition)
     }
     private val items = arrayOf<String>("Wszystkie wydarzenia", "Nadchodzące wydarzenia", "Zapisane wydarzenia")
@@ -291,9 +301,32 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
     }
 
     private fun filter(text: String) {
-        val filteredlist = ArrayList<EventResponse>()
+        val filteredlist1 = ArrayList<EventResponse>()
+        if(locationId==-1){
+            filteredlist1.addAll(eventList)
+        }
+        else{
+            for (item in eventList){
+                if (item.locationData.id==locationId){
+                    filteredlist1.add(item)
+                }
+            }
+        }
 
-        for (item in eventList) {
+        val filteredlist2 = ArrayList<EventResponse>()
+        if(selectedDate==""){
+            filteredlist2.addAll(filteredlist1)
+        }
+        else{
+            for (item in filteredlist1){
+                if(timeFormatSimpler.format(item.startDate)!!.contains(selectedDate)){
+                    filteredlist2.add(item)
+                }
+            }
+        }
+
+        val filteredlist = ArrayList<EventResponse>()
+        for (item in filteredlist2) {
             if (item.name.lowercase().contains(text.lowercase())) {
                 filteredlist.add(item)
             }
@@ -323,6 +356,16 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
         }
         else if (requestCode == EVENT_ADDED && resultCode == Activity.RESULT_OK) {
             refreshList(binding.spinner.selectedItemPosition)
+        }
+        else if (requestCode == LOCATION_SELECTED && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                locationId=data.getIntExtra("returnedLocationID",-1)
+                binding.eventListLocationName.setText(
+                    data.getStringExtra("returnedLocationName")
+                )
+                binding.eventListLocationCancelBT.visibility=View.VISIBLE
+                filter(binding.searchBar.text)
+            }
         }
     }
     fun refreshList(position: Int){
@@ -437,5 +480,37 @@ class EventListActivity : AppCompatActivity(), AdapterView.OnItemSelectedListene
             binding.topSheetLayout.avatarPreviewIV.setImageURI(null)
             binding.topSheetLayout.avatarPreviewIV.setImageResource(R.drawable.avatar_1)
         }
+    }
+    private fun setUpButtons(){
+        binding.eventListLocationSelectBT.setOnClickListener{
+            intent=Intent(this,EventLocationListActivity::class.java)
+            startActivityForResult(intent, LOCATION_SELECTED)
+        }
+        binding.eventListLocationCancelBT.setOnClickListener {
+            binding.eventListLocationCancelBT.visibility=View.GONE
+            binding.eventListLocationName.text=""
+            locationId=-1
+            filter(binding.searchBar.text)
+        }
+        binding.eventListDateSelectBT.setOnClickListener{
+            selectDate()
+        }
+        binding.eventListDateCancelBT.setOnClickListener {
+            binding.eventListDateCancelBT.visibility=View.GONE
+            binding.eventListDateName.text=""
+            selectedDate=""
+            filter(binding.searchBar.text)
+        }
+    }
+    private fun selectDate(){
+        val dateDialog = DatePickerDialog(this, R.style.DatePicker, { _, year, monthOfYear, dayOfMonth ->
+            selectedCalendar.set(year,monthOfYear,dayOfMonth)
+            selectedDate = timeFormatSimpler.format(selectedCalendar.time)
+            binding.eventListDateName.text=selectedDate
+            binding.eventListDateCancelBT.visibility=View.VISIBLE
+            filter(binding.searchBar.text)
+        }, selectedCalendar.get(Calendar.YEAR), selectedCalendar.get(Calendar.MONTH),
+            selectedCalendar.get(Calendar.DAY_OF_MONTH))
+        dateDialog.show()
     }
 }
