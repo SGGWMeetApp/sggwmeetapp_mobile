@@ -246,8 +246,10 @@
     <string name="group">Grupa</string>
 
 
-    <!-- Places -->
-    <string name="filter_button_text">Filtruj</string>
+    <!-- Places Distance-->
+    <string name="distance_text">dystans</string>
+    <string name="distance_input_hint_text">maksymalna odległość</string>
+    <string name="distance_confirm_button_text">zapisz</string>
 
     <!-- Location categories -->
     <string name="loc_cat_all">wszystkie</string>

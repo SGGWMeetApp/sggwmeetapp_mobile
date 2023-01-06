@@ -37,7 +37,9 @@ import pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment
 import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
+import java.lang.Long.min
 import javax.inject.Inject
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class MapFragment : Fragment(R.layout.fragment_map) {
@@ -236,7 +238,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         this.binding.arrowBT.setOnClickListener {
             this.showPlacesListCardView(true)
         }
-        this.binding.placesListArrowButton.setOnClickListener {
+        this.binding.placesListBackButton.setOnClickListener {
             this.showPlacesListCardView(false)
         }
 
@@ -250,19 +252,45 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         LocationListenerImpl.userLocation.observe(this.viewLifecycleOwner) {
             this.adapter.submitUserLocation(it)
         }
+        this.setupPlacesListDistanceCardView()
+    }
+
+    private fun setupPlacesListDistanceCardView() {
+        this.binding.openDistanceFilterButton.setOnClickListener {
+            this.showPlacesListDistanceCardView(true)
+        }
+
+        this.binding.distanceCloseCardButton.setOnClickListener {
+            val text = this.binding.distanceInput.text?.toString()
+            var value = if (text.isNullOrEmpty()) Long.MAX_VALUE / 1000
+            else min(abs(text.toLong()), Long.MAX_VALUE / 1000)
+            val selectedPosition = this.binding.distanceUnitSpinner.selectedItemPosition
+            if (selectedPosition == 1) value *= 1000
+
+            this.showPlacesListDistanceCardView(false)
+            Toast.makeText(this.requireContext(), "Max distance: $value meters", Toast.LENGTH_LONG).show()
+        }
+        this.setupPlacesListDistanceUnitSpinner()
+    }
+
+    private fun getVisibilityModifier(visible: Boolean): Int {
+        return if (visible) View.VISIBLE
+        else View.GONE
     }
 
     private fun showPlacesListCardView(show: Boolean) {
-        fun visible(visible: Boolean): Int {
-            return if (visible) View.VISIBLE
-            else View.GONE
-        }
-
         with (this.binding) {
-            this.arrowBT.visibility = visible(!show)
-            this.zoomInBT.visibility = visible(!show)
-            this.zoomOutBT.visibility = visible(!show)
-            this.placesListCardView.visibility = visible(show)
+            this.arrowBT.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.zoomInBT.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.zoomOutBT.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.placesListCardView.visibility = this@MapFragment.getVisibilityModifier(show)
+        }
+    }
+
+    private fun showPlacesListDistanceCardView(show: Boolean) {
+        with (this.binding) {
+            this.distanceFilterClosedCv.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.distanceFilterOpenCv.visibility = this@MapFragment.getVisibilityModifier(show)
         }
     }
 
@@ -291,6 +319,16 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         )
         adapter.setDropDownViewResource(R.layout.category_spinner_text_view)
         spinner.adapter = adapter
+    }
+
+    private fun setupPlacesListDistanceUnitSpinner() {
+        val adapter: ArrayAdapter<String> = ArrayAdapter(
+            this.requireContext(),
+            R.layout.category_spinner_text_view,
+            arrayOf("M", "KM")
+        )
+        adapter.setDropDownViewResource(R.layout.category_spinner_text_view)
+        this.binding.distanceUnitSpinner.adapter = adapter
     }
 
     private fun checkPermission(permission: String): Boolean {
