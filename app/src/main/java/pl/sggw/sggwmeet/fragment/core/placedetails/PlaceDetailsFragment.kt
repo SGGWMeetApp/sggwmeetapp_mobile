@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -39,10 +40,12 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
 
     companion object {
         const val PLACE_ID_BUNDLE_KEY = "id"
+        const val FROM_PLACE_LIST_BUNDLE_KEY = "from place list"
     }
 
     lateinit var binding : FragmentPlaceDetailsBinding
     lateinit var placeId : String
+    var fromPlacesList: Boolean = false
     private val placesViewModel by viewModels<PlacesViewModel>()
     private val reviewsViewModel by viewModels<ReviewsViewModel>()
     private val eventViewModel by viewModels<EventViewModel>()
@@ -68,7 +71,10 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         initReviewRecyclerView()
         initEventsRecyclerView()
         initFoodMenuAdapter()
-        placeId = requireArguments().getString(PLACE_ID_BUNDLE_KEY, "")
+        with (this.requireArguments()) {
+            placeId = this.getString(PLACE_ID_BUNDLE_KEY, "")
+            fromPlacesList = this.getBoolean(FROM_PLACE_LIST_BUNDLE_KEY, false)
+        }
         placesViewModel.getPlaceDetails(placeId)
     }
 
@@ -169,7 +175,10 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         }
 
         binding.backBT.setOnClickListener {
-            this.findNavController().navigate(R.id.action_placeDetailsFragment_to_mapFragment)
+            val bundle = bundleOf(
+                Pair(FROM_PLACE_LIST_BUNDLE_KEY, this.fromPlacesList)
+            )
+            this.findNavController().navigate(R.id.action_placeDetailsFragment_to_mapFragment, bundle)
         }
 
         binding.addEventBT.setOnClickListener {

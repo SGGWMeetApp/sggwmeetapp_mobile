@@ -83,6 +83,11 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         customizeMap()
         setListeners()
         this.setupPlacesListCardView()
+        with (this.arguments) {
+            if (this == null) return
+            val fromPlacesList = this.getBoolean(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY)
+            this@MapFragment.showPlacesListCardView(fromPlacesList)
+        }
     }
 
     private fun setListeners() {
@@ -96,7 +101,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         binding.placeDescriptionViewBT.setOnClickListener {
 
             val bundle = bundleOf(
-                Pair(PlaceDetailsFragment.PLACE_ID_BUNDLE_KEY, chosenPlaceId)
+                Pair(PlaceDetailsFragment.PLACE_ID_BUNDLE_KEY, chosenPlaceId),
+                Pair(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY, false)
             )
             this.findNavController().navigate(R.id.action_mapFragment_to_placeDetailsFragment, bundle)
 
@@ -242,7 +248,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             this.showPlacesListCardView(false)
         }
 
-        this.adapter = PlacesAdapter(this.picasso)
+        this.adapter = PlacesAdapter(this.picasso, this)
         with(this.binding.placesListRecyclerView) {
             this.layoutManager = LinearLayoutManager(this@MapFragment.requireContext())
             this.adapter = this@MapFragment.adapter
