@@ -279,7 +279,9 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 is Resource.Success -> {
                     unlockAddReviewButton()
                     reviewAdapter.addItemOnTop(resource.data!!)
-                    recalculateReviewSummaryData(reviewAdapter.currentList)
+                    val newList = reviewAdapter.currentList.toMutableList()
+                    newList.add(resource.data)
+                    recalculateReviewSummaryData(newList)
                     Toast.makeText(requireContext(), "Pomyślnie dodano recenzje", Toast.LENGTH_SHORT).show()
                 }
                 is Resource.Error -> {
@@ -446,7 +448,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
 
         binding.placeReviewPositivePercentReviewPanelTV.text = getString(R.string.place_review_count_reviews_panel_TV, positivePercent.toInt(), reviewsCount)
         binding.placeReviewCountTV.text = getString(R.string.place_review_count_TV, reviewsCount)
-        binding.placeReviewPositivePercentTV.text = DecimalFormat("#.00").format(positivePercent)
+        binding.placeReviewPositivePercentTV.text = DecimalFormat("0.00").format(positivePercent)
 
     }
 
