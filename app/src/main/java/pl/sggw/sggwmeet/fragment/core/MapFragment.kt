@@ -78,6 +78,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private lateinit var locationProvider: FusedLocationProviderClient
     private val lastKnownUserLocation = MutableLiveData<Location>()
+    private var userMarker: Marker? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -122,6 +123,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private fun setOnMarkerClickListener() {
         map.setOnMarkerClickListener {
+            if (it == this.userMarker) return@setOnMarkerClickListener true
 
             val data = markerIdsToPlacesData[it]!!
             if(PlaceCategory.ROOT_LOCATION != data.category) {
@@ -276,7 +278,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             this@MapFragment.reloadMarkers(this.value!!)
         }
 
-        map.addMarker(
+        this.userMarker = map.addMarker(
             MarkerOptions()
                 .position(LatLng(userLocation.latitude, userLocation.longitude))
                 .icon(BitmapDescriptorFactory.fromBitmap(markerBitmapGenerator.generateUserBitmap(this.getUserData())))
