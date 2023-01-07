@@ -20,8 +20,8 @@ class PlacesViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _placeMarkerListState: MutableLiveData<Resource<List<PlaceMarkerData>>> = MutableLiveData()
-//    val placeMarkerListState: LiveData<Resource<List<PlaceMarkerData>>>
-//        get() = _placeMarkerListState
+    val placeMarkerListState: LiveData<Resource<List<PlaceMarkerData>>>
+        get() = _placeMarkerListState
 
     private val _placeMarkerFilteredListState: MutableLiveData<List<PlaceMarkerData>> = MutableLiveData()
     val placeMarkerFilteredListState: LiveData<List<PlaceMarkerData>> = this._placeMarkerFilteredListState
