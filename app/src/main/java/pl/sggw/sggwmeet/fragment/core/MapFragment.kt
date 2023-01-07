@@ -12,11 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -53,8 +53,6 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         private const val TAG = "MapFragment"
 
         private const val LOCATION_UPDATE_INTERVAL = 100L
-        private const val LOCATION_UPDATE_DISTANCE = 0.01F
-
         private const val MAX_LOCATION_UPDATE_AGE = 1000L
     }
 
@@ -75,9 +73,11 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private val markerIdsToPlacesData : MutableMap<Marker, PlaceMarkerData> = HashMap()
     lateinit var chosenPlaceId : String
-    var shouldFollowUser = true
+    private var shouldFollowUser = true
+    private var cameraMovedManually = false
 
     private lateinit var locationProvider: FusedLocationProviderClient
+    private val lastKnownUserLocation = MutableLiveData<Location>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -90,11 +90,6 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         setListeners()
         this.setupPlacesListCardView()
         this.locationProvider = LocationServices.getFusedLocationProviderClient(this.requireContext())
-        with (this.arguments) {
-            if (this == null) return
-            val fromPlacesList = this.getBoolean(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY, false)
-            this@MapFragment.showPlacesListCardView(fromPlacesList)
-        }
         this.startLocationUpdates()
     }
 
@@ -104,6 +99,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 //        this.setUserLocationListener()
         setClosePlaceDetailsButtonPopupListener()
         setPlaceDetailsButtonPopupListener()
+
     }
 
     private fun setPlaceDetailsButtonPopupListener() {
@@ -172,6 +168,11 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             setOnMarkerClickListener()
             placesViewModel.getPlaceMarkers(arrayOf(null))
 
+            map.setOnCameraMoveListener {
+                this.shouldFollowUser = !cameraMovedManually
+                cameraMovedManually = true
+            }
+
             // TODO -> jeśli mapa została ręcznie przesunięta, powinna przestać śledzić użytkownika
         }
 
@@ -184,6 +185,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         binding.arrowBT.visibility = View.VISIBLE
         binding.zoomInBT.visibility = View.VISIBLE
         binding.zoomOutBT.visibility = View.VISIBLE
+        binding.focusUserButton.visibility = View.VISIBLE
     }
 
     private fun setButtonListeners() {
@@ -197,6 +199,12 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
         binding.arrowBT.setOnClickListener {
             this.placesDialog.show()
+        }
+
+        binding.focusUserButton.setOnClickListener {
+            if (this.lastKnownUserLocation.value == null) return@setOnClickListener
+            this.cameraMovedManually = false
+            this.zoomToLocation(this.lastKnownUserLocation.value!!)
         }
     }
 
@@ -234,12 +242,6 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 //        }
     }
 
-//    private fun setUserLocationListener() {
-//        LocationListenerImpl.userLocation.observe(viewLifecycleOwner) { location ->
-////            this.reloadUserMarker(location)
-//            this.adapter.submitUserLocation(location)
-//        }
-//    }
 
     private fun reloadMarkers(markers: List<PlaceMarkerData>) {
         clearOldMarkers()
@@ -280,7 +282,10 @@ class MapFragment : Fragment(R.layout.fragment_map) {
                 .icon(BitmapDescriptorFactory.fromBitmap(markerBitmapGenerator.generateUserBitmap(this.getUserData())))
         )
 
-        if (this.shouldFollowUser) this.zoomToLocation(userLocation)
+        if (this.shouldFollowUser) {
+            this.cameraMovedManually = false
+            this.zoomToLocation(userLocation)
+        }
     }
 
     private fun clearOldMarkers() {
@@ -288,9 +293,9 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         markerIdsToPlacesData.clear()
     }
 
-    private fun showErrorMessage() {
-        Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
-    }
+//    private fun showErrorMessage() {
+//        Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
+//    }
 
     private fun zoomToLocation(location: Location) {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
@@ -302,8 +307,6 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
 
     private fun setupPlacesListCardView() {
-//        this.setupLocationManager()
-
         this.binding.arrowBT.setOnClickListener {
             this.showPlacesListCardView(true)
         }
@@ -317,12 +320,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             this.adapter = this@MapFragment.adapter
         }
         this.setupPlacesListSpinner()
-
-//        this.locationListener.userLocation.observe(this.viewLifecycleOwner) {
-//            this.adapter.submitUserLocation(it)
-//        }
-
         this.setupPlacesListDistanceCardView()
+
+        with (this.arguments) {
+            if (this == null) return
+            val fromPlacesList = this.getBoolean(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY, false)
+            if (fromPlacesList) this@MapFragment.binding.arrowBT.performClick()
+        }
     }
 
     private fun setupPlacesListDistanceCardView() {
@@ -339,7 +343,6 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
             this.showPlacesListDistanceCardView(false)
             this.placesViewModel.setMaxDistance(value, arrayOf(this.getPlacesCategoryFilter()))
-//            Toast.makeText(this.requireContext(), "Max distance: $value meters", Toast.LENGTH_LONG).show()
         }
         this.setupPlacesListDistanceUnitSpinner()
     }
@@ -354,6 +357,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             this.arrowBT.visibility = this@MapFragment.getVisibilityModifier(!show)
             this.zoomInBT.visibility = this@MapFragment.getVisibilityModifier(!show)
             this.zoomOutBT.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.focusUserButton.visibility = this@MapFragment.getVisibilityModifier(!show)
             this.placesListCardView.visibility = this@MapFragment.getVisibilityModifier(show)
         }
     }
@@ -406,43 +410,23 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         return ActivityCompat.checkSelfPermission(this.requireContext(), permission) == PackageManager.PERMISSION_GRANTED
     }
 
-//    private fun setupLocationManager() {
-//        try {
-//            if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
-//            if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
-//            this.locationManager.requestLocationUpdates(
-//                LocationManager.GPS_PROVIDER,
-//                LOCATION_UPDATE_INTERVAL,
-//                LOCATION_UPDATE_DISTANCE,
-//                this.locationListener
-//            )
-//        } catch (ex: SecurityException) {
-//            ex.printStackTrace()
-//        }
-//    }
-
-    // Must be run on separate thread
-//    private fun getLocation() {
-//        if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
-//        if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
-//        val locationRequest = CurrentLocationRequest.Builder().build()
-//        this.locationProvider.getCurrentLocation(locationRequest, null).addOnSuccessListener {
-//            this.adapter.submitUserLocation(it)
-//        }
-//        Thread.sleep(LOCATION_UPDATE_INTERVAL)
-//        this.getLocation()
-//    }
-
     private fun startLocationUpdates() {
         if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
         if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
         val locationRequest = LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
             .setMaxUpdateAgeMillis(MAX_LOCATION_UPDATE_AGE).build()
         this.locationProvider.requestLocationUpdates(locationRequest, {
+            this.lastKnownUserLocation.value = it
+        }, Looper.getMainLooper())
+        this.setupLocationListener()
+    }
+
+    private fun setupLocationListener() {
+        this.lastKnownUserLocation.observe(this.viewLifecycleOwner) {
             this.adapter.submitUserLocation(it)
             this.placesViewModel.setUserLocation(it, arrayOf(this.getPlacesCategoryFilter()))
             this.reloadUserMarker(it)
-        }, Looper.getMainLooper())
+        }
     }
 
     private fun getPlacesCategoryFilter(): PlaceCategory? {
@@ -452,13 +436,4 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             return PlaceCategory.getCategoryByTranslation(translation)
         }
     }
-
-//    private class LocationListenerImpl(private val context: Context): LocationListener {
-//        private val _userLocation: MutableLiveData<Location> = MutableLiveData()
-//        val userLocation: LiveData<Location> = this._userLocation
-//        override fun onLocationChanged(location: Location) {
-//            Toast.makeText(this.context, "new location", Toast.LENGTH_SHORT).show()
-//            this._userLocation.postValue(location)
-//        }
-//    }
 }
