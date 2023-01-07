@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -79,6 +81,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private lateinit var locationProvider: FusedLocationProviderClient
     private val lastKnownUserLocation = MutableLiveData<Location>()
     private var userMarker: Marker? = null
+    private lateinit var requestLocationPermissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -92,6 +95,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         this.setupPlacesListCardView()
         this.locationProvider = LocationServices.getFusedLocationProviderClient(this.requireContext())
         this.startLocationUpdates()
+        this.requestLocationPermissionLauncher = this.initializeLocationPermissionLauncher()
+        this.requestLocationPermissions()
     }
 
     private fun setListeners() {
@@ -188,6 +193,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         binding.zoomInBT.visibility = View.VISIBLE
         binding.zoomOutBT.visibility = View.VISIBLE
         binding.focusUserButton.visibility = View.VISIBLE
+        binding.requestLocationPermissionButton.visibility = View.VISIBLE
     }
 
     private fun setButtonListeners() {
@@ -207,6 +213,10 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             if (this.lastKnownUserLocation.value == null) return@setOnClickListener
             this.cameraMovedManually = false
             this.zoomToLocation(this.lastKnownUserLocation.value!!)
+        }
+
+        binding.requestLocationPermissionButton.setOnClickListener {
+            this.requestLocationPermissions()
         }
     }
 
@@ -360,6 +370,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             this.zoomInBT.visibility = this@MapFragment.getVisibilityModifier(!show)
             this.zoomOutBT.visibility = this@MapFragment.getVisibilityModifier(!show)
             this.focusUserButton.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.requestLocationPermissionButton.visibility = this@MapFragment.getVisibilityModifier(!show)
             this.placesListCardView.visibility = this@MapFragment.getVisibilityModifier(show)
         }
     }
@@ -437,5 +448,22 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             val translation = this.selectedItem as String
             return PlaceCategory.getCategoryByTranslation(translation)
         }
+    }
+
+    private fun initializeLocationPermissionLauncher(): ActivityResultLauncher<Array<String>> {
+        return this.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            if (this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                && this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                this.startLocationUpdates()
+            }
+        }
+    }
+
+    private fun requestLocationPermissions() {
+        if (this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+            && this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
+        this.requestLocationPermissionLauncher.launch(arrayOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
+        ))
     }
 }
