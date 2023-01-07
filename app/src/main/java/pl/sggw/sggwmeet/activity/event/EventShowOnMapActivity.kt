@@ -20,7 +20,6 @@ import pl.sggw.sggwmeet.databinding.ActivityEventShowOnMapBinding
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
 import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
-import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
 import javax.inject.Inject
 
@@ -183,21 +182,25 @@ class EventShowOnMapActivity: AppCompatActivity() {
     }
 
     private fun setViewModelListeners() {
-        placesViewModel.placeMarkerListState.observe(this) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    binding.mapPB.visibility = View.VISIBLE
-                }
-                is Resource.Success -> {
-                    binding.mapPB.visibility = View.GONE
-                    reloadMarkers(resource.data!!)
-                }
-                is Resource.Error -> {
-                    binding.mapPB.visibility = View.GONE
-                    showErrorMessage()
-                }
-            }
+        placesViewModel.placeMarkerFilteredListState.observe(this) { markers ->
+            this.reloadMarkers(markers)
         }
+
+//        placesViewModel.placeMarkerListState.observe(this) { resource ->
+//            when(resource) {
+//                is Resource.Loading -> {
+//                    binding.mapPB.visibility = View.VISIBLE
+//                }
+//                is Resource.Success -> {
+//                    binding.mapPB.visibility = View.GONE
+//                    reloadMarkers(resource.data!!)
+//                }
+//                is Resource.Error -> {
+//                    binding.mapPB.visibility = View.GONE
+//                    showErrorMessage()
+//                }
+//            }
+//        }
     }
 
     private fun loadImageBasedOnPath(data : PlaceMarkerData) {

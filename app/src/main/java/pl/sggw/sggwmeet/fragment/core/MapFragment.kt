@@ -4,9 +4,9 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,25 +17,28 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.adapter.PlacesAdapter
 import pl.sggw.sggwmeet.databinding.FragmentMapBinding
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment
 import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
-import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
 import java.lang.Long.min
 import javax.inject.Inject
@@ -51,6 +54,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
         private const val LOCATION_UPDATE_INTERVAL = 100L
         private const val LOCATION_UPDATE_DISTANCE = 0.01F
+
+        private const val MAX_LOCATION_UPDATE_AGE = 1000L
     }
 
     lateinit var placesDialog: AlertDialog
@@ -70,8 +75,9 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private val markerIdsToPlacesData : MutableMap<Marker, PlaceMarkerData> = HashMap()
     lateinit var chosenPlaceId : String
+    var shouldFollowUser = true
 
-
+    private lateinit var locationProvider: FusedLocationProviderClient
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -83,16 +89,19 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         customizeMap()
         setListeners()
         this.setupPlacesListCardView()
+        this.locationProvider = LocationServices.getFusedLocationProviderClient(this.requireContext())
         with (this.arguments) {
             if (this == null) return
-            val fromPlacesList = this.getBoolean(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY)
+            val fromPlacesList = this.getBoolean(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY, false)
             this@MapFragment.showPlacesListCardView(fromPlacesList)
         }
+        this.startLocationUpdates()
     }
 
     private fun setListeners() {
         setButtonListeners()
         setViewModelListeners()
+//        this.setUserLocationListener()
         setClosePlaceDetailsButtonPopupListener()
         setPlaceDetailsButtonPopupListener()
     }
@@ -162,6 +171,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style))
             setOnMarkerClickListener()
             placesViewModel.getPlaceMarkers(arrayOf(null))
+
+            // TODO -> jeśli mapa została ręcznie przesunięta, powinna przestać śledzić użytkownika
         }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -190,31 +201,53 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     }
 
     private fun setViewModelListeners() {
-        placesViewModel.placeMarkerListState.observe(viewLifecycleOwner) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    binding.mapPB.visibility = View.VISIBLE
-                }
-                is Resource.Success -> {
-                    binding.mapPB.visibility = View.GONE
-                    reloadMarkers(resource.data!!)
-                    this.adapter.submitItems(resource.data)
-                }
-                is Resource.Error -> {
-                    binding.mapPB.visibility = View.GONE
-                    showErrorMessage()
-                }
-            }
+        placesViewModel.observeNonFilteredPlaces(viewLifecycleOwner)
+
+        placesViewModel.placeMarkerFilteredListState.observe(viewLifecycleOwner) { markers ->
+            reloadMarkers(markers)
+            this.adapter.submitItems(markers)
+
         }
+
+//        with(placesViewModel.placeMarkerFilteredListState) {
+//            if (this.value == null) return
+//            for (marker in this.value!!)
+//                if (marker.category == PlaceCategory.ROOT_LOCATION) this@MapFragment.zoomToRootLocation(marker)
+//        }
+
+
+//        placesViewModel.placeMarkerListState.observe(viewLifecycleOwner) { resource ->
+//            when(resource) {
+//                is Resource.Loading -> {
+//                    binding.mapPB.visibility = View.VISIBLE
+//                }
+//                is Resource.Success -> {
+//                    binding.mapPB.visibility = View.GONE
+//                    reloadMarkers(resource.data!!)
+//                    this.adapter.submitItems(resource.data)
+//                }
+//                is Resource.Error -> {
+//                    binding.mapPB.visibility = View.GONE
+//                    showErrorMessage()
+//                }
+//            }
+//        }
     }
+
+//    private fun setUserLocationListener() {
+//        LocationListenerImpl.userLocation.observe(viewLifecycleOwner) { location ->
+////            this.reloadUserMarker(location)
+//            this.adapter.submitUserLocation(location)
+//        }
+//    }
 
     private fun reloadMarkers(markers: List<PlaceMarkerData>) {
         clearOldMarkers()
 
         markers.forEach { markerData ->
-            if(PlaceCategory.ROOT_LOCATION == markerData.category) {
-                zoomToRootLocation(markerData)
-            }
+//            if(PlaceCategory.ROOT_LOCATION == markerData.category) {
+//                zoomToRootLocation(markerData)
+//            }
             val marker = map.addMarker(
                 MarkerOptions()
                     .position(LatLng(markerData.geolocation.latitude, markerData.geolocation.longitude))
@@ -222,6 +255,32 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             )
             markerIdsToPlacesData[marker!!] = markerData
         }
+    }
+
+    private fun getUserData(): UserData {
+        val gson = Gson()
+        val fetchedData = Prefs.read().content(
+            "userData",
+            "{\"id\":\"0\",\"firstName\":\"Imie\",\"lastName\":\"Nazwisko\",\"phoneNumberPrefix\":\"12\",\"phoneNumber\":\"123\",\"description\":\"\",\"avatarUrl\":null}"
+        )
+        return gson.fromJson(fetchedData, UserData::class.java)
+    }
+
+    private fun reloadUserMarker(userLocation: Location) {
+        map.clear()
+
+        with(placesViewModel.placeMarkerFilteredListState) {
+            if (this.value == null) return
+            this@MapFragment.reloadMarkers(this.value!!)
+        }
+
+        map.addMarker(
+            MarkerOptions()
+                .position(LatLng(userLocation.latitude, userLocation.longitude))
+                .icon(BitmapDescriptorFactory.fromBitmap(markerBitmapGenerator.generateUserBitmap(this.getUserData())))
+        )
+
+        if (this.shouldFollowUser) this.zoomToLocation(userLocation)
     }
 
     private fun clearOldMarkers() {
@@ -233,13 +292,17 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
     }
 
-    private fun zoomToRootLocation(marker : PlaceMarkerData) {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(marker.geolocation.latitude, marker.geolocation.longitude), DEFAULT_ZOOM))
+    private fun zoomToLocation(location: Location) {
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
     }
+
+//    private fun zoomToRootLocation(marker : PlaceMarkerData) {
+//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(marker.geolocation.latitude, marker.geolocation.longitude), DEFAULT_ZOOM))
+//    }
 
 
     private fun setupPlacesListCardView() {
-        this.setupLocationManager()
+//        this.setupLocationManager()
 
         this.binding.arrowBT.setOnClickListener {
             this.showPlacesListCardView(true)
@@ -255,9 +318,10 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         }
         this.setupPlacesListSpinner()
 
-        LocationListenerImpl.userLocation.observe(this.viewLifecycleOwner) {
-            this.adapter.submitUserLocation(it)
-        }
+//        this.locationListener.userLocation.observe(this.viewLifecycleOwner) {
+//            this.adapter.submitUserLocation(it)
+//        }
+
         this.setupPlacesListDistanceCardView()
     }
 
@@ -274,7 +338,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             if (selectedPosition == 1) value *= 1000
 
             this.showPlacesListDistanceCardView(false)
-            Toast.makeText(this.requireContext(), "Max distance: $value meters", Toast.LENGTH_LONG).show()
+            this.placesViewModel.setMaxDistance(value, arrayOf(this.getPlacesCategoryFilter()))
+//            Toast.makeText(this.requireContext(), "Max distance: $value meters", Toast.LENGTH_LONG).show()
         }
         this.setupPlacesListDistanceUnitSpinner()
     }
@@ -341,26 +406,59 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         return ActivityCompat.checkSelfPermission(this.requireContext(), permission) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun setupLocationManager() {
-        try {
-            if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
-            if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
-            this.locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                LOCATION_UPDATE_INTERVAL,
-                LOCATION_UPDATE_DISTANCE,
-                LocationListenerImpl
-            )
-        } catch (ex: SecurityException) {
-            ex.printStackTrace()
+//    private fun setupLocationManager() {
+//        try {
+//            if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
+//            if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
+//            this.locationManager.requestLocationUpdates(
+//                LocationManager.GPS_PROVIDER,
+//                LOCATION_UPDATE_INTERVAL,
+//                LOCATION_UPDATE_DISTANCE,
+//                this.locationListener
+//            )
+//        } catch (ex: SecurityException) {
+//            ex.printStackTrace()
+//        }
+//    }
+
+    // Must be run on separate thread
+//    private fun getLocation() {
+//        if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
+//        if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
+//        val locationRequest = CurrentLocationRequest.Builder().build()
+//        this.locationProvider.getCurrentLocation(locationRequest, null).addOnSuccessListener {
+//            this.adapter.submitUserLocation(it)
+//        }
+//        Thread.sleep(LOCATION_UPDATE_INTERVAL)
+//        this.getLocation()
+//    }
+
+    private fun startLocationUpdates() {
+        if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
+        if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
+        val locationRequest = LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
+            .setMaxUpdateAgeMillis(MAX_LOCATION_UPDATE_AGE).build()
+        this.locationProvider.requestLocationUpdates(locationRequest, {
+            this.adapter.submitUserLocation(it)
+            this.placesViewModel.setUserLocation(it, arrayOf(this.getPlacesCategoryFilter()))
+            this.reloadUserMarker(it)
+        }, Looper.getMainLooper())
+    }
+
+    private fun getPlacesCategoryFilter(): PlaceCategory? {
+        with(this.binding.placesListCategorySpinner) {
+            if (this.selectedItemPosition <= 0) return null
+            val translation = this.selectedItem as String
+            return PlaceCategory.getCategoryByTranslation(translation)
         }
     }
 
-    private object LocationListenerImpl: LocationListener {
-        private val _userLocation: MutableLiveData<Location> = MutableLiveData()
-        val userLocation: LiveData<Location> = this._userLocation
-        override fun onLocationChanged(location: Location) {
-            this._userLocation.postValue(location)
-        }
-    }
+//    private class LocationListenerImpl(private val context: Context): LocationListener {
+//        private val _userLocation: MutableLiveData<Location> = MutableLiveData()
+//        val userLocation: LiveData<Location> = this._userLocation
+//        override fun onLocationChanged(location: Location) {
+//            Toast.makeText(this.context, "new location", Toast.LENGTH_SHORT).show()
+//            this._userLocation.postValue(location)
+//        }
+//    }
 }
