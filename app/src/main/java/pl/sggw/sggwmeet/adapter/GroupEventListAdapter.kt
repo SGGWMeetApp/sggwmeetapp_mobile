@@ -29,8 +29,12 @@ class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: Group
         holder.eventName.setText(model.name)
         holder.eventLocation.setText(model.locationData.name)
         holder.eventAuthor.setText(model.author.firstName+" "+model.author.lastName)
+        holder.eventAuthor.visibility=View.GONE
         holder.eventDescription.setText(model.description)
         holder.eventAttenders.visibility=View.GONE
+        holder.eventNotifications.visibility=View.VISIBLE
+        if(model.notification24hEnabled) holder.eventNotifications.setText("Powiadomienia: włączone")
+        else holder.eventNotifications.setText("Powiadomienia: wyłączone")
         if(model.description.isNullOrBlank()){
             holder.eventDescription.visibility=View.GONE
         }
@@ -59,6 +63,7 @@ class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: Group
         lateinit var eventAuthor: TextView
         lateinit var eventDescription: TextView
         lateinit var eventAttenders: TextView
+        lateinit var eventNotifications: TextView
 
 
         init {
@@ -69,6 +74,7 @@ class GroupEventListAdapter(eventList: ArrayList<EventResponse>, activity: Group
             eventAuthor = itemView.findViewById(R.id.event_author)
             eventDescription = itemView.findViewById(R.id.event_description)
             eventAttenders = itemView.findViewById(R.id.event_attenders)
+            eventNotifications = itemView.findViewById(R.id.event_notifications)
         }
     }
 
