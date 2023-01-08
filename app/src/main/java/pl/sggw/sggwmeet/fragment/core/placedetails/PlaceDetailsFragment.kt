@@ -192,7 +192,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 actions.dismissAlertDialog()
             }
             .onConfirmButtonClick { actions, eventSnapshot ->
-                if(eventSnapshot.eventName.isBlank() || eventSnapshot.eventDescription.isBlank()) {
+                if(eventSnapshot.eventName.isBlank()) {
                     Toast.makeText(requireContext(), "Uzupełnij wymagane dane!", Toast.LENGTH_SHORT).show()
                 } else {
                     actions.dismissAlertDialog()
@@ -209,7 +209,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 actions.dismissAlertDialog()
             }
             .onConfirmButtonClick { actions, eventSnapshot ->
-                if(eventSnapshot.eventName.isBlank() || eventSnapshot.eventDescription.isBlank()) {
+                if(eventSnapshot.eventName.isBlank()) {
                     Toast.makeText(requireContext(), "Uzupełnij wymagane dane!", Toast.LENGTH_SHORT).show()
                 } else {
                     actions.dismissAlertDialog()

@@ -11,6 +11,7 @@ data class PlaceEvent(
     val canEdit: Boolean,
     var attendersCount: Int,
     var userAttends: Boolean,
+    var email: String
 ) {
 
     var isLeaving = false
@@ -27,6 +28,7 @@ data class PlaceEvent(
                 userAttends == event.userAttends &&
                 isLeaving == event.isLeaving &&
                 isJoining == event.isJoining &&
-                isEditing == event.isEditing
+                isEditing == event.isEditing &&
+                email == event.email
     }
 }
