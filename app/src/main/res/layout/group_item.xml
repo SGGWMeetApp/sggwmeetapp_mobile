@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="8dp"
@@ -26,18 +27,18 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/group_member_count"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Member count"
-            android:fontFamily="@font/montserrat"
-            android:layout_marginVertical="0.5dp" />
-
-        <TextView
             android:id="@+id/group_admin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Admin"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginVertical="0.5dp" />
+
+        <TextView
+            android:id="@+id/group_member_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Member count"
             android:fontFamily="@font/montserrat"
             android:layout_marginVertical="0.5dp" />
 

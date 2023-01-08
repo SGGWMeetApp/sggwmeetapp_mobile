@@ -8,8 +8,8 @@ import pl.sggw.sggwmeet.domain.UserCredentials
 import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
-import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.exception.ServerException
+import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.mapper.AuthorizationMapper
 import pl.sggw.sggwmeet.model.UserDataStore
 import pl.sggw.sggwmeet.model.connector.AuthorizationConnector
@@ -109,7 +109,7 @@ class AuthorizationRepository(
 
     // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
-        return password.length > MIN_PASSWORD_LENGTH
+        return password.length >= MIN_PASSWORD_LENGTH
     }
 
     suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest) : Flow<Resource<ResetPasswordResponse>> = flow {

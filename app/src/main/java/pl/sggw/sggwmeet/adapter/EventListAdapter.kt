@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -13,7 +14,6 @@ import pl.sggw.sggwmeet.activity.event.EventListActivity
 import pl.sggw.sggwmeet.activity.event.EventShowActivity
 import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import java.text.SimpleDateFormat
-import kotlin.coroutines.coroutineContext
 
 class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity): RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
     private var eventList: ArrayList<EventResponse>
@@ -33,8 +33,8 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
         val model: EventResponse = eventList[position]
         holder.eventDate.setText(timeFormat.format(model.startDate))
         holder.eventName.setText(model.name)
-        holder.eventLocation.setText(model.locationData.name)
         holder.eventAuthor.setText(model.author.firstName+" "+model.author.lastName)
+        holder.eventLocation.setText(model.locationData.name)
         holder.eventDescription.setText(model.description)
         holder.eventAttenders.setText("Uczestnicy: ${model.attendersCount}")
         if(model.description.isNullOrBlank()){
@@ -43,6 +43,8 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
         else{
             holder.eventDescription.visibility=View.VISIBLE
         }
+        if(model.userAttends) holder.eventTick.visibility=View.VISIBLE
+        else holder.eventTick.visibility=View.GONE
         holder.itemView.setOnClickListener{
             val newActivity = Intent(holder.itemView.context, EventShowActivity::class.java)
                 .putExtra("eventData",gson.toJson(model))
@@ -63,6 +65,7 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
         lateinit var eventAuthor: TextView
         lateinit var eventDescription: TextView
         lateinit var eventAttenders: TextView
+        lateinit var eventTick: ImageButton
 
 
         init {
@@ -73,6 +76,7 @@ class EventListAdapter(eventList: ArrayList<EventResponse>, activity: Activity):
             eventAuthor = itemView.findViewById(R.id.event_author)
             eventDescription = itemView.findViewById(R.id.event_description)
             eventAttenders = itemView.findViewById(R.id.event_attenders)
+            eventTick = itemView.findViewById(R.id.event_item_tick)
         }
     }
 
