@@ -84,6 +84,9 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private var userMarker: Marker? = null
     private lateinit var requestLocationPermissionLauncher: ActivityResultLauncher<Array<String>>
 
+    private var firstReload = true
+    private var placesCount: Int? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
         return this.binding.root
@@ -221,10 +224,19 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         }
     }
 
+    private fun updatePlacesCountLabel(count: Int) {
+        if (this.placesCount == null) return
+        this.binding.placesCountTv.text = "$count/${this.placesCount}"
+    }
+
     private fun setViewModelListeners() {
         placesViewModel.observeNonFilteredPlaces(viewLifecycleOwner)
 
         placesViewModel.placeMarkerFilteredListState.observe(viewLifecycleOwner) { markers ->
+            if (this.firstReload) this.placesCount = markers.size
+            this.firstReload = false
+
+            updatePlacesCountLabel(markers.size)
             reloadMarkers(markers)
             this.adapter.submitItems(markers)
 
