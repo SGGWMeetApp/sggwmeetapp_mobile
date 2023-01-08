@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -357,11 +356,6 @@ class MapFragment : Fragment(R.layout.fragment_map) {
                 reviewsValues.second,
                 arrayOf(this.getPlacesCategoryFilter())
             )
-            Toast.makeText(
-                this.requireContext(),
-                "min: ${reviewsValues.first} ; max: ${reviewsValues.second}",
-                Toast.LENGTH_LONG
-            ).show()
             this.showPlacesListDistanceCardView(false)
         }
         this.setupPlacesListDistanceUnitSpinner()
