@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -42,9 +43,10 @@ import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment
 import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
-import java.lang.Long.min
 import javax.inject.Inject
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 @AndroidEntryPoint
 class MapFragment : Fragment(R.layout.fragment_map) {
@@ -346,17 +348,43 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             this.showPlacesListDistanceCardView(true)
         }
 
-        this.binding.distanceCloseCardButton.setOnClickListener {
-            val text = this.binding.distanceInput.text?.toString()
-            var value = if (text.isNullOrEmpty()) Long.MAX_VALUE / 1000
-            else min(abs(text.toLong()), Long.MAX_VALUE / 1000)
-            val selectedPosition = this.binding.distanceUnitSpinner.selectedItemPosition
-            if (selectedPosition == 1) value *= 1000
-
+        this.binding.closeFiltersCvButton.setOnClickListener {
+            val distanceValue = this.getDistanceFilterValue()
+            val reviewsValues = this.getReviewsFilterValues()
+            this.placesViewModel.setFilters(
+                distanceValue,
+                reviewsValues.first,
+                reviewsValues.second,
+                arrayOf(this.getPlacesCategoryFilter())
+            )
+            Toast.makeText(
+                this.requireContext(),
+                "min: ${reviewsValues.first} ; max: ${reviewsValues.second}",
+                Toast.LENGTH_LONG
+            ).show()
             this.showPlacesListDistanceCardView(false)
-            this.placesViewModel.setMaxDistance(value, arrayOf(this.getPlacesCategoryFilter()))
         }
         this.setupPlacesListDistanceUnitSpinner()
+    }
+
+    private fun getDistanceFilterValue(): Long {
+        val text = this.binding.distanceInput.text?.toString()
+        val value = if (text.isNullOrEmpty()) Long.MAX_VALUE / 1000
+        else Math.min(abs(text.toLong()), Long.MAX_VALUE / 1000)
+        return if (this.binding.distanceUnitSpinner.selectedItemPosition == 1) 1000 * value
+        else value
+    }
+
+    private fun getReviewsFilterValues(): Pair<Float, Float> {
+        val minText = this.binding.minReviewsInput.text?.toString()
+        var minValue = if (minText.isNullOrEmpty()) 0F else minText.toFloat()
+        minValue = max(0F, min(100F, minValue))
+
+        val maxText = this.binding.maxReviewsInput.text?.toString()
+        var maxValue = if (maxText.isNullOrEmpty()) 100F else maxText.toFloat()
+        maxValue = min(100F, max(0F, maxValue))
+
+        return Pair(min(minValue, maxValue), max(minValue, maxValue))
     }
 
     private fun getVisibilityModifier(visible: Boolean): Int {
@@ -377,8 +405,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private fun showPlacesListDistanceCardView(show: Boolean) {
         with (this.binding) {
-            this.distanceFilterClosedCv.visibility = this@MapFragment.getVisibilityModifier(!show)
-            this.distanceFilterOpenCv.visibility = this@MapFragment.getVisibilityModifier(show)
+            this.filtersClosedCv.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.filtersOpenCv.visibility = this@MapFragment.getVisibilityModifier(show)
         }
     }
 

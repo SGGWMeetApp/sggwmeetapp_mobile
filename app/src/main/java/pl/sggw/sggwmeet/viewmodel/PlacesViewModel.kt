@@ -31,6 +31,8 @@ class PlacesViewModel @Inject constructor(
         get() = _placeDetailsState
 
     private var maxDistance = Long.MAX_VALUE
+    private var minPositiveReviews = 0F
+    private var maxPositiveReviews = 100F
     private var userLocation: Location? = null
 
     fun observeNonFilteredPlaces(owner: LifecycleOwner) {
@@ -43,8 +45,11 @@ class PlacesViewModel @Inject constructor(
                         return@observe
                     }
                     val filteredMarkers = mutableListOf<PlaceMarkerData>()
-                    for (marker in markers)
-                        if (marker.geolocation.toLocation().distanceTo(userLocation!!) <= maxDistance) filteredMarkers.add(marker)
+                    for (marker in markers) {
+                        if (marker.geolocation.toLocation().distanceTo(userLocation!!) > maxDistance) continue
+                        val range = minPositiveReviews..(maxPositiveReviews + 0.00001F)
+                        if (marker.positiveReviewsPercent != null && marker.positiveReviewsPercent!! in range) filteredMarkers.add(marker)
+                    }
                     this._placeMarkerFilteredListState.value = filteredMarkers
                 }
                 else -> {
@@ -54,8 +59,15 @@ class PlacesViewModel @Inject constructor(
         }
     }
 
-    fun setMaxDistance(distance: Long, categoryCodes: Array<PlaceCategory?>) {
-        this.maxDistance = distance
+    fun setFilters(
+        maxDistance: Long,
+        minPositiveReviews: Float,
+        maxPositiveReviews: Float,
+        categoryCodes: Array<PlaceCategory?>
+    ) {
+        this.maxDistance = maxDistance
+        this.minPositiveReviews = minPositiveReviews
+        this.maxPositiveReviews = maxPositiveReviews
         this.getPlaceMarkers(categoryCodes)
     }
 

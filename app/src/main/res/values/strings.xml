@@ -247,9 +247,11 @@
 
 
     <!-- Places Distance-->
-    <string name="distance_text">dystans</string>
+    <string name="filters_text">filtry</string>
     <string name="distance_input_hint_text">maksymalna odległość</string>
-    <string name="distance_confirm_button_text">zapisz</string>
+    <string name="filters_confirm_button_text">zapisz</string>
+    <string name="min_reviews_hint_text">min. oc.</string>
+    <string name="max_reviews_hint_text">max. oc.</string>
 
     <!-- Location categories -->
     <string name="loc_cat_all">wszystkie</string>
