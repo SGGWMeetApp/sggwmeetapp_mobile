@@ -32,7 +32,7 @@ class FoodItemsSectionRecyclerViewAdapter(
         binder.categoryNameTV.text = section.category
 
         val itemsAdapter = FoodItemRecyclerViewAdapter(context, picasso)
-        binder.foodItemsRV.layoutManager = LinearLayoutManager(context)
+        binder.foodItemsRV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binder.foodItemsRV.adapter = itemsAdapter
         itemsAdapter.submitList(section.items)
     }

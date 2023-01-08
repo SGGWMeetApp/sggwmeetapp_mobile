@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.core.placedetails.PlaceDetailsFragment">
 
@@ -430,6 +430,13 @@
                             tools:listitem="@layout/row_food_menu_category"
                             android:visibility="gone"
                             tools:visibility="visible"/>
+
+                        <TextView
+                            android:id="@+id/no_menu_TV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Brak menu do wyświetlenia"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
 

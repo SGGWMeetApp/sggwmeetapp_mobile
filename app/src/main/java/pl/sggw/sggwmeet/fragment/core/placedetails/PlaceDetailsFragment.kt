@@ -340,13 +340,12 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                     showMenuLoading()
                 }
                 is Resource.Success -> {
-                    foodMenuAdapter.submitList(
-                        resource.data!!.itemsByCategory.entries.map { FoodMenuSection(it.key, it.value) }
-                    )
-                    showMenuLoaded()
+                    val items = resource.data!!.itemsByCategory.entries.map { FoodMenuSection(it.key, it.value) }
+                    foodMenuAdapter.submitList(items)
+                    showMenuLoaded(items.size)
                 }
                 is Resource.Error -> {
-                    showMenuLoaded()
+                    showMenuLoaded(0)
                     Toast.makeText(requireContext(), "Błąd podczas ładowania menu!", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -431,15 +430,22 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         binding.foodMenuRV.visibility = View.GONE
     }
 
-    private fun showMenuLoaded() {
+    private fun showMenuLoaded(size: Int) {
         binding.foodMenuLoadingPB.visibility = View.GONE
-        binding.foodMenuRV.visibility = View.VISIBLE
+        if(size != 0) {
+            binding.foodMenuRV.visibility = View.VISIBLE
+            return
+        }
+        binding.noMenuTV.visibility = View.VISIBLE
     }
 
     private fun fetchMenuIfPossible(menuPath: String?) {
         if(menuPath != null) {
             foodMenuViewModel.getFoodMenu(menuPath)
+            return
         }
+
+        binding.noMenuTV.visibility = View.VISIBLE
     }
 
     private fun recalculateReviewSummaryData(currentList: List<Review>) {
