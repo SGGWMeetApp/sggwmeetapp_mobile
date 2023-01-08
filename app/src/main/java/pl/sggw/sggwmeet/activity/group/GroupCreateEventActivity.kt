@@ -12,19 +12,22 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.activity.event.EventLocationListActivity
+import pl.sggw.sggwmeet.activity.event.EventShowActivity
 import pl.sggw.sggwmeet.databinding.ActivityGroupEventCreateBinding
 import pl.sggw.sggwmeet.exception.ClientErrorCode
 import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.model.connector.dto.request.EventCreatePublicRequest
+import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -37,6 +40,9 @@ class GroupCreateEventActivity: AppCompatActivity() {
     private var selectedCalendar=Calendar.getInstance()
     private var selectedLocationID=0
     private var groupId=-1
+    private var groupName=""
+
+    private val gson = Gson()
 
     private val eventViewModel by viewModels<EventViewModel>()
 
@@ -51,6 +57,7 @@ class GroupCreateEventActivity: AppCompatActivity() {
         setViewModelListener()
         binding.eventStartDateTV.setText(timeFormat.format(selectedCalendar.time))
         groupId = intent.getIntExtra("groupId",groupId)
+        groupName = intent.getStringExtra("groupName").toString()
         if(groupId==-1){
             this.finish()
         }
@@ -133,7 +140,13 @@ class GroupCreateEventActivity: AppCompatActivity() {
                 is Resource.Success -> {
                     Toast.makeText(this, "Utworzono wydarzenie", Toast.LENGTH_SHORT).show()
                     this.setResult(Activity.RESULT_OK)
-                    this.finish()
+                    val newEventData:EventResponse = resource.data!!
+                    val newActivity = Intent(this, EventShowActivity::class.java)
+                        .putExtra("eventData",gson.toJson(newEventData))
+                        .putExtra("groupId",groupId)
+                        .putExtra("groupName",groupName)
+                    startActivityForResult(newActivity, 987)
+                    //this.finish()
                     unlockUI()
                 }
                 is Resource.Error -> {
@@ -188,6 +201,9 @@ class GroupCreateEventActivity: AppCompatActivity() {
                 binding.eventCreateLocationWarning.visibility=View.GONE
             }
 
+        }
+        else if(requestCode==987){
+            this.finish()
         }
     }
 

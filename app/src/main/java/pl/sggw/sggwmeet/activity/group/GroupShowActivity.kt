@@ -118,6 +118,7 @@ class GroupShowActivity: AppCompatActivity() {
     private fun addEvent(){
         val newActivity = Intent(this, GroupCreateEventActivity::class.java)
             .putExtra("groupId",groupData.id)
+            .putExtra("groupName",groupData.name)
         startActivityForResult(newActivity, ADD_EVENT)
     }
 
