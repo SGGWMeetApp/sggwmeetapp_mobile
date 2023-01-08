@@ -187,6 +187,13 @@ class GroupEventEditActivity: AppCompatActivity() {
 
     private fun handleServerErrorCode(errorCode: String) {
         when(errorCode){
+            "400" -> {
+                binding.eventEditDateWarning.visibility=View.VISIBLE
+            }
+            "401" -> {
+                Toast.makeText(this, "Nie masz uprawnień", Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
         }
     }
 
@@ -222,6 +229,7 @@ class GroupEventEditActivity: AppCompatActivity() {
     }
     private fun editEvent(){
         binding.eventNameTextInputLayout.isErrorEnabled=false
+        binding.eventEditDateWarning.visibility=View.GONE
         trimTextInput(binding.eventNameTF)
         trimTextInput(binding.eventDescriptionTF)
         if(!binding.eventNameTF.text.isNullOrBlank()){

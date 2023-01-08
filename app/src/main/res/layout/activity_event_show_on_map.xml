@@ -27,6 +27,36 @@
                 android:layout_width="match_parent"
                 android:animateLayoutChanges="true">
 
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/zoom_in_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/bg_white_rounded"
+                    android:elevation="10dp"
+                    android:padding="5dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/asset_plus"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="invisible" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/zoom_out_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/bg_white_rounded"
+                    android:elevation="10dp"
+                    android:padding="5dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/asset_minus"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@id/zoom_in_BT"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="invisible" />
+
                 <fragment
                     android:id="@+id/map_view"
                     android:name="com.google.android.gms.maps.SupportMapFragment"

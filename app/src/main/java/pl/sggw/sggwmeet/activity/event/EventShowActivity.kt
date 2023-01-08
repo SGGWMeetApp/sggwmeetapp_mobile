@@ -88,6 +88,7 @@ class EventShowActivity: AppCompatActivity() {
 
                 binding.eventGroupLayout.visibility= View.VISIBLE
                 binding.eventGroupNotificationSwitchTV.isClickable=canEdit
+                binding.eventGroupNotificationSwitchTV.isChecked=eventData.notification24hEnabled
                 if(canEdit){
                     setUpSwitch()
                     setUpDeleteGroupEventAlertDialog()

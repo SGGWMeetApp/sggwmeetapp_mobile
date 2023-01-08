@@ -10,10 +10,22 @@ import androidx.appcompat.widget.AppCompatImageView
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.domain.UserData
 
 class MarkerBitmapGenerator(
     private val context : Context
 ) {
+
+    fun generateUserBitmap(user: UserData): Bitmap {
+        val markerView = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+            .inflate(R.layout.marker_place, null)
+        val markerImage = markerView.findViewById<AppCompatImageView>(R.id.marker_IV)
+        val markerTitle = markerView.findViewById<TextView>(R.id.marker_TV)
+        markerImage.setImageResource(R.drawable.asset_marker_app_user)
+        markerTitle.text = "${user.firstName} ${user.lastName}"
+
+        return this.generateBitmap(markerView)
+    }
 
     fun generatePlaceBitmap(place : PlaceMarkerData) : Bitmap {
         val markerView = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
@@ -23,9 +35,12 @@ class MarkerBitmapGenerator(
         setDrawableBasedOnCategory(markerImage, place.category)
         markerTitle.text = place.name
 
+        return this.generateBitmap(markerView)
+    }
+
+    private fun generateBitmap(markerView: View): Bitmap {
         markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
         markerView.layout(0, 0, markerView.measuredWidth, markerView.measuredHeight);
-
         val bitmap = Bitmap.createBitmap(markerView.measuredWidth, markerView.measuredHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         markerView.draw(canvas)

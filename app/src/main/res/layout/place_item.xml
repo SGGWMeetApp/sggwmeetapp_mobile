@@ -57,16 +57,28 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.7"/>
 
-    <TextView
-        android:id="@+id/place_distance_TV"
+    <Button
+        android:id="@+id/place_details_button"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizontal_guideline"
+        app:layout_constraintBottom_toTopOf="@id/place_distance_TV"
+        android:text="@string/place_details_button_text"
+        android:textSize="11sp"
+        android:layout_marginHorizontal="@dimen/margin_small"/>
+
+    <TextView
+        android:id="@+id/place_distance_TV"
+        android:layout_width="0dp"
+        android:layout_height="19dp"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/place_details_button"
         app:layout_constraintBottom_toTopOf="@id/place_positive_reviews_TV"
         android:fontFamily="@font/montserratromanmedium"
-        android:textSize="18sp"
+        android:textSize="12sp"
         android:text="@string/place_test_distance"
         android:textAlignment="gravity"
         android:gravity="center"/>
@@ -74,13 +86,13 @@
     <TextView
         android:id="@+id/place_positive_reviews_TV"
         android:layout_width="0dp"
-        android:layout_height="20dp"
+        android:layout_height="19dp"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/place_distance_TV"
         app:layout_constraintBottom_toBottomOf="parent"
         android:fontFamily="@font/montserratromanregular"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:text="@string/place_test_positive_reviews_percent"
         android:textAlignment="gravity"
         android:gravity="center"/>

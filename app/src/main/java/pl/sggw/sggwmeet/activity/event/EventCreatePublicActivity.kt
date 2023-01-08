@@ -23,11 +23,12 @@ import pl.sggw.sggwmeet.exception.ClientException
 import pl.sggw.sggwmeet.exception.ServerException
 import pl.sggw.sggwmeet.exception.TechnicalException
 import pl.sggw.sggwmeet.model.connector.dto.request.EventCreatePublicRequest
+import pl.sggw.sggwmeet.model.connector.dto.response.EventResponse
 import pl.sggw.sggwmeet.model.connector.dto.response.GroupResponse
 import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.EventViewModel
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -144,7 +145,11 @@ class EventCreatePublicActivity: AppCompatActivity(), AdapterView.OnItemSelected
                 is Resource.Success -> {
                     Toast.makeText(this, "Utworzono wydarzenie", Toast.LENGTH_SHORT).show()
                     this.setResult(Activity.RESULT_OK)
-                    this.finish()
+                    val newEventData: EventResponse = resource.data!!
+                    val newActivity = Intent(this, EventShowActivity::class.java)
+                        .putExtra("eventData",gson.toJson(newEventData))
+                    startActivityForResult(newActivity, 987)
+                    //this.finish()
                     unlockUI()
                 }
                 is Resource.Error -> {
@@ -173,7 +178,14 @@ class EventCreatePublicActivity: AppCompatActivity(), AdapterView.OnItemSelected
                 is Resource.Success -> {
                     Toast.makeText(this, "Utworzono wydarzenie grupowe", Toast.LENGTH_SHORT).show()
                     this.setResult(Activity.RESULT_OK)
-                    this.finish()
+                    this.setResult(Activity.RESULT_OK)
+                    val newEventData:EventResponse = resource.data!!
+                    val newActivity = Intent(this, EventShowActivity::class.java)
+                        .putExtra("eventData",gson.toJson(newEventData))
+                        .putExtra("groupId",groupId)
+                        .putExtra("groupName",selectedGroupData.name)
+                    startActivityForResult(newActivity, 987)
+                    //this.finish()
                     unlockUI()
                 }
                 is Resource.Error -> {
@@ -239,6 +251,9 @@ class EventCreatePublicActivity: AppCompatActivity(), AdapterView.OnItemSelected
                 binding.eventCreateGroupNameTV.text=selectedGroupData.name
             }
 
+        }
+        else if(requestCode==987){
+            this.finish()
         }
     }
 

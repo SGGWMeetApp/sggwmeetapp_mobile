@@ -1,6 +1,6 @@
 package pl.sggw.sggwmeet.model.connector.dto.response
 
-import java.util.Date
+import java.util.*
 
 
 data class EventResponse(
@@ -13,5 +13,5 @@ data class EventResponse(
     var canEdit: Boolean,
     var notification24hEnabled: Boolean,
     var attendersCount: Int = 0,
-    var userAttends: Boolean = false
+    var userAttends: Boolean = true
 ) :ErrorResponse()

@@ -31,7 +31,8 @@ class EventMapper {
             "${event.author.firstName} ${event.author.lastName}",
             event.canEdit,
             event.attendersCount,
-            event.userAttends
+            event.userAttends,
+            event.author.email
         )
     }
 

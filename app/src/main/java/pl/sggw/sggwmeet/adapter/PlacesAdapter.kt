@@ -4,17 +4,22 @@ import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.domain.Geolocation
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.fragment.core.MapFragment
+import pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
-class PlacesAdapter(private val picasso: Picasso): RecyclerView.Adapter<PlacesAdapter.ViewHolder>() {
+class PlacesAdapter(private val picasso: Picasso, private val fragment: MapFragment): RecyclerView.Adapter<PlacesAdapter.ViewHolder>() {
     private var items: List<PlaceMarkerData>? = null
     private var userLocation: Location? = null
 
@@ -41,6 +46,14 @@ class PlacesAdapter(private val picasso: Picasso): RecyclerView.Adapter<PlacesAd
         holder.distanceTV.text = this.measureDistance(item.geolocation)
         holder.positiveReviewsTV.text = this.formatReviews(item.reviewsCount, item.positiveReviewsPercent)
         this.setImage(holder, item)
+
+        holder.detailsButton.setOnClickListener {
+            val bundle = bundleOf(
+                Pair(PlaceDetailsFragment.PLACE_ID_BUNDLE_KEY, item.id),
+                Pair(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY, true)
+            )
+            this.fragment.findNavController().navigate(R.id.action_mapFragment_to_placeDetailsFragment, bundle)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -87,6 +100,7 @@ class PlacesAdapter(private val picasso: Picasso): RecyclerView.Adapter<PlacesAd
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val nameTV: TextView = itemView.findViewById(R.id.place_name_TV)
         val categoryTV: TextView = itemView.findViewById(R.id.place_category_TV)
+        val detailsButton: Button = itemView.findViewById(R.id.place_details_button)
         val distanceTV: TextView = itemView.findViewById(R.id.place_distance_TV)
         val positiveReviewsTV: TextView = itemView.findViewById(R.id.place_positive_reviews_TV)
         val imageIV: ImageView = itemView.findViewById(R.id.place_image_IV)

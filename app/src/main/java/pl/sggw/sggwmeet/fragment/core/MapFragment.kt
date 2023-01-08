@@ -4,40 +4,48 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.adapter.PlacesAdapter
 import pl.sggw.sggwmeet.databinding.FragmentMapBinding
 import pl.sggw.sggwmeet.domain.PlaceCategory
 import pl.sggw.sggwmeet.domain.PlaceMarkerData
+import pl.sggw.sggwmeet.domain.UserData
 import pl.sggw.sggwmeet.fragment.core.placedetails.PlaceDetailsFragment
 import pl.sggw.sggwmeet.util.MarkerBitmapGenerator
-import pl.sggw.sggwmeet.util.Resource
 import pl.sggw.sggwmeet.viewmodel.PlacesViewModel
 import javax.inject.Inject
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 @AndroidEntryPoint
 class MapFragment : Fragment(R.layout.fragment_map) {
@@ -48,7 +56,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         private const val TAG = "MapFragment"
 
         private const val LOCATION_UPDATE_INTERVAL = 100L
-        private const val LOCATION_UPDATE_DISTANCE = 0.01F
+        private const val MAX_LOCATION_UPDATE_AGE = 1000L
     }
 
     lateinit var placesDialog: AlertDialog
@@ -68,8 +76,16 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private val markerIdsToPlacesData : MutableMap<Marker, PlaceMarkerData> = HashMap()
     lateinit var chosenPlaceId : String
+    private var shouldFollowUser = true
+    private var cameraMovedManually = false
 
+    private lateinit var locationProvider: FusedLocationProviderClient
+    private val lastKnownUserLocation = MutableLiveData<Location>()
+    private var userMarker: Marker? = null
+    private lateinit var requestLocationPermissionLauncher: ActivityResultLauncher<Array<String>>
 
+    private var firstReload = true
+    private var placesCount: Int? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -81,20 +97,27 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         customizeMap()
         setListeners()
         this.setupPlacesListCardView()
+        this.locationProvider = LocationServices.getFusedLocationProviderClient(this.requireContext())
+        this.startLocationUpdates()
+        this.requestLocationPermissionLauncher = this.initializeLocationPermissionLauncher()
+        this.requestLocationPermissions()
     }
 
     private fun setListeners() {
         setButtonListeners()
         setViewModelListeners()
+//        this.setUserLocationListener()
         setClosePlaceDetailsButtonPopupListener()
         setPlaceDetailsButtonPopupListener()
+
     }
 
     private fun setPlaceDetailsButtonPopupListener() {
         binding.placeDescriptionViewBT.setOnClickListener {
 
             val bundle = bundleOf(
-                Pair(PlaceDetailsFragment.PLACE_ID_BUNDLE_KEY, chosenPlaceId)
+                Pair(PlaceDetailsFragment.PLACE_ID_BUNDLE_KEY, chosenPlaceId),
+                Pair(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY, false)
             )
             this.findNavController().navigate(R.id.action_mapFragment_to_placeDetailsFragment, bundle)
 
@@ -109,6 +132,7 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     private fun setOnMarkerClickListener() {
         map.setOnMarkerClickListener {
+            if (it == this.userMarker) return@setOnMarkerClickListener true
 
             val data = markerIdsToPlacesData[it]!!
             if(PlaceCategory.ROOT_LOCATION != data.category) {
@@ -154,6 +178,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style))
             setOnMarkerClickListener()
             placesViewModel.getPlaceMarkers(arrayOf(null))
+
+            map.setOnCameraMoveListener {
+                this.shouldFollowUser = !cameraMovedManually
+                cameraMovedManually = true
+            }
+
+            // TODO -> jeśli mapa została ręcznie przesunięta, powinna przestać śledzić użytkownika
         }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -165,6 +196,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         binding.arrowBT.visibility = View.VISIBLE
         binding.zoomInBT.visibility = View.VISIBLE
         binding.zoomOutBT.visibility = View.VISIBLE
+        binding.focusUserButton.visibility = View.VISIBLE
+        binding.requestLocationPermissionButton.visibility = View.VISIBLE
     }
 
     private fun setButtonListeners() {
@@ -179,34 +212,69 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         binding.arrowBT.setOnClickListener {
             this.placesDialog.show()
         }
+
+        binding.focusUserButton.setOnClickListener {
+            if (this.lastKnownUserLocation.value == null) return@setOnClickListener
+            this.cameraMovedManually = false
+            this.zoomToLocation(this.lastKnownUserLocation.value!!)
+        }
+
+        binding.requestLocationPermissionButton.setOnClickListener {
+            this.requestLocationPermissions()
+        }
+    }
+
+    private fun updatePlacesCountLabel(count: Int) {
+        if (this.placesCount == null) return
+        this.binding.placesCountTv.text = "$count/${this.placesCount}"
     }
 
     private fun setViewModelListeners() {
-        placesViewModel.placeMarkerListState.observe(viewLifecycleOwner) { resource ->
-            when(resource) {
-                is Resource.Loading -> {
-                    binding.mapPB.visibility = View.VISIBLE
-                }
-                is Resource.Success -> {
-                    binding.mapPB.visibility = View.GONE
-                    reloadMarkers(resource.data!!)
-                    this.adapter.submitItems(resource.data)
-                }
-                is Resource.Error -> {
-                    binding.mapPB.visibility = View.GONE
-                    showErrorMessage()
-                }
-            }
+        placesViewModel.observeNonFilteredPlaces(viewLifecycleOwner)
+
+        placesViewModel.placeMarkerFilteredListState.observe(viewLifecycleOwner) { markers ->
+            if (this.firstReload) this.placesCount = markers.size
+            this.firstReload = false
+
+            updatePlacesCountLabel(markers.size)
+            reloadMarkers(markers)
+            this.adapter.submitItems(markers)
+
         }
+
+//        with(placesViewModel.placeMarkerFilteredListState) {
+//            if (this.value == null) return
+//            for (marker in this.value!!)
+//                if (marker.category == PlaceCategory.ROOT_LOCATION) this@MapFragment.zoomToRootLocation(marker)
+//        }
+
+
+//        placesViewModel.placeMarkerListState.observe(viewLifecycleOwner) { resource ->
+//            when(resource) {
+//                is Resource.Loading -> {
+//                    binding.mapPB.visibility = View.VISIBLE
+//                }
+//                is Resource.Success -> {
+//                    binding.mapPB.visibility = View.GONE
+//                    reloadMarkers(resource.data!!)
+//                    this.adapter.submitItems(resource.data)
+//                }
+//                is Resource.Error -> {
+//                    binding.mapPB.visibility = View.GONE
+//                    showErrorMessage()
+//                }
+//            }
+//        }
     }
+
 
     private fun reloadMarkers(markers: List<PlaceMarkerData>) {
         clearOldMarkers()
 
         markers.forEach { markerData ->
-            if(PlaceCategory.ROOT_LOCATION == markerData.category) {
-                zoomToRootLocation(markerData)
-            }
+//            if(PlaceCategory.ROOT_LOCATION == markerData.category) {
+//                zoomToRootLocation(markerData)
+//            }
             val marker = map.addMarker(
                 MarkerOptions()
                     .position(LatLng(markerData.geolocation.latitude, markerData.geolocation.longitude))
@@ -216,53 +284,135 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         }
     }
 
+    private fun getUserData(): UserData {
+        val gson = Gson()
+        val fetchedData = Prefs.read().content(
+            "userData",
+            "{\"id\":\"0\",\"firstName\":\"Imie\",\"lastName\":\"Nazwisko\",\"phoneNumberPrefix\":\"12\",\"phoneNumber\":\"123\",\"description\":\"\",\"avatarUrl\":null}"
+        )
+        return gson.fromJson(fetchedData, UserData::class.java)
+    }
+
+    private fun reloadUserMarker(userLocation: Location) {
+        map.clear()
+
+        with(placesViewModel.placeMarkerFilteredListState) {
+            if (this.value == null) return
+            this@MapFragment.reloadMarkers(this.value!!)
+        }
+
+        this.userMarker = map.addMarker(
+            MarkerOptions()
+                .position(LatLng(userLocation.latitude, userLocation.longitude))
+                .icon(BitmapDescriptorFactory.fromBitmap(markerBitmapGenerator.generateUserBitmap(this.getUserData())))
+        )
+
+        if (this.shouldFollowUser) {
+            this.cameraMovedManually = false
+            this.zoomToLocation(userLocation)
+        }
+    }
+
     private fun clearOldMarkers() {
         markerIdsToPlacesData.forEach { it.key.remove() }
         markerIdsToPlacesData.clear()
     }
 
-    private fun showErrorMessage() {
-        Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
+//    private fun showErrorMessage() {
+//        Toast.makeText(context, getString(R.string.technical_error_message), Toast.LENGTH_LONG).show()
+//    }
+
+    private fun zoomToLocation(location: Location) {
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
     }
 
-    private fun zoomToRootLocation(marker : PlaceMarkerData) {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(marker.geolocation.latitude, marker.geolocation.longitude), DEFAULT_ZOOM))
-    }
+//    private fun zoomToRootLocation(marker : PlaceMarkerData) {
+//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(marker.geolocation.latitude, marker.geolocation.longitude), DEFAULT_ZOOM))
+//    }
 
 
     private fun setupPlacesListCardView() {
-        this.setupLocationManager()
-
         this.binding.arrowBT.setOnClickListener {
             this.showPlacesListCardView(true)
         }
-        this.binding.placesListArrowButton.setOnClickListener {
+        this.binding.placesListBackButton.setOnClickListener {
             this.showPlacesListCardView(false)
         }
 
-        this.adapter = PlacesAdapter(this.picasso)
+        this.adapter = PlacesAdapter(this.picasso, this)
         with(this.binding.placesListRecyclerView) {
             this.layoutManager = LinearLayoutManager(this@MapFragment.requireContext())
             this.adapter = this@MapFragment.adapter
         }
         this.setupPlacesListSpinner()
+        this.setupPlacesListDistanceCardView()
 
-        LocationListenerImpl.userLocation.observe(this.viewLifecycleOwner) {
-            this.adapter.submitUserLocation(it)
+        with (this.arguments) {
+            if (this == null) return
+            val fromPlacesList = this.getBoolean(PlaceDetailsFragment.FROM_PLACE_LIST_BUNDLE_KEY, false)
+            if (fromPlacesList) this@MapFragment.binding.arrowBT.performClick()
         }
     }
 
-    private fun showPlacesListCardView(show: Boolean) {
-        fun visible(visible: Boolean): Int {
-            return if (visible) View.VISIBLE
-            else View.GONE
+    private fun setupPlacesListDistanceCardView() {
+        this.binding.openDistanceFilterButton.setOnClickListener {
+            this.showPlacesListDistanceCardView(true)
         }
 
+        this.binding.closeFiltersCvButton.setOnClickListener {
+            val distanceValue = this.getDistanceFilterValue()
+            val reviewsValues = this.getReviewsFilterValues()
+            this.placesViewModel.setFilters(
+                distanceValue,
+                reviewsValues.first,
+                reviewsValues.second,
+                arrayOf(this.getPlacesCategoryFilter())
+            )
+            this.showPlacesListDistanceCardView(false)
+        }
+        this.setupPlacesListDistanceUnitSpinner()
+    }
+
+    private fun getDistanceFilterValue(): Long {
+        val text = this.binding.distanceInput.text?.toString()
+        val value = if (text.isNullOrEmpty()) Long.MAX_VALUE / 1000
+        else Math.min(abs(text.toLong()), Long.MAX_VALUE / 1000)
+        return if (this.binding.distanceUnitSpinner.selectedItemPosition == 1) 1000 * value
+        else value
+    }
+
+    private fun getReviewsFilterValues(): Pair<Float, Float> {
+        val minText = this.binding.minReviewsInput.text?.toString()
+        var minValue = if (minText.isNullOrEmpty()) 0F else minText.toFloat()
+        minValue = max(0F, min(100F, minValue))
+
+        val maxText = this.binding.maxReviewsInput.text?.toString()
+        var maxValue = if (maxText.isNullOrEmpty()) 100F else maxText.toFloat()
+        maxValue = min(100F, max(0F, maxValue))
+
+        return Pair(min(minValue, maxValue), max(minValue, maxValue))
+    }
+
+    private fun getVisibilityModifier(visible: Boolean): Int {
+        return if (visible) View.VISIBLE
+        else View.GONE
+    }
+
+    private fun showPlacesListCardView(show: Boolean) {
         with (this.binding) {
-            this.arrowBT.visibility = visible(!show)
-            this.zoomInBT.visibility = visible(!show)
-            this.zoomOutBT.visibility = visible(!show)
-            this.placesListCardView.visibility = visible(show)
+            this.arrowBT.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.zoomInBT.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.zoomOutBT.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.focusUserButton.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.requestLocationPermissionButton.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.placesListCardView.visibility = this@MapFragment.getVisibilityModifier(show)
+        }
+    }
+
+    private fun showPlacesListDistanceCardView(show: Boolean) {
+        with (this.binding) {
+            this.filtersClosedCv.visibility = this@MapFragment.getVisibilityModifier(!show)
+            this.filtersOpenCv.visibility = this@MapFragment.getVisibilityModifier(show)
         }
     }
 
@@ -293,30 +443,61 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         spinner.adapter = adapter
     }
 
+    private fun setupPlacesListDistanceUnitSpinner() {
+        val adapter: ArrayAdapter<String> = ArrayAdapter(
+            this.requireContext(),
+            R.layout.category_spinner_text_view,
+            arrayOf("M", "KM")
+        )
+        adapter.setDropDownViewResource(R.layout.category_spinner_text_view)
+        this.binding.distanceUnitSpinner.adapter = adapter
+    }
+
     private fun checkPermission(permission: String): Boolean {
         return ActivityCompat.checkSelfPermission(this.requireContext(), permission) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun setupLocationManager() {
-        try {
-            if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
-            if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
-            this.locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                LOCATION_UPDATE_INTERVAL,
-                LOCATION_UPDATE_DISTANCE,
-                LocationListenerImpl
-            )
-        } catch (ex: SecurityException) {
-            ex.printStackTrace()
+    private fun startLocationUpdates() {
+        if (!this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) return
+        if (!this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
+        val locationRequest = LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
+            .setMaxUpdateAgeMillis(MAX_LOCATION_UPDATE_AGE).build()
+        this.locationProvider.requestLocationUpdates(locationRequest, {
+            this.lastKnownUserLocation.value = it
+        }, Looper.getMainLooper())
+        this.setupLocationListener()
+    }
+
+    private fun setupLocationListener() {
+        this.lastKnownUserLocation.observe(this.viewLifecycleOwner) {
+            this.adapter.submitUserLocation(it)
+            this.placesViewModel.setUserLocation(it, arrayOf(this.getPlacesCategoryFilter()))
+            this.reloadUserMarker(it)
         }
     }
 
-    private object LocationListenerImpl: LocationListener {
-        private val _userLocation: MutableLiveData<Location> = MutableLiveData()
-        val userLocation: LiveData<Location> = this._userLocation
-        override fun onLocationChanged(location: Location) {
-            this._userLocation.postValue(location)
+    private fun getPlacesCategoryFilter(): PlaceCategory? {
+        with(this.binding.placesListCategorySpinner) {
+            if (this.selectedItemPosition <= 0) return null
+            val translation = this.selectedItem as String
+            return PlaceCategory.getCategoryByTranslation(translation)
         }
+    }
+
+    private fun initializeLocationPermissionLauncher(): ActivityResultLauncher<Array<String>> {
+        return this.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            if (this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                && this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                this.startLocationUpdates()
+            }
+        }
+    }
+
+    private fun requestLocationPermissions() {
+        if (this.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+            && this.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) return
+        this.requestLocationPermissionLauncher.launch(arrayOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
+        ))
     }
 }

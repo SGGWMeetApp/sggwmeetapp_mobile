@@ -13,7 +13,7 @@ enum class PlaceCategory(val polishTranslation: String) {
     companion object {
         fun getPolishTranslations(): Array<String> {
             val list = mutableListOf<String>()
-            for (category in PlaceCategory.values()) list.add(category.polishTranslation)
+            for (category in values()) list.add(category.polishTranslation)
             return Array(list.size) { index -> list[index] }
         }
 

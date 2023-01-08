@@ -10,13 +10,15 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import io.easyprefs.Prefs
 import pl.sggw.sggwmeet.R
 import pl.sggw.sggwmeet.domain.PlaceEvent
 import java.text.SimpleDateFormat
 import java.util.*
 
 class EventRecyclerViewAdapter(
-    private val context: Context
+    private val context: Context,
+    private val userEmail: String = Prefs.read().content("email","")
 ) : ListAdapter<PlaceEvent, RecyclerView.ViewHolder>(DiffCallback()){
 
     companion object {
@@ -124,7 +126,7 @@ class EventRecyclerViewAdapter(
     }
 
     private fun setEditButton(review: PlaceEvent, editBT: AppCompatImageButton, position: Int) {
-        if(!review.canEdit) {
+        if(!review.email.equals(userEmail)) {
             editBT.visibility = View.GONE
         } else {
             editBT.visibility = View.VISIBLE
