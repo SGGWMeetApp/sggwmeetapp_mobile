@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.core.placedetails.PlaceDetailsFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/loading_PB"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_margin="30dp"
+            android:visibility="visible"
+            tools:visibility="gone"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/place_name_wrapper"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_margin="15dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/place_name_TV"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto"
+                    android:text="Name Placeholder"
+                    android:textColor="@color/black"
+                    android:textFontWeight="500"
+                    android:textSize="25dp" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/back_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/asset_arrow_left"
+                    android:scaleType="fitXY"
+                    android:padding="5dp"
+                    android:background="@drawable/bg_white_rounded"
+                    android:elevation="10dp"
+                    android:layout_margin="10dp"
+                    />
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/place_review_summary_wrapper"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/place_name_wrapper"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_margin="15dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/asset_percent"/>
+
+                <TextView
+                    android:id="@+id/place_review_positive_percent_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="~"
+                    android:layout_marginHorizontal="5dp"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/black"
+                    android:textFontWeight="500"/>
+
+                <TextView
+                    android:id="@+id/place_review_count_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="0 opinii"
+                    android:layout_marginHorizontal="5dp"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/black"
+                    android:textFontWeight="500"/>
+
+                <TextView
+                    android:id="@+id/place_address_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="Placeholder address"
+                    android:layout_marginHorizontal="25dp"
+                    android:fontFamily="@font/roboto"
+                    android:textFontWeight="500"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/place_image_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/place_review_summary_wrapper"
+                android:layout_margin="15dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/place_image_IV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="300dp"
+                    app:srcCompat="@drawable/asset_loading"
+                    android:adjustViewBounds="true"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/place_image_wrapper">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/options_panel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_margin="15dp">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/description_section_BT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/reviews_section_BT">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="@color/black"
+                            android:textFontWeight="500"
+                            android:text="Opis" />
+
+                        <View
+                            android:id="@+id/description_section_BT_underline"
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp"
+                            android:background="@drawable/bg_aqua_rounded"
+                            android:visibility="gone" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/reviews_section_BT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toEndOf="@id/description_section_BT"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/events_section_BT">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="@color/black"
+                            android:textFontWeight="500"
+                            android:text="Opinie"/>
+
+                        <View
+                            android:id="@+id/reviews_section_BT_underline"
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp"
+                            android:background="@drawable/bg_aqua_rounded"
+                            android:visibility="gone" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/events_section_BT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toEndOf="@id/reviews_section_BT"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/menu_section_BT">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="@color/black"
+                            android:textFontWeight="500"
+                            android:text="Wydarzenia"/>
+
+                        <View
+                            android:id="@+id/events_section_BT_underline"
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp"
+                            android:background="@drawable/bg_aqua_rounded"
+                            android:visibility="gone"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/menu_section_BT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toEndOf="@id/events_section_BT"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="@color/black"
+                            android:textFontWeight="500"
+                            android:text="Menu"/>
+
+                        <View
+                            android:id="@+id/menu_section_BT_underline"
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp"
+                            android:background="@drawable/bg_aqua_rounded"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Options Content View -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/options_panel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_margin="15dp"
+                    android:orientation="horizontal">
+
+                    <!-- Description Panel -->
+                    <LinearLayout
+                        android:id="@+id/description_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/description_TV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/lorem_tiny"
+                            android:fontFamily="@font/roboto"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            android:layout_margin="1px"/>
+
+                    </LinearLayout>
+
+                    <!-- Reviews Panel -->
+                    <LinearLayout
+                        android:id="@+id/reviews_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:gravity="center_vertical">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="25dp"
+                                android:layout_height="match_parent"
+                                app:srcCompat="@drawable/asset_percent" />
+
+                            <TextView
+                                android:id="@+id/place_review_positive_percent_review_panel_TV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="5dp"
+                                android:fontFamily="@font/roboto"
+                                android:text="66 z 5 opinii"
+                                android:textColor="@color/black"
+                                android:textFontWeight="500"
+                                android:textSize="20sp" />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1" />
+
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/add_review_BT"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_marginHorizontal="10dp"
+                                android:backgroundTint="@color/black"
+                                android:src="@drawable/asset_plus"
+                                android:tint="@color/white" />
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/reviews_RV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:listitem="@layout/row_review"/>
+
+                    </LinearLayout>
+
+                    <!-- Events Panel -->
+                    <LinearLayout
+                        android:id="@+id/events_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <!-- Loading -->
+                        <ProgressBar
+                            android:id="@+id/events_loading_PB"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:visibility="gone"/>
+
+                        <!-- Content -->
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/events_content_panel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <!-- Events header-->
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/events_count_TV"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:layout_marginHorizontal="5dp"
+                                    android:fontFamily="@font/roboto"
+                                    android:text="10 wydarzeń w najbliższym czasie"
+                                    android:textColor="@color/black"
+                                    android:textFontWeight="500"
+                                    android:textSize="20sp" />
+
+                                <androidx.appcompat.widget.AppCompatImageButton
+                                    android:id="@+id/add_event_BT"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:layout_marginHorizontal="10dp"
+                                    android:backgroundTint="@color/black"
+                                    android:src="@drawable/asset_plus"
+                                    android:tint="@color/white" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/events_RV"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                tools:listitem="@layout/row_place_public_event"/>
+
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </LinearLayout>
+
+                    <!-- Menu Panel -->
+                    <LinearLayout
+                        android:id="@+id/menu_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <ProgressBar
+                            android:id="@+id/food_menu_loading_PB"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_margin="30dp"
+                            android:visibility="gone"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/food_menu_RV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:listitem="@layout/row_food_menu_category"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
+
+                        <TextView
+                            android:id="@+id/no_menu_TV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Brak menu do wyświetlenia"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</ScrollView>

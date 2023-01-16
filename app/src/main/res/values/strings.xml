@@ -1,0 +1,284 @@
+<resources>
+    <string name="app_name">SGGW Meet</string>
+    <string name="app_name_merged">SGGWMeetApp</string>
+
+    <!-- FRAGMENT START -->
+    <string name="fstart_label_greetings_text">Welcome, to the SGGW Meet App!</string>
+    <string name="fstart_button_next_text">NEXT</string>
+    <string name="skip_login_button_text">SKIP LOGIN</string>
+
+    <!-- FRAGMENT NEXT -->
+    <string name="fnext_label_greetings_text">Hi, I\'m the NEXT fragment!</string>
+    <string name="fnext_button_back_text">BACK</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Hasło</string>
+    <string name="action_sign_in_short">Zaloguj</string>
+    <string name="welcome">"Witaj,"</string>
+    <string name="invalid_email">Niepoprawny email</string>
+    <string name="invalid_password">Hasło musi mieć >=8 znaków</string>
+    <string name="login_failed">"Logowanie nie powiodło się"</string>
+    <string name="login_register_info">Nie mam jeszcze konta</string>
+    <string name="login_register_link"><a href="">Zarejestruj</a></string>
+    <string name="login_wrong">Niepoprawne dane</string>
+    <string name="reset_password_info">Nie pamiętam hasła</string>
+    <string name="reset_password">Zresetuj hasło</string>
+    <string name="reset_password_link"><a href="">Zresetuj hasło</a></string>
+    <string name="go_back">Wróć</string>
+    <string name="reset_email_sent">Wysłano wiadomość z linkiem do resetu hasła.\n\nSprawdź skrzynkę pocztową.</string>
+    <string name="large_text">
+        "Material is the metaphor.\n\n"
+
+        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
+        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
+        "technologically advanced and open to imagination and magic.\n"
+        "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
+        "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
+        "flexibility of the material creates new affordances that supercede those in the physical "
+        "world, without breaking the rules of physics.\n"
+        "The fundamentals of light, surface, and movement are key to conveying how objects move, "
+        "interact, and exist in space and in relation to each other. Realistic lighting shows "
+        "seams, divides space, and indicates moving parts.\n\n"
+
+        "Bold, graphic, intentional.\n\n"
+
+        "The foundational elements of print based design typography, grids, space, scale, color, "
+        "and use of imagery guide visual treatments. These elements do far more than please the "
+        "eye. They create hierarchy, meaning, and focus. Deliberate color choices, edge to edge "
+        "imagery, large scale typography, and intentional white space create a bold and graphic "
+        "interface that immerse the user in the experience.\n"
+        "An emphasis on user actions makes core functionality immediately apparent and provides "
+        "waypoints for the user.\n\n"
+
+        "Motion provides meaning.\n\n"
+
+        "Motion respects and reinforces the user as the prime mover. Primary user actions are "
+        "inflection points that initiate motion, transforming the whole design.\n"
+        "All action takes place in a single environment. Objects are presented to the user without "
+        "breaking the continuity of experience even as they transform and reorganize.\n"
+        "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
+        "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
+
+        "3D world.\n\n"
+
+        "The material environment is a 3D space, which means all objects have x, y, and z "
+        "dimensions. The z-axis is perpendicularly aligned to the plane of the display, with the "
+        "positive z-axis extending towards the viewer. Every sheet of material occupies a single "
+        "position along the z-axis and has a standard 1dp thickness.\n"
+        "On the web, the z-axis is used for layering and not for perspective. The 3D world is "
+        "emulated by manipulating the y-axis.\n\n"
+
+        "Light and shadow.\n\n"
+
+        "Within the material environment, virtual lights illuminate the scene. Key lights create "
+        "directional shadows, while ambient light creates soft shadows from all angles.\n"
+        "Shadows in the material environment are cast by these two light sources. In Android "
+        "development, shadows occur when light sources are blocked by sheets of material at "
+        "various positions along the z-axis. On the web, shadows are depicted by manipulating the "
+        "y-axis only. The following example shows the card with a height of 6dp.\n\n"
+
+        "Resting elevation.\n\n"
+
+        "All material objects, regardless of size, have a resting elevation, or default elevation "
+        "that does not change. If an object changes elevation, it should return to its resting "
+        "elevation as soon as possible.\n\n"
+
+        "Component elevations.\n\n"
+
+        "The resting elevation for a component type is consistent across apps (e.g., FAB elevation "
+        "does not vary from 6dp in one app to 16dp in another app).\n"
+        "Components may have different resting elevations across platforms, depending on the depth "
+        "of the environment (e.g., TV has a greater depth than mobile or desktop).\n\n"
+
+        "Responsive elevation and dynamic elevation offsets.\n\n"
+
+        "Some component types have responsive elevation, meaning they change elevation in response "
+        "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
+        "changes are consistently implemented using dynamic elevation offsets.\n"
+        "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
+        "to the component’s resting state. They ensure that elevation changes are consistent "
+        "across actions and component types. For example, all components that lift on press have "
+        "the same elevation change relative to their resting elevation.\n"
+        "Once the input event is completed or cancelled, the component will return to its resting "
+        "elevation.\n\n"
+
+        "Avoiding elevation interference.\n\n"
+
+        "Components with responsive elevations may encounter other components as they move between "
+        "their resting elevations and dynamic elevation offsets. Because material cannot pass "
+        "through other material, components avoid interfering with one another any number of ways, "
+        "whether on a per component basis or using the entire app layout.\n"
+        "On a component level, components can move or be removed before they cause interference. "
+        "For example, a floating action button (FAB) can disappear or move off screen before a "
+        "user picks up a card, or it can move if a snackbar appears.\n"
+        "On the layout level, design your app layout to minimize opportunities for interference. "
+        "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
+        "when a user tries to pick up one of cards.\n\n"
+    </string>
+    <string name="zaloguj_się_do_serwisu">Zaloguj się do serwisu</string>
+    <!-- Rejestracja -->
+    <string name="zarejestruj_sie_w_serwisie">Zarejestruj się w serwisie</string>
+    <string name="prompt_passwordRepeat">Powtórz hasło</string>
+    <string name="prompt_firstName">Imię</string>
+    <string name="prompt_lastName">Nazwisko</string>
+    <string name="prompt_phone">Telefon</string>
+    <string name="prompt_description">Opis</string>
+    <string name="prompt_phonePrefix">Prefiks</string>
+    <string name="action_register">Zarejestruj</string>
+    <string name="password_limit">Hasło powinno zawierać min. 8 symboli</string>
+    <string name="reg_tos_text">Akceptuję <a href="https://google.com">warunki korzystania z serwisu</a></string>
+    <string name="password_repeat_fail">Źle powtórzone hasło</string>
+    <string name="registration_required_field">Pole wymagane</string>
+    <string name="optional_field">Pole opcjonalne</string>
+    <string name="reg_avatar_select">Wybierz zdjęcie profilowe</string>
+    <string name="reg_avatar_cancel">Anuluj wybór zdjęcia</string>
+    <string name="prefix_limit">Wymagane 4 lub mniej znaków</string>
+    <string name="phone_limit">Wymagane 15 lub mniej znaków</string>
+    <string name="register_login_info">Mam już konto</string>
+    <string name="register_login_link"><a href="">Zaloguj się</a></string>
+    <string name="email_taken">Wybrany email jest zajęty</string>
+    <string name="phone_taken">Już istnieje użytkownik o wybranym numerze</string>
+    <string name="user_exists">Użytkownik o tych danych już istnieje</string>
+    <string name="phone_error">Niepoprawne dane</string>
+
+    <!-- Wspólne komunikaty -->
+    <string name="technical_error_message">Błąd techniczny</string>
+
+    <!-- Menu -->
+    <string name="menu_start_BT">Start</string>
+    <string name="menu_login_BT">Logowanie</string>
+    <string name="menu_reg_BT">Rejestracja</string>
+    <string name="menu_map_BT">Mapa</string>
+    <string name="menu_event_BT">Wydarzenia</string>
+    <string name="menu_groups_BT">Grupy</string>
+    <string name="menu_spots_BT">Miejsca</string>
+    <string name="menu_search_text">Wyszukaj...</string>
+    <string name="menu_settings_BT">Ustawienia</string>
+    <string name="menu_profile_BT">Profil</string>
+    <string name="menu_logout_BT">Wyloguj się</string>
+
+    <!-- MapFragment -->
+    <string name="map_fragment_details_BT">Szczegóły</string>
+    <string name="select">Wybierz</string>
+
+    <!-- PlaceDetailsFragment -->
+    <string name="place_review_count_TV">%1$d opinii</string>
+    <string name="place_review_count_reviews_panel_TV">%1$d z %2$d opinii</string>
+    <string name="no_description_info">Brak opisu.</string>
+    <string name="events_count_TV">%1$d wydarzeń w najbliższym czasie</string>
+    <string name="event_creator_TV">Utworzył: %1$s</string>
+    <string name="food_item_price_TV">%1$s zł</string>
+    <string name="event_participant_count_TV">Weżmie udział: %1$d osób</string>
+
+
+    <!-- Edytuj użytkownika -->
+    <string name="edit_user">Edytuj dane użytkownika</string>
+    <string name="action_userEdit_accept">Potwierdź</string>
+    <string name="menu_edit_BT">Edytuj użytkownika</string>
+
+    <!-- Profile -->
+    <string name="profile">Profil użytkownika</string>
+    <string name="edit_profile">Edytuj profil</string>
+    <string name="change_password">Zmień hasło</string>
+    <string name="change_avatar">Zmień awatar</string>
+    <string name="cancel">Anuluj</string>
+
+    <!-- Zmiana hasła -->
+    <string name="password_current">Obecne hasło</string>
+    <string name="password_new">Nowe hasło</string>
+    <string name="password_new_repeat">Powtórz nowe hasło</string>
+    <string name="password_wrong">Złe hasło</string>
+    <string name="password_error_same_password">Nowe hasło nie może być takie jak poprzednie</string>
+
+    <!-- Grupy -->
+    <string name="hello_groups_fragment">Hello groups fragment!</string>
+
+    <!-- Wydarzenia -->
+    <string name="hello_events_fragment">Hello events fragment!</string>
+    <string name="event_title">Wydarzenie</string>
+    <string name="event_name">Nazwa wydarzenia</string>
+    <string name="event_description">Opis</string>
+    <string name="event_location">Miejsce</string>
+    <string name="event_startDate">Data</string>
+    <string name="event_author">Autor</string>
+    <string name="event_email">Email</string>
+    <string name="event_edit">Edytuj</string>
+    <string name="exit">Wyjdź</string>
+    <string name="event_edit_title">Edytuj wydarzenie</string>
+    <string name="date_select">Data</string>
+    <string name="time_select">Godzina</string>
+    <string name="location_select_list">Wybierz miejsce</string>
+    <string name="event_create_public_title">Utwórz wydarzenie</string>
+    <string name="event_create_location_warning">Nie wybrano miejsca</string>
+    <string name="event_create_group_warning">Nie wybrano grupy</string>
+    <string name="event_delete">Usuń</string>
+    <string name="event_type">Rodzaj wydarzenia</string>
+    <string name="event_type_public">Publiczne</string>
+    <string name="event_type_group">Grupowe</string>
+    <string name="group_select_list">Wybierz grupę</string>
+    <string name="attenders">Uczestnicy</string>
+    <string name="event_join">Dołącz</string>
+    <string name="event_quit">Opuść</string>
+    <string name="event_joined">Zapisany</string>
+    <string name="event_joined_not">Niezapisany</string>
+    <string name="expand">Rozwiń szczegóły</string>
+    <string name="select_from_map">Wybierz z mapy</string>
+    <string name="event_show_on_map"><a href="">Pokaż na mapie</a></string>
+
+    <!-- Settings -->
+    <string name="user_settings">Opcje użytkownika</string>
+    <string name="notifications">Powiadomienia</string>
+    <string name="setting_1">Nowe wydarzenie</string>
+    <string name="setting_2">Dodanie do grupy</string>
+    <string name="setting_3">Wyrzucenie z grupy</string>
+    <string name="settings_updated">Zaktualizowano ustawienia</string>
+
+    <!-- Groups -->
+    <string name="events_incoming">Nadchodzące wydarzenia</string>
+    <string name="member_count">Ilość członków</string>
+    <string name="admin">Administrator</string>
+    <string name="group_name">Nazwa grupy</string>
+    <string name="group_create_title">Utwórz grupę</string>
+    <string name="add_user">Dodaj użytkownika</string>
+    <string name="group_create_event_title">Utwórz wydarzenie grupowe</string>
+    <string name="group_delete">Usuń grupę</string>
+    <string name="group_leave">Opuść grupę</string>
+    <string name="group">Grupa</string>
+
+
+    <!-- Places Distance-->
+    <string name="filters_text">filtry</string>
+    <string name="distance_input_hint_text">maksymalna odległość</string>
+    <string name="filters_confirm_button_text">zapisz</string>
+    <string name="min_reviews_hint_text">min. oc.</string>
+    <string name="max_reviews_hint_text">max. oc.</string>
+
+    <!-- Location categories -->
+    <string name="loc_cat_all">wszystkie</string>
+    <string name="loc_cat_restaurant">restauracja</string>
+    <string name="loc_cat_bar">bar</string>
+    <string name="loc_cat_pub">pub</string>
+    <string name="loc_cat_gym">siłownia</string>
+    <string name="loc_cat_cinema">kino</string>
+    <string name="loc_cat_root">korzeń</string>
+    <string name="loc_cat_other">inna_kategoria</string>
+
+
+    <!-- Dummy texts   -->
+    <string name="lorem_tiny">Ipsum dolor varius massa non.</string>
+    <string name="lorem_short">
+        Ipsum dolor varius massa non. Condimentum cras egestas malesuada commodo cras quam fames volutpat ac
+    </string>
+    <string name="lorem_medium">
+        Ipsum dolor varius massa non. Condimentum cras egestas malesuada commodo cras quam fames volutpat ac. Aliquet proin viverra eget sit accumsan. In hendrerit lectus urna suscipit nisi vitae arcu gravida. Volutpat sed amet placerat pharetra. Aliquam aenean pellentesque dolor ipsum odio
+    </string>
+    <string name="place_test_name">Test Name</string>
+    <string name="place_test_category">Test Category</string>
+    <string name="place_test_distance">Test Distance</string>
+    <string name="place_test_positive_reviews_percent">TPRP</string>
+    <string name="place_details_button_text">szczegóły</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

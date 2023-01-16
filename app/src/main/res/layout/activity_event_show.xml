@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                android:id="@+id/navbar_activity"
+                layout="@layout/navbar_close" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/background_IV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="false"
+                android:cropToPadding="false"
+                android:scaleType="centerCrop"
+                android:src="@drawable/map_v2"
+                android:tintMode="src_over"
+                app:tint="#66FFFFFF"/>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="40dp"
+                    android:background="@drawable/rounded_corner"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="30dp">
+
+
+                    <TextView
+                        android:id="@+id/title_TV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/roboto"
+                        android:text="@string/event_title"
+                        android:textColor="@color/blackAlpha"
+                        android:textFontWeight="400"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/event_name" />
+
+                    <TextView
+                        android:id="@+id/event_name_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/event_startDate" />
+
+                    <TextView
+                        android:id="@+id/event_startDate_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/event_location" />
+
+                    <TextView
+                        android:id="@+id/event_location_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/event_show_on_map_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="@string/event_show_on_map"
+                        android:textColorLink="#122c34"
+                        android:textSize="18sp"
+                        android:visibility="visible"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/event_description" />
+
+                    <TextView
+                        android:id="@+id/event_description_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/event_author" />
+
+                    <TextView
+                        android:id="@+id/event_author_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/event_email" />
+
+                    <TextView
+                        android:id="@+id/event_email_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:id="@+id/event_attenders_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/attenders" />
+
+                    <TextView
+                        android:id="@+id/event_attenders_TV"
+                        style="@style/profile_main_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:id="@+id/event_attender_joined_not"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone"
+                        tools:visibility="visible" >
+
+                        <TextView
+                            style="@style/profile_main_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:text="@string/event_joined_not"
+                            android:textSize="20sp" />
+
+                        <Button
+                            android:id="@+id/event_join_BT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_weight="0"
+                            android:backgroundTint="#4CAF50"
+                            android:text="@string/event_join" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/event_attender_joined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone"
+                        tools:visibility="visible" >
+
+                        <TextView
+                            style="@style/profile_main_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:text="@string/event_joined"
+                            android:textSize="20sp" />
+
+                        <Button
+                            android:id="@+id/event_quit_BT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_weight="0"
+                            android:backgroundTint="#FF4444"
+                            android:text="@string/event_quit" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/event_group_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/group" />
+
+                        <TextView
+                            android:id="@+id/event_group_name_TV"
+                            style="@style/profile_main_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <Switch
+                            android:id="@+id/event_group_notification_switch_TV"
+                            style="@style/profile_main_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="false"
+                            android:text="@string/notifications"
+                            android:textSize="20sp" />
+
+
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/delete_BT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="8dp"
+                        android:backgroundTint="#FF4444"
+                        android:text="@string/event_delete"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+
+                    <Button
+                        android:id="@+id/editEvent_BT"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/event_edit" />
+
+                    <Button
+                        android:id="@+id/exit_BT"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:backgroundTint="#FF4444"
+                        android:text="@string/exit"
+                        android:visibility="visible" />
+
+
+
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <FrameLayout
+                android:id="@+id/loading_FL"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#40000000"
+                android:visibility="invisible">
+
+            </FrameLayout>
+
+            <ProgressBar
+                android:id="@+id/loading_PB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.3" />
+
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+</layout>

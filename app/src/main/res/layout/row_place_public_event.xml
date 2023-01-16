@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="8dp"
+    app:cardCornerRadius="5dp"
+    android:layout_marginBottom="5dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:orientation="vertical">
+
+        <!-- header -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/name_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wieczór gier planszowych"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textFontWeight="500"/>
+
+                <TextView
+                    android:id="@+id/author_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Utworzył: Maciej Roch"
+                    android:textSize="12sp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:id="@+id/start_date_TV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="22.11.2022"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:textFontWeight="500"
+                android:layout_margin="10dp"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <TextView
+            android:id="@+id/description_TV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lorem_medium"
+            android:textSize="15sp"
+            android:layout_marginVertical="10dp"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/participants_count_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Weżmie udział: 10 osób"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/user_participating_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ty też bierzesz udział"
+                    android:textColor="@android:color/holo_green_dark" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/join_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/asset_plus"
+                    android:backgroundTint="@color/black"
+                    android:tint="@color/white"/>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/leave_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/asset_minus"
+                    android:backgroundTint="@color/black"
+                    android:tint="@color/white"/>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/edit_BT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/asset_edit_pen"
+                    android:backgroundTint="@color/black"
+                    android:tint="@color/white"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.cardview.widget.CardView>

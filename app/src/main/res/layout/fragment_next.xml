@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_next"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="pl.sggw.sggwmeet.fragment.NextFragment">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1"/>
+
+        <TextView
+            android:id="@+id/label_greetings"
+            android:layout_width="@dimen/fill"
+            android:layout_height="@dimen/fill"
+            android:text="@string/fnext_label_greetings_text"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline_top_top"
+            app:layout_constraintBottom_toTopOf="@id/guideline_top_middle"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2"/>
+
+        <TextView
+            android:id="@+id/label_injected"
+            android:layout_width="@dimen/fill"
+            android:layout_height="@dimen/fill"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline_top_middle"
+            app:layout_constraintBottom_toTopOf="@id/guideline_top_bottom"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.3"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_bottom_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.8"/>
+
+        <Button
+            android:id="@+id/button_back"
+            android:layout_width="@dimen/fill"
+            android:layout_height="@dimen/fill"
+            android:text="@string/fnext_button_back_text"
+            android:gravity="center"
+            android:layout_marginVertical="@dimen/margin_small"
+            android:layout_marginHorizontal="@dimen/margin_large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline_bottom_top"
+            app:layout_constraintBottom_toTopOf="@id/guideline_bottom_bottom"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_bottom_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.9"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

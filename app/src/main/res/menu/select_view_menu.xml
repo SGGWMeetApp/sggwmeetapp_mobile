@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_start"
+        android:title="Start">
+    </item>
+    <item
+        android:id="@+id/menu_scrolling"
+        android:title="Scrolling">
+    </item>
+    <item
+        android:id="@+id/menu_login"
+        android:title="Login">
+    </item>
+    <item
+        android:id="@+id/menu_register"
+        android:title="Rejestracja">
+    </item>
+</menu>

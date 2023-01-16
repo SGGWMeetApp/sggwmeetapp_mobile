@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="#80000000"
+    android:backgroundTintMode="src_over"
+    tools:context=".fragment.profile.UploadAvatarFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/uploadAvatar_BackgroundImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/map_v2"
+            android:tintMode="src_over"
+            app:tint="#66FFFFFF"></ImageView>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="40dp"
+                android:background="@drawable/rounded_corner"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="30dp">
+
+
+                <TextView
+                    android:id="@+id/uploadAvatar_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/change_avatar"
+                    android:textColor="@color/blackAlpha"
+                    android:textFontWeight="400"
+                    android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/uploadAvatar_selectAvatar_BT"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/reg_avatar_select" />
+
+                <ImageView
+                    android:id="@+id/uploadAvatar_avatarPreview_IV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:visibility="visible">
+
+                </ImageView>
+
+
+                <Button
+                    android:id="@+id/uploadAvatar_confirm_BT"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:enabled="false"
+                    android:text="@string/action_userEdit_accept" />
+
+                <Button
+                    android:id="@+id/cancel_BT"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:backgroundTint="#FF4444"
+                    android:text="@string/cancel"
+                    android:visibility="visible" />
+
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <FrameLayout
+            android:id="@+id/loading_FL"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#40000000"
+            android:visibility="invisible">
+
+        </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/loading_PB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3" />
+
+    </FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
